@@ -1,0 +1,210 @@
+:root {
+  --bg: #0a0b0f;
+  --glass: rgba(255, 255, 255, 0.045);
+  --glass-border: rgba(255, 255, 255, 0.09);
+  --text: #e8e9ee;
+  --text-dim: #8b8d98;
+  --accent: #34d399;
+  --accent-2: #6366f1;
+  --danger: #f87171;
+  --radius: 14px;
+}
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  color: var(--text);
+  background:
+    radial-gradient(circle at 15% 0%, rgba(99, 102, 241, 0.12), transparent 45%),
+    radial-gradient(circle at 85% 20%, rgba(52, 211, 153, 0.1), transparent 45%),
+    var(--bg);
+  min-height: 100vh;
+}
+
+button {
+  font-family: inherit;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fadeInUp 0.28s ease both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fade-in,
+  .hub-card {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+.card {
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-radius: var(--radius);
+}
+
+input,
+select,
+textarea {
+  font-family: inherit;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--glass-border);
+  color: var(--text);
+  border-radius: 8px;
+  padding: 0.5rem 0.6rem;
+}
+
+/* ---------- Login ---------- */
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 300px;
+  border-radius: var(--radius);
+  padding: 1.6rem;
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.login-form h1 {
+  margin: 0 0 0.5rem;
+  font-size: 1.4rem;
+  text-align: center;
+}
+
+.login-form input,
+.login-form button {
+  padding: 0.65rem 0.8rem;
+  border-radius: 10px;
+}
+
+.login-form button {
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  border: none;
+  color: #06120c;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.login-form button:hover {
+  transform: translateY(-1px);
+}
+
+.login-error {
+  color: var(--danger);
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+/* ---------- Shell ---------- */
+.hub-page {
+  min-height: 100vh;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.7rem 1.2rem;
+  background: var(--glass);
+  border-bottom: 1px solid var(--glass-border);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.toolbar h1 {
+  font-size: 1.15rem;
+  margin: 0;
+}
+
+.toolbar .spacer {
+  flex: 1;
+}
+
+.toolbar .user-email {
+  color: var(--text-dim);
+  font-size: 0.8rem;
+}
+
+.toolbar button {
+  padding: 0.4rem 0.8rem;
+  border-radius: 10px;
+  border: 1px solid var(--glass-border);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text);
+  cursor: pointer;
+  font-size: 0.82rem;
+}
+
+.toolbar button:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* ---------- Hub grid ---------- */
+.hub-grid {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.2rem;
+}
+
+.hub-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.5rem;
+  padding: 2rem 1.2rem;
+  text-decoration: none;
+  color: var(--text);
+  transition: transform 0.18s ease, background 0.18s ease;
+}
+
+.hub-card:hover {
+  transform: translateY(-4px);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.hub-card-icon {
+  font-size: 2.6rem;
+}
+
+.hub-card-name {
+  font-size: 1.1rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.hub-card-desc {
+  color: var(--text-dim);
+  font-size: 0.82rem;
+  line-height: 1.4;
+}

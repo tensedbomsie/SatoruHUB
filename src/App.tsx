@@ -30,6 +30,12 @@ const APPS: AppLink[] = [
     icon: '🏋️',
     url: 'https://tensedbomsie.github.io/WorkoutTracker/',
   },
+  {
+    name: 'Movie Hub',
+    description: 'คลังหนังที่เคยดู พร้อมคะแนน รีวิว และข้อมูลจาก TMDb',
+    icon: '🎬',
+    url: 'https://tensedbomsie.github.io/MovieHub/',
+  },
 ]
 
 function App() {

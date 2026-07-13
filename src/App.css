@@ -208,3 +208,25 @@ textarea {
   font-size: 0.82rem;
   line-height: 1.4;
 }
+
+.corner-link {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  padding: 0.5rem 0.9rem;
+  border-radius: 999px;
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  color: var(--text-dim);
+  text-decoration: none;
+  font-size: 0.8rem;
+  transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
+}
+
+.corner-link:hover {
+  background: rgba(255, 255, 255, 0.09);
+  color: var(--text);
+  transform: translateY(-1px);
+}

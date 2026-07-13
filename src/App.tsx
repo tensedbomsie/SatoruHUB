@@ -74,6 +74,15 @@ function App() {
           </a>
         ))}
       </div>
+
+      <a
+        className="corner-link"
+        href="https://iregis2s1.ru.ac.th/ass_prog_semester2/"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        🎓 ลงทะเบียนเรียน
+      </a>
     </div>
   )
 }

@@ -36,6 +36,12 @@ const APPS: AppLink[] = [
     icon: '🎬',
     url: 'https://tensedbomsie.github.io/MovieHub/',
   },
+  {
+    name: 'Money Diary',
+    description: 'บันทึกรายรับ-รายจ่าย พร้อมสรุปยอดและกราฟตามหมวดหมู่',
+    icon: '💰',
+    url: 'https://tensedbomsie.github.io/MoneyDiary/',
+  },
 ]
 
 function App() {

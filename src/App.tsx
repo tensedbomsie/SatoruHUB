@@ -170,14 +170,26 @@ function App() {
         ))}
       </div>
 
-      <a
-        className="corner-link"
-        href="https://iregis2s1.ru.ac.th/ass_prog_semester2/"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        🎓 ลงทะเบียนเรียน
-      </a>
+      <div className="corner-links">
+        <a
+          className="corner-link"
+          href="https://web.facebook.com/messages/"
+          target="_blank"
+          rel="noopener noreferrer"
+          title="Messenger"
+        >
+          💬
+        </a>
+        <a
+          className="corner-link"
+          href="https://iregis2s1.ru.ac.th/ass_prog_semester2/"
+          target="_blank"
+          rel="noopener noreferrer"
+          title="ลงทะเบียนเรียน"
+        >
+          🎓
+        </a>
+      </div>
     </div>
   )
 }

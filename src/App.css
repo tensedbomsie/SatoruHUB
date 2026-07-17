@@ -231,19 +231,29 @@ textarea {
   white-space: nowrap;
 }
 
-.corner-link {
+.corner-links {
   position: fixed;
   right: 1rem;
   bottom: 1rem;
-  padding: 0.5rem 0.9rem;
-  border-radius: 999px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.corner-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
   background: var(--glass);
   border: 1px solid var(--glass-border);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   color: var(--text-dim);
   text-decoration: none;
-  font-size: 0.8rem;
+  font-size: 1.2rem;
   transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
 }
 

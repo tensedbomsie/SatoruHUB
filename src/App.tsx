@@ -128,6 +128,7 @@ function App() {
   const [food, setFood] = useState<FoodDiaryStats | null>(null)
   const [money, setMoney] = useState<MoneyDiaryStats | null>(null)
   const [movie, setMovie] = useState<MovieHubStats | null>(null)
+  const [showRegister, setShowRegister] = useState(false)
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -189,16 +190,38 @@ function App() {
         >
           📸
         </a>
-        <a
-          className="corner-link"
-          href="https://iregis2s1.ru.ac.th/ass_prog_semester2/"
-          target="_blank"
-          rel="noopener noreferrer"
-          title="ลงทะเบียนเรียน"
-        >
+        <button className="corner-link" title="ลงทะเบียนเรียน" onClick={() => setShowRegister(true)}>
           🎓
-        </a>
+        </button>
       </div>
+
+      {showRegister && (
+        <div className="modal-backdrop" onClick={() => setShowRegister(false)}>
+          <div className="modal register-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="register-modal-header">
+              <h2>ลงทะเบียนเรียน</h2>
+              <div className="register-modal-actions">
+                <a
+                  href="https://iregis2s1.ru.ac.th/ass_prog_semester2/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn"
+                >
+                  เปิดในแท็บใหม่
+                </a>
+                <button className="btn" onClick={() => setShowRegister(false)}>
+                  ปิด
+                </button>
+              </div>
+            </div>
+            <iframe
+              src="https://iregis2s1.ru.ac.th/ass_prog_semester2/"
+              title="ลงทะเบียนเรียน"
+              className="register-iframe"
+            />
+          </div>
+        </div>
+      )}
     </div>
   )
 }

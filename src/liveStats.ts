@@ -8,6 +8,7 @@ export type StoryboardStats = {
 
 export type FoodDiaryStats = {
   kcalToday: number
+  proteinToday: number
 }
 
 export type MoneyDiaryStats = {
@@ -48,6 +49,12 @@ export async function fetchStoryboardStats(): Promise<StoryboardStats | null> {
   }
 }
 
+function parseProteinGrams(protein: string | null | undefined): number {
+  if (!protein) return 0
+  const match = protein.match(/[\d.]+/)
+  return match ? parseFloat(match[0]) : 0
+}
+
 export async function fetchFoodDiaryStats(): Promise<FoodDiaryStats | null> {
   try {
     const startOfDay = new Date()
@@ -57,18 +64,20 @@ export async function fetchFoodDiaryStats(): Promise<FoodDiaryStats | null> {
 
     const { data } = await supabase
       .from('meals')
-      .select('meal_foods(quantity, kcal_override, food:foods(kcal))')
+      .select('meal_foods(quantity, kcal_override, food:foods(kcal, protein))')
       .gte('eaten_at', startOfDay.toISOString())
       .lt('eaten_at', endOfDay.toISOString())
 
     let kcalToday = 0
+    let proteinToday = 0
     for (const meal of (data as any[]) ?? []) {
       for (const mf of meal.meal_foods ?? []) {
-        const base = mf.kcal_override ?? mf.food?.kcal ?? 0
-        kcalToday += base * mf.quantity
+        const baseKcal = mf.kcal_override ?? mf.food?.kcal ?? 0
+        kcalToday += baseKcal * mf.quantity
+        proteinToday += parseProteinGrams(mf.food?.protein) * mf.quantity
       }
     }
-    return { kcalToday }
+    return { kcalToday, proteinToday }
   } catch {
     return null
   }

@@ -92,6 +92,7 @@ function HubCardStats({
     return (
       <div className="hub-card-stats">
         <span className="stat-line">🔥 {fmt(food.kcalToday)} kcal วันนี้</span>
+        <span className="stat-line-sub">🥩 โปรตีน {fmt(food.proteinToday)}g วันนี้</span>
       </div>
     )
   }

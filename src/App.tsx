@@ -2,6 +2,17 @@ import { useEffect, useState } from 'react'
 import type { Session } from '@supabase/supabase-js'
 import { supabase } from './lib/supabase'
 import Login from './Login'
+import {
+  timeAgo,
+  fetchStoryboardStats,
+  fetchFoodDiaryStats,
+  fetchMoneyDiaryStats,
+  fetchMovieHubStats,
+  type StoryboardStats,
+  type FoodDiaryStats,
+  type MoneyDiaryStats,
+  type MovieHubStats,
+} from './liveStats'
 import './App.css'
 
 type AppLink = {
@@ -44,9 +55,78 @@ const APPS: AppLink[] = [
   },
 ]
 
+const fmt = (n: number) => n.toLocaleString('th-TH', { maximumFractionDigits: 0 })
+
+function HubCardStats({
+  app,
+  storyboard,
+  food,
+  money,
+  movie,
+}: {
+  app: AppLink
+  storyboard: StoryboardStats | null
+  food: FoodDiaryStats | null
+  money: MoneyDiaryStats | null
+  movie: MovieHubStats | null
+}) {
+  if (app.name === 'Storyboard') {
+    if (!storyboard) return <span className="hub-card-desc">{app.description}</span>
+    return (
+      <div className="hub-card-stats">
+        <span className="stat-line">{storyboard.count} Projects</span>
+        {storyboard.latestName && (
+          <>
+            <span className="stat-line-sub">ล่าสุด: {storyboard.latestName}</span>
+            {storyboard.latestUpdatedAt && (
+              <span className="stat-line-sub">แก้ไข {timeAgo(storyboard.latestUpdatedAt)}</span>
+            )}
+          </>
+        )}
+      </div>
+    )
+  }
+
+  if (app.name === 'Food Diary') {
+    if (!food) return <span className="hub-card-desc">{app.description}</span>
+    return (
+      <div className="hub-card-stats">
+        <span className="stat-line">🔥 {fmt(food.kcalToday)} kcal วันนี้</span>
+      </div>
+    )
+  }
+
+  if (app.name === 'Money Diary') {
+    if (!money) return <span className="hub-card-desc">{app.description}</span>
+    return (
+      <div className="hub-card-stats">
+        <span className="stat-line">รายรับวันนี้ ฿{fmt(money.incomeToday)}</span>
+        <span className="stat-line-sub">รายรับเดือนนี้ ฿{fmt(money.incomeMonth)}</span>
+      </div>
+    )
+  }
+
+  if (app.name === 'Movie Hub') {
+    if (!movie) return <span className="hub-card-desc">{app.description}</span>
+    if (!movie.title) return <span className="hub-card-desc">{app.description}</span>
+    return (
+      <div className="hub-card-stats">
+        <span className="stat-line-sub">ดูล่าสุด: {movie.title}</span>
+        {movie.rating != null && <span className="stat-line">⭐ {Number(movie.rating).toFixed(1)}</span>}
+      </div>
+    )
+  }
+
+  return <span className="hub-card-desc">{app.description}</span>
+}
+
 function App() {
   const [session, setSession] = useState<Session | null>(null)
   const [checked, setChecked] = useState(false)
+  const [storyboard, setStoryboard] = useState<StoryboardStats | null>(null)
+  const [food, setFood] = useState<FoodDiaryStats | null>(null)
+  const [money, setMoney] = useState<MoneyDiaryStats | null>(null)
+  const [movie, setMovie] = useState<MovieHubStats | null>(null)
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -58,6 +138,14 @@ function App() {
     })
     return () => listener.subscription.unsubscribe()
   }, [])
+
+  useEffect(() => {
+    if (!session) return
+    fetchStoryboardStats().then(setStoryboard)
+    fetchFoodDiaryStats().then(setFood)
+    fetchMoneyDiaryStats().then(setMoney)
+    fetchMovieHubStats().then(setMovie)
+  }, [session])
 
   if (!checked) return null
   if (!session) return <Login />
@@ -76,7 +164,7 @@ function App() {
           <a key={app.name} className="hub-card card" href={app.url}>
             <span className="hub-card-icon">{app.icon}</span>
             <span className="hub-card-name">{app.name}</span>
-            <span className="hub-card-desc">{app.description}</span>
+            <HubCardStats app={app} storyboard={storyboard} food={food} money={money} movie={movie} />
           </a>
         ))}
       </div>

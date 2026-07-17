@@ -209,6 +209,28 @@ textarea {
   line-height: 1.4;
 }
 
+.hub-card-stats {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+.stat-line {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.stat-line-sub {
+  font-size: 0.76rem;
+  color: var(--text-dim);
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .corner-link {
   position: fixed;
   right: 1rem;

@@ -129,6 +129,7 @@ function App() {
   const [money, setMoney] = useState<MoneyDiaryStats | null>(null)
   const [movie, setMovie] = useState<MovieHubStats | null>(null)
   const [showRegister, setShowRegister] = useState(false)
+  const [cornerOpen, setCornerOpen] = useState(false)
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -172,26 +173,42 @@ function App() {
       </div>
 
       <div className="corner-links">
-        <a
-          className="corner-link"
-          href="https://web.facebook.com/messages/"
-          target="_blank"
-          rel="noopener noreferrer"
-          title="Messenger"
+        <div className={`corner-links-items${cornerOpen ? ' open' : ''}`}>
+          <a
+            className="corner-link"
+            href="https://web.facebook.com/messages/"
+            target="_blank"
+            rel="noopener noreferrer"
+            title="Messenger"
+            tabIndex={cornerOpen ? 0 : -1}
+          >
+            💬
+          </a>
+          <a
+            className="corner-link"
+            href="https://www.instagram.com/direct/inbox/"
+            target="_blank"
+            rel="noopener noreferrer"
+            title="Instagram DM"
+            tabIndex={cornerOpen ? 0 : -1}
+          >
+            📸
+          </a>
+          <button
+            className="corner-link"
+            title="ลงทะเบียนเรียน"
+            tabIndex={cornerOpen ? 0 : -1}
+            onClick={() => setShowRegister(true)}
+          >
+            🎓
+          </button>
+        </div>
+        <button
+          className={`corner-toggle${cornerOpen ? ' open' : ''}`}
+          title={cornerOpen ? 'ปิด' : 'เปิด'}
+          onClick={() => setCornerOpen((o) => !o)}
         >
-          💬
-        </a>
-        <a
-          className="corner-link"
-          href="https://www.instagram.com/direct/inbox/"
-          target="_blank"
-          rel="noopener noreferrer"
-          title="Instagram DM"
-        >
-          📸
-        </a>
-        <button className="corner-link" title="ลงทะเบียนเรียน" onClick={() => setShowRegister(true)}>
-          🎓
+          ▲
         </button>
       </div>
 

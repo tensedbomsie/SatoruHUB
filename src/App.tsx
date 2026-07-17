@@ -182,6 +182,15 @@ function App() {
         </a>
         <a
           className="corner-link"
+          href="https://www.instagram.com/direct/inbox/"
+          target="_blank"
+          rel="noopener noreferrer"
+          title="Instagram DM"
+        >
+          📸
+        </a>
+        <a
+          className="corner-link"
           href="https://iregis2s1.ru.ac.th/ass_prog_semester2/"
           target="_blank"
           rel="noopener noreferrer"

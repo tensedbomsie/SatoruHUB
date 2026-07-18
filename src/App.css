@@ -288,7 +288,8 @@ textarea {
   transform: rotate(180deg);
 }
 
-.corner-link {
+.corner-link,
+.side-link-left {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -303,6 +304,19 @@ textarea {
   text-decoration: none;
   font-size: 1.2rem;
   transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
+}
+
+.side-link-left {
+  position: fixed;
+  left: 1rem;
+  bottom: 1rem;
+  z-index: 900;
+}
+
+.side-link-left:hover {
+  background: rgba(255, 255, 255, 0.09);
+  color: var(--text);
+  transform: translateY(-1px);
 }
 
 .corner-link:hover {

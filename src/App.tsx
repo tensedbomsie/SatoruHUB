@@ -172,6 +172,16 @@ function App() {
         ))}
       </div>
 
+      <a
+        className="side-link-left"
+        href="https://www.vlr.gg/"
+        target="_blank"
+        rel="noopener noreferrer"
+        title="VLR.gg"
+      >
+        🎯
+      </a>
+
       <div className="corner-links">
         <div className={`corner-links-items${cornerOpen ? ' open' : ''}`}>
           <a

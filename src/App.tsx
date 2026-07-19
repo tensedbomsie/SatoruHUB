@@ -13,6 +13,7 @@ import {
   type MoneyDiaryStats,
   type MovieHubStats,
 } from './liveStats'
+import { THEMES, getStoredTheme, applyTheme, setTheme, type ThemeId } from './theme'
 import './App.css'
 
 type AppLink = {
@@ -176,6 +177,19 @@ function App() {
   const [cornerOpen, setCornerOpen] = useState(false)
   const [view, setView] = useState<'hub' | 'concepts'>('hub')
   const [conceptMode, setConceptMode] = useState<'grid' | 'preview' | 'moodboard'>('grid')
+  const [showTheme, setShowTheme] = useState(false)
+  const [currentTheme, setCurrentTheme] = useState<ThemeId>('dark')
+
+  useEffect(() => {
+    const stored = getStoredTheme()
+    setCurrentTheme(stored)
+    applyTheme(stored)
+  }, [])
+
+  const chooseTheme = (id: ThemeId) => {
+    setTheme(id)
+    setCurrentTheme(id)
+  }
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -209,6 +223,7 @@ function App() {
         )}
         <span className="spacer" />
         {view === 'hub' && <button onClick={() => setView('concepts')}>🎨 Concepts</button>}
+        <button onClick={() => setShowTheme(true)}>🌗 ธีม</button>
         <span className="user-email">{session.user.email}</span>
         <button onClick={() => supabase.auth.signOut()}>ออกจากระบบ</button>
       </div>
@@ -393,6 +408,36 @@ function App() {
               title="ลงทะเบียนเรียน"
               className="register-iframe"
             />
+          </div>
+        </div>
+      )}
+
+      {showTheme && (
+        <div className="modal-backdrop" onClick={() => setShowTheme(false)}>
+          <div className="modal theme-modal" onClick={(e) => e.stopPropagation()}>
+            <h2>เลือกธีมของ Hub</h2>
+            <p className="modal-sub">เปลี่ยนทันที ไม่ต้อง deploy ใหม่ — ธีมที่เลือกจะซิงก์ไปทุกแอปในเครือด้วย</p>
+            <div className="theme-grid">
+              {THEMES.map((t) => (
+                <button
+                  key={t.id}
+                  className={`theme-card${currentTheme === t.id ? ' active' : ''}`}
+                  onClick={() => chooseTheme(t.id)}
+                >
+                  <div className="theme-card-swatch" style={{ background: t.bg }}>
+                    <span className="theme-swatch-dot" style={{ background: t.accent }} />
+                    <span className="theme-swatch-dot" style={{ background: t.accent2 }} />
+                  </div>
+                  <div className="theme-card-label">
+                    <span className="theme-card-name">{t.name}</span>
+                    <span className="theme-card-desc">{t.desc}</span>
+                  </div>
+                </button>
+              ))}
+            </div>
+            <div className="modal-actions">
+              <button className="btn" onClick={() => setShowTheme(false)}>ปิด</button>
+            </div>
           </div>
         </div>
       )}

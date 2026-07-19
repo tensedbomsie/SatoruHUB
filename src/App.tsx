@@ -247,27 +247,33 @@ function App() {
                   ))}
                 </div>
               ) : (
-                <div className="concepts-preview-list">
+                <div className="concepts-preview-grid">
                   {group.items.map((item) => (
-                    <div key={item.file} className="concept-preview card">
-                      <div className="concept-preview-header">
-                        <span className="concept-card-icon">{item.icon}</span>
-                        <span className="concept-card-name">{item.name}</span>
+                    <div key={item.file} className="concept-preview-card">
+                      <div className="concept-thumb">
+                        <iframe
+                          className="concept-preview-frame"
+                          src={`${import.meta.env.BASE_URL}concepts/${item.file}`}
+                          title={item.name}
+                          loading="lazy"
+                        />
                         <a
                           className="concept-preview-open"
                           href={`${import.meta.env.BASE_URL}concepts/${item.file}`}
                           target="_blank"
                           rel="noopener noreferrer"
+                          title="เปิดเต็มจอ"
                         >
-                          เปิดเต็มจอ ↗
+                          ⤢
                         </a>
                       </div>
-                      <iframe
-                        className="concept-preview-frame"
-                        src={`${import.meta.env.BASE_URL}concepts/${item.file}`}
-                        title={item.name}
-                        loading="lazy"
-                      />
+                      <div className="concept-meta">
+                        <span className="concept-meta-icon">{item.icon}</span>
+                        <div className="concept-meta-text">
+                          <span className="concept-meta-name">{item.name}</span>
+                          <span className="concept-meta-group">{group.title}</span>
+                        </div>
+                      </div>
                     </div>
                   ))}
                 </div>

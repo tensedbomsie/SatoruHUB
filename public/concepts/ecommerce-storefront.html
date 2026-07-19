@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Storefront — E-commerce Template</title>
+<style>
+  :root {
+    --bg: #0a0b0f;
+    --bg-2: #101218;
+    --glass: rgba(255, 255, 255, 0.045);
+    --glass-border: rgba(255, 255, 255, 0.09);
+    --text: #e8e9ee;
+    --text-dim: #8b8d98;
+    --accent: #34d399;
+    --accent-2: #6366f1;
+    --gold: #facc15;
+    --radius: 14px;
+  }
+  * { box-sizing: border-box; }
+  html { color-scheme: dark; }
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    color: var(--text);
+    background:
+      radial-gradient(circle at 15% 0%, rgba(99, 102, 241, 0.12), transparent 45%),
+      radial-gradient(circle at 85% 20%, rgba(52, 211, 153, 0.1), transparent 45%),
+      var(--bg);
+    min-height: 100vh;
+  }
+  .glass { background: var(--glass); border: 1px solid var(--glass-border); backdrop-filter: blur(14px); border-radius: var(--radius); }
+
+  header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 32px; position: sticky; top: 0; z-index: 20;
+    background: rgba(10,11,15,0.75); backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--glass-border);
+  }
+  .logo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 18px; }
+  .logo-mark { width: 32px; height: 32px; border-radius: 9px; background: linear-gradient(135deg, var(--accent), var(--accent-2)); display: flex; align-items: center; justify-content: center; }
+  nav { display: flex; gap: 26px; font-size: 14px; color: var(--text-dim); }
+  nav a { color: inherit; text-decoration: none; }
+  nav a.active { color: var(--text); }
+  .header-actions { display: flex; align-items: center; gap: 14px; }
+  .icon-btn { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.04); border: 1px solid var(--glass-border); position: relative; cursor: pointer; }
+  .cart-badge { position: absolute; top: -4px; right: -4px; background: var(--accent); color: #06120c; font-size: 10px; font-weight: 700; width: 17px; height: 17px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+
+  .hero {
+    margin: 24px 32px; padding: 48px 40px; border-radius: var(--radius);
+    background: linear-gradient(120deg, rgba(52,211,153,0.14), rgba(99,102,241,0.14)), var(--glass);
+    border: 1px solid var(--glass-border);
+    display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap;
+  }
+  .hero h1 { font-size: 34px; margin: 0 0 10px; max-width: 480px; }
+  .hero p { color: var(--text-dim); max-width: 420px; margin: 0 0 20px; }
+  .btn { padding: 12px 24px; border-radius: 999px; border: none; background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #06120c; font-weight: 700; cursor: pointer; font-size: 14px; }
+  .hero-visual { width: 220px; height: 220px; border-radius: 20px; background: linear-gradient(135deg, rgba(52,211,153,0.3), rgba(99,102,241,0.3)); display: flex; align-items: center; justify-content: center; font-size: 64px; flex-shrink: 0; }
+
+  .categories { display: flex; gap: 14px; padding: 0 32px; margin: 28px 0 8px; overflow-x: auto; }
+  .category-chip { padding: 10px 20px; border-radius: 999px; border: 1px solid var(--glass-border); background: rgba(255,255,255,0.03); color: var(--text-dim); font-size: 13px; white-space: nowrap; cursor: pointer; }
+  .category-chip.active { background: linear-gradient(135deg, rgba(52,211,153,0.2), rgba(99,102,241,0.2)); color: var(--text); border-color: transparent; }
+
+  .section-title { padding: 0 32px; margin: 28px 0 16px; font-size: 18px; font-weight: 700; }
+
+  .product-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; padding: 0 32px 40px; }
+  .product-card { padding: 0; overflow: hidden; }
+  .product-thumb { height: 150px; background: linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02)); display: flex; align-items: center; justify-content: center; font-size: 40px; }
+  .product-info { padding: 14px 16px 16px; }
+  .product-cat { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 4px; }
+  .product-name { font-weight: 600; font-size: 14px; margin-bottom: 8px; }
+  .product-bottom { display: flex; align-items: center; justify-content: space-between; }
+  .product-price { font-weight: 700; color: var(--accent); }
+  .add-btn { width: 30px; height: 30px; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(255,255,255,0.04); color: var(--text); cursor: pointer; font-size: 16px; }
+  .rating { font-size: 11px; color: var(--gold); margin-top: 2px; }
+</style>
+</head>
+<body>
+  <header>
+    <div class="logo"><div class="logo-mark">🛍️</div> Storefront</div>
+    <nav>
+      <a href="#" class="active">หน้าแรก</a>
+      <a href="#">สินค้าทั้งหมด</a>
+      <a href="#">โปรโมชั่น</a>
+      <a href="#">เกี่ยวกับเรา</a>
+    </nav>
+    <div class="header-actions">
+      <div class="icon-btn">🔍</div>
+      <div class="icon-btn">♡</div>
+      <div class="icon-btn">🛒<span class="cart-badge">3</span></div>
+    </div>
+  </header>
+
+  <div class="hero">
+    <div>
+      <h1>สินค้าคุณภาพ ส่งตรงถึงมือคุณ</h1>
+      <p>ช้อปสินค้าหลากหลายหมวดหมู่ พร้อมโปรโมชั่นพิเศษทุกสัปดาห์ จัดส่งรวดเร็วทั่วประเทศ</p>
+      <button class="btn">เลือกซื้อเลย</button>
+    </div>
+    <div class="hero-visual">🎁</div>
+  </div>
+
+  <div class="categories">
+    <div class="category-chip active">ทั้งหมด</div>
+    <div class="category-chip">เสื้อผ้า</div>
+    <div class="category-chip">อิเล็กทรอนิกส์</div>
+    <div class="category-chip">ของแต่งบ้าน</div>
+    <div class="category-chip">ความงาม</div>
+    <div class="category-chip">กีฬา</div>
+  </div>
+
+  <div class="section-title">สินค้าขายดี</div>
+  <div class="product-grid">
+    <div class="product-card glass">
+      <div class="product-thumb">👕</div>
+      <div class="product-info">
+        <div class="product-cat">เสื้อผ้า</div>
+        <div class="product-name">เสื้อยืดคอตตอน 100%</div>
+        <div class="rating">★★★★★ (128)</div>
+        <div class="product-bottom">
+          <span class="product-price">฿390</span>
+          <button class="add-btn">+</button>
+        </div>
+      </div>
+    </div>
+    <div class="product-card glass">
+      <div class="product-thumb">🎧</div>
+      <div class="product-info">
+        <div class="product-cat">อิเล็กทรอนิกส์</div>
+        <div class="product-name">หูฟังไร้สาย Bluetooth</div>
+        <div class="rating">★★★★☆ (89)</div>
+        <div class="product-bottom">
+          <span class="product-price">฿1,290</span>
+          <button class="add-btn">+</button>
+        </div>
+      </div>
+    </div>
+    <div class="product-card glass">
+      <div class="product-thumb">🕯️</div>
+      <div class="product-info">
+        <div class="product-cat">ของแต่งบ้าน</div>
+        <div class="product-name">เทียนหอมอโรม่า</div>
+        <div class="rating">★★★★★ (56)</div>
+        <div class="product-bottom">
+          <span class="product-price">฿250</span>
+          <button class="add-btn">+</button>
+        </div>
+      </div>
+    </div>
+    <div class="product-card glass">
+      <div class="product-thumb">💄</div>
+      <div class="product-info">
+        <div class="product-cat">ความงาม</div>
+        <div class="product-name">ลิปสติกแมทท์</div>
+        <div class="rating">★★★★☆ (204)</div>
+        <div class="product-bottom">
+          <span class="product-price">฿320</span>
+          <button class="add-btn">+</button>
+        </div>
+      </div>
+    </div>
+    <div class="product-card glass">
+      <div class="product-thumb">👟</div>
+      <div class="product-info">
+        <div class="product-cat">กีฬา</div>
+        <div class="product-name">รองเท้าวิ่ง</div>
+        <div class="rating">★★★★★ (312)</div>
+        <div class="product-bottom">
+          <span class="product-price">฿1,890</span>
+          <button class="add-btn">+</button>
+        </div>
+      </div>
+    </div>
+    <div class="product-card glass">
+      <div class="product-thumb">⌚</div>
+      <div class="product-info">
+        <div class="product-cat">อิเล็กทรอนิกส์</div>
+        <div class="product-name">สมาร์ทวอทช์</div>
+        <div class="rating">★★★★☆ (167)</div>
+        <div class="product-bottom">
+          <span class="product-price">฿2,590</span>
+          <button class="add-btn">+</button>
+        </div>
+      </div>
+    </div>
+    <div class="product-card glass">
+      <div class="product-thumb">🧴</div>
+      <div class="product-info">
+        <div class="product-cat">ความงาม</div>
+        <div class="product-name">เซรั่มบำรุงผิวหน้า</div>
+        <div class="rating">★★★★★ (245)</div>
+        <div class="product-bottom">
+          <span class="product-price">฿590</span>
+          <button class="add-btn">+</button>
+        </div>
+      </div>
+    </div>
+    <div class="product-card glass">
+      <div class="product-thumb">🎒</div>
+      <div class="product-info">
+        <div class="product-cat">เสื้อผ้า</div>
+        <div class="product-name">กระเป๋าเป้อเนกประสงค์</div>
+        <div class="rating">★★★★☆ (98)</div>
+        <div class="product-bottom">
+          <span class="product-price">฿790</span>
+          <button class="add-btn">+</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

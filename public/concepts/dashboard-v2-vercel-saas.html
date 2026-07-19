@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Dashboard — Startup / Vercel SaaS Style</title>
+<style>
+  :root {
+    --bg: #000000;
+    --surface: #0a0a0a;
+    --surface-hover: #111111;
+    --border: rgba(255, 255, 255, 0.13);
+    --text: #ffffff;
+    --text-dim: #888888;
+    --accent: #0070f3;
+    --success: #50e3a4;
+    --warn: #f5a623;
+    --radius: 8px;
+  }
+
+  * { box-sizing: border-box; }
+  html { color-scheme: dark; }
+
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', ui-sans-serif, system-ui, sans-serif;
+    color: var(--text);
+    background-color: var(--bg);
+    background-image:
+      linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px);
+    background-size: 34px 34px;
+    min-height: 100vh;
+  }
+
+  .surface { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
+
+  .app { display: flex; min-height: 100vh; }
+
+  .sidebar { width: 236px; flex-shrink: 0; padding: 22px 14px; border-right: 1px solid var(--border); background: rgba(0,0,0,0.6); backdrop-filter: blur(6px); }
+
+  .brand { display: flex; align-items: center; gap: 9px; padding: 4px 8px 26px; font-weight: 700; font-size: 14px; text-transform: uppercase; letter-spacing: 0.03em; }
+
+  .brand-mark { width: 24px; height: 24px; border-radius: 5px; background: #fff; color: #000; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 900; }
+
+  .nav-item { display: flex; align-items: center; gap: 11px; padding: 8px 10px; border-radius: 6px; color: var(--text-dim); font-size: 13px; font-weight: 500; cursor: default; margin-bottom: 2px; border: 1px solid transparent; }
+  .nav-item .icon { width: 16px; text-align: center; font-size: 13px; }
+  .nav-item.active { background: var(--surface-hover); color: var(--text); border-color: var(--border); }
+
+  .nav-section-label { font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-dim); padding: 18px 10px 5px; font-weight: 700; }
+
+  .main { flex: 1; padding: 22px 30px 40px; min-width: 0; }
+
+  .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; }
+  .topbar h1 { font-size: 20px; margin: 0; font-weight: 700; letter-spacing: -0.01em; }
+
+  .user-chip { display: flex; align-items: center; gap: 9px; padding: 5px 12px 5px 5px; }
+  .avatar { width: 26px; height: 26px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; }
+  .user-chip .name { font-size: 13px; }
+
+  .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 16px; }
+
+  .stat-card { padding: 16px 18px; }
+  .stat-label { font-size: 11.5px; color: var(--text-dim); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
+  .stat-value { font-size: 22px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .stat-delta { font-size: 11.5px; color: var(--success); margin-top: 6px; font-weight: 600; }
+
+  .content-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 14px; margin-bottom: 14px; }
+
+  .panel { padding: 18px 20px; }
+  .panel-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .panel-header h3 { margin: 0; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; }
+  .panel-header .pill { font-size: 11px; color: var(--text-dim); border: 1px solid var(--border); padding: 3px 9px; border-radius: 999px; font-weight: 600; }
+
+  .chart-axis { display: flex; justify-content: space-between; font-size: 10.5px; color: var(--text-dim); margin-top: 6px; }
+
+  .product-row, .order-row { display: flex; align-items: center; gap: 11px; padding: 9px 0; border-bottom: 1px solid var(--border); font-size: 12.5px; }
+  .product-row:last-child, .order-row:last-child { border-bottom: none; }
+
+  .letter-badge { width: 24px; height: 24px; border-radius: 5px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; flex-shrink: 0; background: var(--surface-hover); border: 1px solid var(--border); }
+
+  .row-main { flex: 1; min-width: 0; }
+  .row-title { font-weight: 600; }
+  .row-amount { font-weight: 700; font-variant-numeric: tabular-nums; }
+
+  .status-badge { font-size: 10.5px; padding: 3px 9px; border-radius: 4px; background: rgba(80,227,164,0.12); color: var(--success); border: 1px solid rgba(80,227,164,0.3); font-weight: 700; text-transform: uppercase; letter-spacing: 0.02em; }
+
+  .bottom-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 14px; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  th { text-align: left; color: var(--text-dim); font-weight: 700; font-size: 10.5px; padding-bottom: 9px; text-transform: uppercase; letter-spacing: 0.04em; }
+  td { padding: 9px 0; border-top: 1px solid var(--border); font-variant-numeric: tabular-nums; }
+
+  .donut-wrap { display: flex; align-items: center; gap: 18px; }
+  .donut { width: 108px; height: 108px; border-radius: 50%; background: conic-gradient(var(--accent) 0% 45%, #50e3a4 45% 75%, #f5a623 75% 90%, #333 90% 100%); position: relative; flex-shrink: 0; }
+  .donut::after { content: ""; position: absolute; inset: 20px; border-radius: 50%; background: var(--bg); }
+
+  .legend { display: flex; flex-direction: column; gap: 9px; font-size: 12.5px; }
+  .legend-item { display: flex; align-items: center; gap: 8px; color: var(--text-dim); font-weight: 500; }
+  .dot { width: 7px; height: 7px; border-radius: 2px; flex-shrink: 0; }
+  .legend-value { margin-left: auto; color: var(--text); font-size: 12px; font-variant-numeric: tabular-nums; font-weight: 700; }
+</style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand"><div class="brand-mark">▲</div><span>Satoru Admin</span></div>
+      <div class="nav-item active"><span class="icon">▦</span> Dashboard</div>
+      <div class="nav-item"><span class="icon">◫</span> Projects</div>
+      <div class="nav-item"><span class="icon">◎</span> Users</div>
+      <div class="nav-item"><span class="icon">▢</span> Products</div>
+      <div class="nav-item"><span class="icon">▤</span> Orders</div>
+      <div class="nav-item"><span class="icon">◈</span> Analytics</div>
+      <div class="nav-section-label">Other</div>
+      <div class="nav-item"><span class="icon">▥</span> Reports</div>
+      <div class="nav-item"><span class="icon">◐</span> Settings</div>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <h1>Dashboard</h1>
+        <div class="user-chip surface"><div class="avatar">N</div><span class="name">Nont</span></div>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat-card surface"><div class="stat-label">Total Users</div><div class="stat-value">1,250</div><div class="stat-delta">↑ 12.5%</div></div>
+        <div class="stat-card surface"><div class="stat-label">Total Sales</div><div class="stat-value">฿125,430</div><div class="stat-delta">↑ 8.2%</div></div>
+        <div class="stat-card surface"><div class="stat-label">Orders</div><div class="stat-value">320</div><div class="stat-delta">↑ 15.3%</div></div>
+        <div class="stat-card surface"><div class="stat-label">Active Projects</div><div class="stat-value">18</div><div class="stat-delta">↑ 4.5%</div></div>
+      </div>
+
+      <div class="content-grid">
+        <div class="panel surface">
+          <div class="panel-header"><h3>Analytics Overview</h3><span class="pill">This Week</span></div>
+          <svg viewBox="0 0 560 170" width="100%" height="170" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="lineFill2" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#0070f3" stop-opacity="0.3"/>
+                <stop offset="100%" stop-color="#0070f3" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+            <polyline points="0,115 80,88 160,122 240,58 320,90 400,38 480,66 560,20" fill="none" stroke="#0070f3" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <polygon points="0,115 80,88 160,122 240,58 320,90 400,38 480,66 560,20 560,170 0,170" fill="url(#lineFill2)"/>
+          </svg>
+          <div class="chart-axis"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
+        </div>
+
+        <div class="panel surface">
+          <div class="panel-header"><h3>Top Products</h3></div>
+          <div class="product-row"><div class="letter-badge">A</div><div class="row-main"><div class="row-title">Product A</div></div><div class="row-amount">฿12,420</div></div>
+          <div class="product-row"><div class="letter-badge">B</div><div class="row-main"><div class="row-title">Product B</div></div><div class="row-amount">฿8,210</div></div>
+          <div class="product-row"><div class="letter-badge">C</div><div class="row-main"><div class="row-title">Product C</div></div><div class="row-amount">฿6,150</div></div>
+          <div class="product-row"><div class="letter-badge">D</div><div class="row-main"><div class="row-title">Product D</div></div><div class="row-amount">฿4,230</div></div>
+        </div>
+      </div>
+
+      <div class="bottom-grid">
+        <div class="panel surface">
+          <div class="panel-header"><h3>Recent Orders</h3></div>
+          <table>
+            <thead><tr><th>Order ID</th><th>Customer</th><th>Status</th><th>Amount</th></tr></thead>
+            <tbody>
+              <tr><td>#1024</td><td>John Doe</td><td><span class="status-badge">Completed</span></td><td>฿2,450</td></tr>
+              <tr><td>#1023</td><td>Jane Smith</td><td><span class="status-badge">Completed</span></td><td>฿1,180</td></tr>
+              <tr><td>#1022</td><td>Alex Kim</td><td><span class="status-badge" style="background:rgba(245,166,35,0.12); color:var(--warn); border-color:rgba(245,166,35,0.3);">Pending</span></td><td>฿3,920</td></tr>
+              <tr><td>#1021</td><td>Mai Tran</td><td><span class="status-badge">Completed</span></td><td>฿890</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="panel surface">
+          <div class="panel-header"><h3>Traffic Source</h3></div>
+          <div class="donut-wrap">
+            <div class="donut"></div>
+            <div class="legend">
+              <div class="legend-item"><span class="dot" style="background:var(--accent);"></span>Direct<span class="legend-value">45%</span></div>
+              <div class="legend-item"><span class="dot" style="background:#50e3a4;"></span>Search<span class="legend-value">30%</span></div>
+              <div class="legend-item"><span class="dot" style="background:#f5a623;"></span>Social<span class="legend-value">15%</span></div>
+              <div class="legend-item"><span class="dot" style="background:#333;"></span>Referrals<span class="legend-value">10%</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

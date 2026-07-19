@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8" />
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
+  .cover {
+    width: 1200px; height: 675px; position: relative; overflow: hidden;
+    background: linear-gradient(135deg, #fff6e5, #ffe9c2);
+    display: flex; align-items: center; padding: 0 70px;
+  }
+  .blob { position: absolute; border-radius: 50%; opacity: 0.5; }
+  .blob1 { width: 380px; height: 380px; background: #e4d4ff; top: -140px; right: -100px; }
+  .blob2 { width: 260px; height: 260px; background: #d8c4ff; bottom: -100px; right: 180px; opacity: 0.45; }
+
+  .wordmark { position: absolute; top: 28px; left: 70px; z-index: 3; display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 800; letter-spacing: 0.12em; color: #6d28d9; }
+  .wordmark .dot { width: 8px; height: 8px; border-radius: 50%; background: linear-gradient(135deg, #7c3aed, #4f46e5); }
+
+  .copy { position: relative; z-index: 2; max-width: 600px; }
+  .eyebrow { display: inline-flex; align-items: center; gap: 8px; background: rgba(109,40,217,0.1); padding: 8px 18px; border-radius: 999px; font-size: 15px; font-weight: 700; color: #6d28d9; margin-bottom: 22px; }
+  h1 { font-size: 42px; line-height: 1.3; margin: 0 0 18px; color: #241c14; font-weight: 800; }
+  h1 .accent { background: linear-gradient(135deg, #7c3aed, #4f46e5); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  p.sub { font-size: 18px; color: #5c5346; margin: 0 0 30px; line-height: 1.6; }
+
+  .points { display: flex; gap: 16px; flex-wrap: wrap; }
+  .point { display: flex; align-items: center; gap: 10px; background: #ffffff; padding: 12px 18px; border-radius: 12px; font-size: 14px; font-weight: 600; color: #241c14; box-shadow: 0 4px 14px rgba(36,28,20,0.06); }
+  .point .emoji { font-size: 18px; }
+
+  /* proof mockup visual */
+  .proof { position: absolute; right: 55px; top: 50%; transform: translateY(-50%); z-index: 2; display: flex; align-items: center; gap: 18px; }
+  .plus { font-size: 28px; font-weight: 800; color: #6d28d9; }
+
+  .browser-frame { width: 340px; border-radius: 14px; background: #ffffff; box-shadow: 0 24px 50px rgba(36,28,20,0.18); overflow: hidden; border: 1px solid rgba(36,28,20,0.06); }
+  .browser-bar { display: flex; align-items: center; gap: 6px; padding: 10px 12px; background: #f4f0fb; border-bottom: 1px solid rgba(36,28,20,0.06); }
+  .browser-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .browser-body { padding: 16px; }
+  .browser-title { font-size: 11px; font-weight: 700; color: #241c14; margin-bottom: 10px; }
+  .mini-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 10px; }
+  .mini-stat { background: #faf7f2; border-radius: 8px; padding: 8px 10px; }
+  .mini-stat .label { font-size: 9px; color: #9c94b8; }
+  .mini-stat .value { font-size: 13px; font-weight: 800; color: #241c14; }
+  .mini-chart { height: 44px; }
+
+  .phone-frame { width: 132px; border-radius: 20px; background: #ffffff; box-shadow: 0 24px 50px rgba(36,28,20,0.18); overflow: hidden; border: 1px solid rgba(36,28,20,0.06); padding: 10px 10px 14px; }
+  .phone-title { font-size: 10px; font-weight: 800; color: #241c14; margin-bottom: 8px; text-align: center; }
+  .phone-row { display: flex; justify-content: space-between; font-size: 9px; padding: 5px 0; border-bottom: 1px solid #f1ede4; }
+  .phone-row .in { color: #16a34a; font-weight: 700; }
+  .phone-row .out { color: #dc2626; font-weight: 700; }
+  .phone-total { margin-top: 8px; background: #f4f0fb; border-radius: 8px; padding: 7px; text-align: center; }
+  .phone-total .label { font-size: 8px; color: #9c94b8; }
+  .phone-total .value { font-size: 12px; font-weight: 800; color: #6d28d9; }
+</style>
+</head>
+<body>
+  <div class="cover">
+    <div class="blob blob1"></div>
+    <div class="blob blob2"></div>
+
+    <div class="wordmark"><span class="dot"></span> SATORU HUB</div>
+
+    <div class="copy">
+      <div class="eyebrow">✅ ระบบที่ผมใช้งานจริง</div>
+      <h1>สร้าง<span class="accent">ระบบ</span>ที่ใช้งานง่าย<br>เพื่อให้คุณโฟกัสกับธุรกิจ</h1>
+      <p class="sub">เริ่มจากปัญหาของคุณ ไม่ใช่ศัพท์เทคนิค — บอกแค่ว่าอยากให้ระบบช่วยอะไร ที่เหลือผมออกแบบให้ตั้งแต่ต้นจนจบ</p>
+      <div class="points">
+        <div class="point"><span class="emoji">🗣️</span> อธิบายเข้าใจง่าย</div>
+        <div class="point"><span class="emoji">🤝</span> ดูแลจนกว่าจะพอใจ</div>
+        <div class="point"><span class="emoji">⚡</span> เริ่มงานได้ไว</div>
+      </div>
+    </div>
+
+    <div class="proof">
+      <div class="browser-frame">
+        <div class="browser-bar">
+          <span class="browser-dot" style="background:#f87171"></span>
+          <span class="browser-dot" style="background:#facc15"></span>
+          <span class="browser-dot" style="background:#34d399"></span>
+        </div>
+        <div class="browser-body">
+          <div class="browser-title">▦ Dashboard</div>
+          <div class="mini-stats">
+            <div class="mini-stat"><div class="label">Total Sales</div><div class="value">฿125,430</div></div>
+            <div class="mini-stat"><div class="label">Orders</div><div class="value">320</div></div>
+          </div>
+          <svg class="mini-chart" viewBox="0 0 300 60" width="100%" height="44" preserveAspectRatio="none">
+            <polyline points="0,40 50,28 100,44 150,18 200,32 250,10 300,20" fill="none" stroke="#6d28d9" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="plus">+</div>
+
+      <div class="phone-frame">
+        <div class="phone-title">📱 Money Diary</div>
+        <div class="phone-row"><span>กาแฟเช้า</span><span class="out">-65</span></div>
+        <div class="phone-row"><span>เงินเดือน</span><span class="in">+35,000</span></div>
+        <div class="phone-row"><span>ค่าน้ำมัน</span><span class="out">-400</span></div>
+        <div class="phone-total"><div class="label">คงเหลือเดือนนี้</div><div class="value">฿28,450</div></div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -55,6 +55,50 @@ const APPS: AppLink[] = [
   },
 ]
 
+type ConceptLink = {
+  name: string
+  icon: string
+  file: string
+}
+
+type ConceptGroup = {
+  title: string
+  items: ConceptLink[]
+}
+
+const CONCEPT_GROUPS: ConceptGroup[] = [
+  {
+    title: 'Dashboard — สไตล์ต่างๆ',
+    items: [
+      { name: 'Original', icon: '🧩', file: 'dashboard-v0-original.html' },
+      { name: 'Minimal Apple/Linear', icon: '◆', file: 'dashboard-v1-minimal-apple.html' },
+      { name: 'Vercel/Startup SaaS', icon: '▲', file: 'dashboard-v2-vercel-saas.html' },
+      { name: 'Glassmorphism Glow', icon: '✦', file: 'dashboard-v3-glow-glass.html' },
+    ],
+  },
+  {
+    title: 'Business Templates — Dark',
+    items: [
+      { name: 'E-commerce Storefront', icon: '🛍️', file: 'ecommerce-storefront.html' },
+      { name: 'POS ร้านอาหาร/คาเฟ่', icon: '🍽️', file: 'pos-restaurant.html' },
+      { name: 'ระบบจองคิวคลินิก', icon: '🩺', file: 'clinic-booking.html' },
+      { name: 'อสังหาริมทรัพย์', icon: '🏠', file: 'realestate-portfolio.html' },
+    ],
+  },
+  {
+    title: 'Business Templates — Flat/Warm',
+    items: [
+      { name: 'E-commerce Storefront', icon: '🛍️', file: 'ecommerce-storefront-flat.html' },
+      { name: 'POS ร้านอาหาร/คาเฟ่', icon: '🍽️', file: 'pos-restaurant-flat.html' },
+      { name: 'Landing Page ร้านอาหาร', icon: '🍔', file: 'restaurant-landing-warm-minimal.html' },
+    ],
+  },
+  {
+    title: 'Marketing',
+    items: [{ name: 'ปกงาน Freelance', icon: '💬', file: 'gig-cover-simple-warm.html' }],
+  },
+]
+
 const fmt = (n: number) => n.toLocaleString('th-TH', { maximumFractionDigits: 0 })
 
 function HubCardStats({
@@ -130,6 +174,7 @@ function App() {
   const [movie, setMovie] = useState<MovieHubStats | null>(null)
   const [showRegister, setShowRegister] = useState(false)
   const [cornerOpen, setCornerOpen] = useState(false)
+  const [view, setView] = useState<'hub' | 'concepts'>('hub')
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -156,21 +201,51 @@ function App() {
   return (
     <div className="hub-page fade-in">
       <div className="toolbar">
-        <h1>🏠 Satoru HUB</h1>
+        {view === 'concepts' ? (
+          <button onClick={() => setView('hub')}>← กลับ</button>
+        ) : (
+          <h1>🏠 Satoru HUB</h1>
+        )}
         <span className="spacer" />
+        {view === 'hub' && <button onClick={() => setView('concepts')}>🎨 Concepts</button>}
         <span className="user-email">{session.user.email}</span>
         <button onClick={() => supabase.auth.signOut()}>ออกจากระบบ</button>
       </div>
 
-      <div className="hub-grid">
-        {APPS.map((app) => (
-          <a key={app.name} className="hub-card card" href={app.url}>
-            <span className="hub-card-icon">{app.icon}</span>
-            <span className="hub-card-name">{app.name}</span>
-            <HubCardStats app={app} storyboard={storyboard} food={food} money={money} movie={movie} />
-          </a>
-        ))}
-      </div>
+      {view === 'concepts' ? (
+        <div className="concepts-page">
+          <p className="concepts-intro">รวมงานออกแบบ/เทมเพลตที่ทำไว้ — คลิกเพื่อดูตัวอย่างแต่ละแบบ</p>
+          {CONCEPT_GROUPS.map((group) => (
+            <div key={group.title} className="concepts-group">
+              <h2 className="concepts-group-title">{group.title}</h2>
+              <div className="concepts-grid">
+                {group.items.map((item) => (
+                  <a
+                    key={item.file}
+                    className="concept-card card"
+                    href={`${import.meta.env.BASE_URL}concepts/${item.file}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <span className="concept-card-icon">{item.icon}</span>
+                    <span className="concept-card-name">{item.name}</span>
+                  </a>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="hub-grid">
+          {APPS.map((app) => (
+            <a key={app.name} className="hub-card card" href={app.url}>
+              <span className="hub-card-icon">{app.icon}</span>
+              <span className="hub-card-name">{app.name}</span>
+              <HubCardStats app={app} storyboard={storyboard} food={food} money={money} movie={movie} />
+            </a>
+          ))}
+        </div>
+      )}
 
       <a
         className="side-link-left"

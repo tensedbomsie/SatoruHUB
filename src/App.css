@@ -222,6 +222,64 @@ textarea {
   color: var(--text);
 }
 
+/* ---------- Concepts gallery ---------- */
+.concepts-page {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem 3rem;
+}
+
+.concepts-intro {
+  color: var(--text-dim);
+  font-size: 0.9rem;
+  margin: 0 0 2rem;
+  text-align: center;
+}
+
+.concepts-group {
+  margin-bottom: 2.2rem;
+}
+
+.concepts-group-title {
+  font-size: 1rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin: 0 0 1rem;
+  font-weight: 600;
+}
+
+.concepts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+}
+
+.concept-card {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 1.1rem 1.2rem;
+  text-decoration: none;
+  color: var(--text);
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.concept-card:hover {
+  transform: translateY(-3px);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.concept-card-icon {
+  font-size: 1.6rem;
+  flex-shrink: 0;
+}
+
+.concept-card-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
 .stat-line-sub {
   font-size: 0.76rem;
   color: var(--text-dim);

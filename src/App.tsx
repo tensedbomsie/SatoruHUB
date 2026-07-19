@@ -175,7 +175,7 @@ function App() {
   const [showRegister, setShowRegister] = useState(false)
   const [cornerOpen, setCornerOpen] = useState(false)
   const [view, setView] = useState<'hub' | 'concepts'>('hub')
-  const [conceptMode, setConceptMode] = useState<'grid' | 'preview'>('grid')
+  const [conceptMode, setConceptMode] = useState<'grid' | 'preview' | 'moodboard'>('grid')
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -224,10 +224,36 @@ function App() {
               <button className={conceptMode === 'preview' ? 'active' : ''} onClick={() => setConceptMode('preview')}>
                 👁️ ดูรวมในหน้านี้
               </button>
+              <button className={conceptMode === 'moodboard' ? 'active' : ''} onClick={() => setConceptMode('moodboard')}>
+                🖼️ Moodboard
+              </button>
             </div>
           </div>
 
-          {CONCEPT_GROUPS.map((group) => (
+          {conceptMode === 'moodboard' && (
+            <div className="moodboard-grid">
+              {CONCEPT_GROUPS.flatMap((group) => group.items).map((item) => (
+                <a
+                  key={item.file}
+                  className="moodboard-tile"
+                  href={`${import.meta.env.BASE_URL}concepts/${item.file}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <img
+                    src={`${import.meta.env.BASE_URL}concepts/thumbs/${item.file.replace('.html', '.png')}`}
+                    alt={item.name}
+                    loading="lazy"
+                  />
+                  <div className="moodboard-caption">
+                    <span>{item.icon}</span> {item.name}
+                  </div>
+                </a>
+              ))}
+            </div>
+          )}
+
+          {conceptMode !== 'moodboard' && CONCEPT_GROUPS.map((group) => (
             <div key={group.title} className="concepts-group">
               <h2 className="concepts-group-title">{group.title}</h2>
 

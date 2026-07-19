@@ -365,6 +365,47 @@ textarea {
   color: var(--text-dim);
 }
 
+/* ---------- Moodboard ---------- */
+.moodboard-grid {
+  background: #f4f2ea;
+  border-radius: 20px;
+  padding: 2.4rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.moodboard-tile {
+  display: block;
+  text-decoration: none;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 10px 26px rgba(36, 28, 20, 0.14);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.moodboard-tile:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 34px rgba(36, 28, 20, 0.2);
+}
+
+.moodboard-tile img {
+  width: 100%;
+  display: block;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  object-position: top;
+}
+
+.moodboard-caption {
+  padding: 0.7rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #241c14;
+}
+
 .concepts-group {
   margin-bottom: 2.2rem;
 }

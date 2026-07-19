@@ -232,8 +232,77 @@ textarea {
 .concepts-intro {
   color: var(--text-dim);
   font-size: 0.9rem;
-  margin: 0 0 2rem;
-  text-align: center;
+  margin: 0;
+}
+
+.concepts-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.concept-mode-toggle {
+  display: flex;
+  gap: 0.4rem;
+  padding: 0.25rem;
+  border-radius: 12px;
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+}
+
+.concept-mode-toggle button {
+  padding: 0.4rem 0.9rem;
+  border-radius: 9px;
+  border: none;
+  background: transparent;
+  color: var(--text-dim);
+  cursor: pointer;
+  font-size: 0.82rem;
+}
+
+.concept-mode-toggle button.active {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text);
+  font-weight: 600;
+}
+
+.concepts-preview-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+}
+
+.concept-preview {
+  padding: 1rem;
+}
+
+.concept-preview-header {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.8rem;
+}
+
+.concept-preview-open {
+  margin-left: auto;
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  text-decoration: none;
+}
+
+.concept-preview-open:hover {
+  color: var(--text);
+}
+
+.concept-preview-frame {
+  width: 100%;
+  height: 480px;
+  border: 1px solid var(--glass-border);
+  border-radius: 10px;
+  background: #fff;
 }
 
 .concepts-group {

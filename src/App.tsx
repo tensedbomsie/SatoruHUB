@@ -175,6 +175,7 @@ function App() {
   const [showRegister, setShowRegister] = useState(false)
   const [cornerOpen, setCornerOpen] = useState(false)
   const [view, setView] = useState<'hub' | 'concepts'>('hub')
+  const [conceptMode, setConceptMode] = useState<'grid' | 'preview'>('grid')
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -214,24 +215,63 @@ function App() {
 
       {view === 'concepts' ? (
         <div className="concepts-page">
-          <p className="concepts-intro">รวมงานออกแบบ/เทมเพลตที่ทำไว้ — คลิกเพื่อดูตัวอย่างแต่ละแบบ</p>
+          <div className="concepts-toolbar">
+            <p className="concepts-intro">รวมงานออกแบบ/เทมเพลตที่ทำไว้</p>
+            <div className="concept-mode-toggle">
+              <button className={conceptMode === 'grid' ? 'active' : ''} onClick={() => setConceptMode('grid')}>
+                ⬛ การ์ด
+              </button>
+              <button className={conceptMode === 'preview' ? 'active' : ''} onClick={() => setConceptMode('preview')}>
+                👁️ ดูรวมในหน้านี้
+              </button>
+            </div>
+          </div>
+
           {CONCEPT_GROUPS.map((group) => (
             <div key={group.title} className="concepts-group">
               <h2 className="concepts-group-title">{group.title}</h2>
-              <div className="concepts-grid">
-                {group.items.map((item) => (
-                  <a
-                    key={item.file}
-                    className="concept-card card"
-                    href={`${import.meta.env.BASE_URL}concepts/${item.file}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <span className="concept-card-icon">{item.icon}</span>
-                    <span className="concept-card-name">{item.name}</span>
-                  </a>
-                ))}
-              </div>
+
+              {conceptMode === 'grid' ? (
+                <div className="concepts-grid">
+                  {group.items.map((item) => (
+                    <a
+                      key={item.file}
+                      className="concept-card card"
+                      href={`${import.meta.env.BASE_URL}concepts/${item.file}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <span className="concept-card-icon">{item.icon}</span>
+                      <span className="concept-card-name">{item.name}</span>
+                    </a>
+                  ))}
+                </div>
+              ) : (
+                <div className="concepts-preview-list">
+                  {group.items.map((item) => (
+                    <div key={item.file} className="concept-preview card">
+                      <div className="concept-preview-header">
+                        <span className="concept-card-icon">{item.icon}</span>
+                        <span className="concept-card-name">{item.name}</span>
+                        <a
+                          className="concept-preview-open"
+                          href={`${import.meta.env.BASE_URL}concepts/${item.file}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          เปิดเต็มจอ ↗
+                        </a>
+                      </div>
+                      <iframe
+                        className="concept-preview-frame"
+                        src={`${import.meta.env.BASE_URL}concepts/${item.file}`}
+                        title={item.name}
+                        loading="lazy"
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           ))}
         </div>

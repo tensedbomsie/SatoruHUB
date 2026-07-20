@@ -266,6 +266,15 @@ textarea {
   color: var(--text);
 }
 
+.portfolio-intro {
+  max-width: 1000px;
+  margin: 1.6rem auto 0;
+  padding: 0 1.5rem;
+  color: var(--text-dim);
+  font-size: 0.92rem;
+  line-height: 1.6;
+}
+
 /* ---------- Concepts gallery ---------- */
 .concepts-page {
   max-width: 1000px;

@@ -21,6 +21,11 @@ export type MovieHubStats = {
   rating: number | null
 }
 
+export type TechDictionaryStats = {
+  count: number
+  categoryCount: number
+}
+
 export function timeAgo(iso: string): string {
   const diffMs = Date.now() - new Date(iso).getTime()
   const min = Math.floor(diffMs / 60000)
@@ -102,6 +107,16 @@ export async function fetchMoneyDiaryStats(): Promise<MoneyDiaryStats | null> {
 
     const sum = (rows: { amount: number }[] | null) => (rows ?? []).reduce((s, r) => s + Number(r.amount), 0)
     return { incomeToday: sum(todayTx), incomeMonth: sum(monthTx) }
+  } catch {
+    return null
+  }
+}
+
+export async function fetchTechDictionaryStats(): Promise<TechDictionaryStats | null> {
+  try {
+    const { data, count } = await supabase.from('tech_terms').select('category', { count: 'exact' })
+    const categoryCount = new Set(((data as { category: string }[]) ?? []).map((t) => t.category)).size
+    return { count: count ?? 0, categoryCount }
   } catch {
     return null
   }

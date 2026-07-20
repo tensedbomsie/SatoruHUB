@@ -8,10 +8,12 @@ import {
   fetchFoodDiaryStats,
   fetchMoneyDiaryStats,
   fetchMovieHubStats,
+  fetchTechDictionaryStats,
   type StoryboardStats,
   type FoodDiaryStats,
   type MoneyDiaryStats,
   type MovieHubStats,
+  type TechDictionaryStats,
 } from './liveStats'
 import { THEMES, getStoredTheme, applyTheme, setTheme, type ThemeId } from './theme'
 import ConceptsGallery from './ConceptsGallery'
@@ -56,6 +58,12 @@ const APPS: AppLink[] = [
     icon: '💰',
     url: 'https://tensedbomsie.github.io/MoneyDiary/',
   },
+  {
+    name: 'Tech Dictionary',
+    description: 'พจนานุกรมศัพท์เว็บ/ไอที อธิบายง่ายๆ พร้อมค้นหาและหมวดหมู่',
+    icon: '📖',
+    url: 'https://tensedbomsie.github.io/TechDictionary/',
+  },
 ]
 
 const fmt = (n: number) => n.toLocaleString('th-TH', { maximumFractionDigits: 0 })
@@ -66,12 +74,14 @@ function HubCardStats({
   food,
   money,
   movie,
+  techDict,
 }: {
   app: AppLink
   storyboard: StoryboardStats | null
   food: FoodDiaryStats | null
   money: MoneyDiaryStats | null
   movie: MovieHubStats | null
+  techDict: TechDictionaryStats | null
 }) {
   if (app.name === 'Storyboard') {
     if (!storyboard) return <span className="hub-card-desc">{app.description}</span>
@@ -121,6 +131,16 @@ function HubCardStats({
     )
   }
 
+  if (app.name === 'Tech Dictionary') {
+    if (!techDict || techDict.count === 0) return <span className="hub-card-desc">{app.description}</span>
+    return (
+      <div className="hub-card-stats">
+        <span className="stat-line">📖 {techDict.count} คำศัพท์</span>
+        <span className="stat-line-sub">{techDict.categoryCount} หมวดหมู่</span>
+      </div>
+    )
+  }
+
   return <span className="hub-card-desc">{app.description}</span>
 }
 
@@ -131,6 +151,7 @@ function App() {
   const [food, setFood] = useState<FoodDiaryStats | null>(null)
   const [money, setMoney] = useState<MoneyDiaryStats | null>(null)
   const [movie, setMovie] = useState<MovieHubStats | null>(null)
+  const [techDict, setTechDict] = useState<TechDictionaryStats | null>(null)
   const [showRegister, setShowRegister] = useState(false)
   const [cornerOpen, setCornerOpen] = useState(false)
   const [view, setView] = useState<'hub' | 'concepts'>('hub')
@@ -166,6 +187,7 @@ function App() {
     fetchFoodDiaryStats().then(setFood)
     fetchMoneyDiaryStats().then(setMoney)
     fetchMovieHubStats().then(setMovie)
+    fetchTechDictionaryStats().then(setTechDict)
   }, [session])
 
   if (isPortfolio) return <PublicPortfolio />
@@ -196,7 +218,7 @@ function App() {
             <a key={app.name} className="hub-card card" href={app.url}>
               <span className="hub-card-icon">{app.icon}</span>
               <span className="hub-card-name">{app.name}</span>
-              <HubCardStats app={app} storyboard={storyboard} food={food} money={money} movie={movie} />
+              <HubCardStats app={app} storyboard={storyboard} food={food} money={money} movie={movie} techDict={techDict} />
             </a>
           ))}
         </div>

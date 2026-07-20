@@ -2,64 +2,91 @@ import { useState } from 'react'
 
 type ConceptLink = {
   name: string
+  nameEn: string
   icon: string
   file: string
 }
 
 type ConceptGroup = {
   title: string
+  titleEn: string
   items: ConceptLink[]
 }
 
 const CONCEPT_GROUPS: ConceptGroup[] = [
   {
     title: 'Dashboard — สไตล์ต่างๆ',
+    titleEn: 'Dashboard — Styles',
     items: [
-      { name: 'Original', icon: '🧩', file: 'dashboard-v0-original.html' },
-      { name: 'Minimal Apple/Linear', icon: '◆', file: 'dashboard-v1-minimal-apple.html' },
-      { name: 'Vercel/Startup SaaS', icon: '▲', file: 'dashboard-v2-vercel-saas.html' },
-      { name: 'Glassmorphism Glow', icon: '✦', file: 'dashboard-v3-glow-glass.html' },
+      { name: 'Original', nameEn: 'Original', icon: '🧩', file: 'dashboard-v0-original.html' },
+      { name: 'Minimal Apple/Linear', nameEn: 'Minimal Apple/Linear', icon: '◆', file: 'dashboard-v1-minimal-apple.html' },
+      { name: 'Vercel/Startup SaaS', nameEn: 'Vercel/Startup SaaS', icon: '▲', file: 'dashboard-v2-vercel-saas.html' },
+      { name: 'Glassmorphism Glow', nameEn: 'Glassmorphism Glow', icon: '✦', file: 'dashboard-v3-glow-glass.html' },
     ],
   },
   {
     title: 'Business Templates — Dark',
+    titleEn: 'Business Templates — Dark',
     items: [
-      { name: 'E-commerce Storefront', icon: '🛍️', file: 'ecommerce-storefront.html' },
-      { name: 'POS ร้านอาหาร/คาเฟ่', icon: '🍽️', file: 'pos-restaurant.html' },
-      { name: 'ระบบจองคิวคลินิก', icon: '🩺', file: 'clinic-booking.html' },
-      { name: 'อสังหาริมทรัพย์', icon: '🏠', file: 'realestate-portfolio.html' },
+      { name: 'E-commerce Storefront', nameEn: 'E-commerce Storefront', icon: '🛍️', file: 'ecommerce-storefront.html' },
+      { name: 'POS ร้านอาหาร/คาเฟ่', nameEn: 'Restaurant/Cafe POS', icon: '🍽️', file: 'pos-restaurant.html' },
+      { name: 'ระบบจองคิวคลินิก', nameEn: 'Clinic Booking System', icon: '🩺', file: 'clinic-booking.html' },
+      { name: 'อสังหาริมทรัพย์', nameEn: 'Real Estate', icon: '🏠', file: 'realestate-portfolio.html' },
     ],
   },
   {
     title: 'Business Templates — Flat/Warm',
+    titleEn: 'Business Templates — Flat/Warm',
     items: [
-      { name: 'E-commerce Storefront', icon: '🛍️', file: 'ecommerce-storefront-flat.html' },
-      { name: 'POS ร้านอาหาร/คาเฟ่', icon: '🍽️', file: 'pos-restaurant-flat.html' },
-      { name: 'Landing Page ร้านอาหาร', icon: '🍔', file: 'restaurant-landing-warm-minimal.html' },
+      { name: 'E-commerce Storefront', nameEn: 'E-commerce Storefront', icon: '🛍️', file: 'ecommerce-storefront-flat.html' },
+      { name: 'POS ร้านอาหาร/คาเฟ่', nameEn: 'Restaurant/Cafe POS', icon: '🍽️', file: 'pos-restaurant-flat.html' },
+      { name: 'Landing Page ร้านอาหาร', nameEn: 'Restaurant Landing Page', icon: '🍔', file: 'restaurant-landing-warm-minimal.html' },
     ],
   },
   {
     title: 'Marketing',
-    items: [{ name: 'ปกงาน Freelance', icon: '💬', file: 'gig-cover-simple-warm.html' }],
+    titleEn: 'Marketing',
+    items: [{ name: 'ปกงาน Freelance', nameEn: 'Freelance Gig Cover', icon: '💬', file: 'gig-cover-simple-warm.html' }],
   },
 ]
 
-export default function ConceptsGallery() {
+const TEXT = {
+  th: {
+    intro: 'รวมงานออกแบบ/เทมเพลตที่ทำไว้',
+    cards: '⬛ การ์ด',
+    preview: '👁️ ดูรวมในหน้านี้',
+    moodboard: '🖼️ Moodboard',
+    openFull: 'เปิดเต็มจอ',
+  },
+  en: {
+    intro: 'A collection of design work and templates',
+    cards: '⬛ Cards',
+    preview: '👁️ Preview Here',
+    moodboard: '🖼️ Moodboard',
+    openFull: 'Open Fullscreen',
+  },
+}
+
+export default function ConceptsGallery({ lang = 'th' }: { lang?: 'th' | 'en' }) {
   const [conceptMode, setConceptMode] = useState<'grid' | 'preview' | 'moodboard'>('grid')
+  const t = TEXT[lang]
+
+  const groupTitle = (g: ConceptGroup) => (lang === 'en' ? g.titleEn : g.title)
+  const itemName = (i: ConceptLink) => (lang === 'en' ? i.nameEn : i.name)
 
   return (
     <div className="concepts-page">
       <div className="concepts-toolbar">
-        <p className="concepts-intro">รวมงานออกแบบ/เทมเพลตที่ทำไว้</p>
+        <p className="concepts-intro">{t.intro}</p>
         <div className="concept-mode-toggle">
           <button className={conceptMode === 'grid' ? 'active' : ''} onClick={() => setConceptMode('grid')}>
-            ⬛ การ์ด
+            {t.cards}
           </button>
           <button className={conceptMode === 'preview' ? 'active' : ''} onClick={() => setConceptMode('preview')}>
-            👁️ ดูรวมในหน้านี้
+            {t.preview}
           </button>
           <button className={conceptMode === 'moodboard' ? 'active' : ''} onClick={() => setConceptMode('moodboard')}>
-            🖼️ Moodboard
+            {t.moodboard}
           </button>
         </div>
       </div>
@@ -76,11 +103,11 @@ export default function ConceptsGallery() {
             >
               <img
                 src={`${import.meta.env.BASE_URL}concepts/thumbs/${item.file.replace('.html', '.png')}`}
-                alt={item.name}
+                alt={itemName(item)}
                 loading="lazy"
               />
               <div className="moodboard-caption">
-                <span>{item.icon}</span> {item.name}
+                <span>{item.icon}</span> {itemName(item)}
               </div>
             </a>
           ))}
@@ -90,7 +117,7 @@ export default function ConceptsGallery() {
       {conceptMode !== 'moodboard' &&
         CONCEPT_GROUPS.map((group) => (
           <div key={group.title} className="concepts-group">
-            <h2 className="concepts-group-title">{group.title}</h2>
+            <h2 className="concepts-group-title">{groupTitle(group)}</h2>
 
             {conceptMode === 'grid' ? (
               <div className="concepts-grid">
@@ -103,7 +130,7 @@ export default function ConceptsGallery() {
                     rel="noopener noreferrer"
                   >
                     <span className="concept-card-icon">{item.icon}</span>
-                    <span className="concept-card-name">{item.name}</span>
+                    <span className="concept-card-name">{itemName(item)}</span>
                   </a>
                 ))}
               </div>
@@ -115,7 +142,7 @@ export default function ConceptsGallery() {
                       <iframe
                         className="concept-preview-frame"
                         src={`${import.meta.env.BASE_URL}concepts/${item.file}`}
-                        title={item.name}
+                        title={itemName(item)}
                         loading="lazy"
                       />
                       <a
@@ -123,7 +150,7 @@ export default function ConceptsGallery() {
                         href={`${import.meta.env.BASE_URL}concepts/${item.file}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        title="เปิดเต็มจอ"
+                        title={t.openFull}
                       >
                         ⤢
                       </a>
@@ -131,8 +158,8 @@ export default function ConceptsGallery() {
                     <div className="concept-meta">
                       <span className="concept-meta-icon">{item.icon}</span>
                       <div className="concept-meta-text">
-                        <span className="concept-meta-name">{item.name}</span>
-                        <span className="concept-meta-group">{group.title}</span>
+                        <span className="concept-meta-name">{itemName(item)}</span>
+                        <span className="concept-meta-group">{groupTitle(group)}</span>
                       </div>
                     </div>
                   </div>

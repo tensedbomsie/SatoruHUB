@@ -10,14 +10,15 @@ export default function PublicPortfolio() {
   return (
     <div className="hub-page fade-in">
       <div className="toolbar">
-        <h1>🧩 Satoru — ผลงาน/แนวทางออกแบบ</h1>
+        <h1>🧩 Satoru — Portfolio & Design Concepts</h1>
       </div>
 
       <p className="portfolio-intro">
-        รวมตัวอย่างระบบและดีไซน์ที่เคยทำ — สนใจแบบไหนหรืออยากได้ปรับให้ตรงกับธุรกิจของคุณ ทักมาคุยกันได้เลยครับ
+        A collection of systems and designs I've built — like one of these or want it tailored to your business? Feel
+        free to reach out.
       </p>
 
-      <ConceptsGallery />
+      <ConceptsGallery lang="en" />
     </div>
   )
 }

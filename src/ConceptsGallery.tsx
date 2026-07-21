@@ -28,6 +28,13 @@ const CONCEPT_GROUPS: ConceptGroup[] = [
         url: 'https://sparkle-pup-style.lovable.app/',
         thumb: 'client-sparkle-pup-style.png',
       },
+      {
+        name: 'The Strand Salon & Spa (San Antonio, US)',
+        nameEn: 'The Strand Salon & Spa (San Antonio, US)',
+        icon: '💈',
+        url: 'https://strand-beauty-glow.lovable.app/',
+        thumb: 'client-strand-beauty-glow.png',
+      },
     ],
   },
   {

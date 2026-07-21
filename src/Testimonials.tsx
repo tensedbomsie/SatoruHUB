@@ -78,13 +78,19 @@ export function TestimonialForm({ lang = 'th' }: { lang?: 'th' | 'en' }) {
   const [rating, setRating] = useState(5)
   const [submitting, setSubmitting] = useState(false)
   const [sent, setSent] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const t = TEXT[lang]
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setSubmitting(true)
-    await supabase.from('testimonials').insert({ name, message, rating, approved: false })
+    setError(null)
+    const { error } = await supabase.from('testimonials').insert({ name, message, rating, approved: false })
     setSubmitting(false)
+    if (error) {
+      setError(error.message)
+      return
+    }
     setSent(true)
     setName('')
     setMessage('')
@@ -111,6 +117,7 @@ export function TestimonialForm({ lang = 'th' }: { lang?: 'th' | 'en' }) {
           </button>
         ))}
       </div>
+      {error && <p className="login-error">{error}</p>}
       <button type="submit" className="btn btn-primary" disabled={submitting}>
         {submitting ? t.submitting : t.submit}
       </button>

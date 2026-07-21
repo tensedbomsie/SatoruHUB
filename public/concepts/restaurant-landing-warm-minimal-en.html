@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Restaurant Landing — Warm Minimal Style</title>
+<style>
+  :root {
+    --bg: #fffdf8;
+    --surface: #ffffff;
+    --ink: #241c14;
+    --ink-dim: #7a7166;
+    --warm: #f5a623;
+    --warm-dark: #e08a00;
+    --red: #d64545;
+    --line: #ece5d8;
+    --radius: 10px;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    color: var(--ink);
+    background: var(--bg);
+  }
+  h1, h2, h3 { font-family: 'Arial Black', 'Segoe UI', sans-serif; letter-spacing: -0.01em; }
+
+  header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 48px; border-bottom: 1px solid var(--line);
+  }
+  .logo { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 17px; letter-spacing: 0.02em; }
+  .logo-mark { width: 34px; height: 34px; border-radius: 8px; background: var(--warm); display: flex; align-items: center; justify-content: center; font-size: 17px; }
+  nav { display: flex; gap: 30px; font-size: 13px; font-weight: 600; letter-spacing: 0.03em; text-transform: uppercase; }
+  nav a { color: var(--ink); text-decoration: none; }
+  .contact-line { font-size: 12px; color: var(--ink-dim); }
+
+  .hero {
+    background: linear-gradient(135deg, var(--warm), #ffc861);
+    padding: 64px 48px;
+    display: flex; align-items: center; justify-content: space-between; gap: 32px;
+    flex-wrap: wrap;
+  }
+  .hero-copy { max-width: 460px; }
+  .badge { display: inline-block; background: rgba(36,28,20,0.1); padding: 5px 14px; border-radius: 999px; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 16px; }
+  .hero h1 { font-size: 52px; line-height: 1.05; margin: 0 0 20px; text-transform: uppercase; }
+  .btn { display: inline-block; padding: 14px 30px; border-radius: 6px; background: var(--red); color: #fff; font-weight: 700; text-decoration: none; font-size: 14px; letter-spacing: 0.03em; text-transform: uppercase; border: none; cursor: pointer; }
+  .hero-visual { position: relative; font-size: 130px; flex-shrink: 0; }
+  .price-tag { position: absolute; bottom: 6px; left: 6px; width: 76px; height: 76px; border-radius: 50%; background: var(--red); color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: 800; font-size: 20px; transform: rotate(-8deg); border: 3px dashed rgba(255,255,255,0.6); }
+  .price-tag span { font-size: 10px; font-weight: 600; text-transform: uppercase; }
+
+  .section { padding: 56px 48px; }
+  .section-label { text-align: center; }
+  .section-label .eyebrow { display: inline-block; background: var(--warm); color: #fff; padding: 5px 16px; border-radius: 999px; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 12px; }
+  .section-label h2 { font-size: 30px; text-transform: uppercase; margin: 0 0 8px; }
+  .section-label p { color: var(--ink-dim); font-size: 14px; max-width: 480px; margin: 0 auto 40px; }
+
+  .menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+  .menu-card { text-align: center; }
+  .menu-visual { width: 130px; height: 130px; margin: 0 auto 16px; border-radius: 50%; background: #fbeed9; display: flex; align-items: center; justify-content: center; font-size: 60px; }
+  .menu-card h3 { font-size: 15px; margin: 0 0 6px; text-transform: uppercase; }
+  .menu-card p { font-size: 12px; color: var(--ink-dim); margin: 0 0 14px; }
+  .menu-card .btn { background: var(--red); padding: 10px 24px; font-size: 12px; }
+
+  .events {
+    background: var(--ink); color: #fff; border-radius: 16px; margin: 0 48px;
+    display: flex; align-items: center; gap: 32px; padding: 40px; flex-wrap: wrap;
+  }
+  .events-visual { font-size: 90px; flex-shrink: 0; }
+  .events-copy .eyebrow { color: var(--warm); font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+  .events h2 { font-size: 26px; margin: 8px 0 10px; text-transform: uppercase; }
+  .events p { color: #cfc7ba; font-size: 13px; max-width: 420px; margin: 0; }
+
+  .reserve { max-width: 640px; margin: 0 auto; text-align: center; }
+  .reserve-form { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 28px; text-align: left; }
+  .reserve-form input { padding: 13px 16px; border-radius: 8px; border: 1px solid var(--line); font-size: 13px; font-family: inherit; }
+  .reserve-form .btn { grid-column: span 2; text-align: center; margin-top: 6px; }
+
+  footer { background: var(--ink); color: #cfc7ba; padding: 40px 48px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+  footer .logo { color: #fff; }
+  footer .socials { display: flex; gap: 14px; font-size: 18px; }
+</style>
+</head>
+<body>
+  <header>
+    <div class="logo"><div class="logo-mark">🍔</div> The Grill House</div>
+    <nav>
+      <a href="#">Home</a>
+      <a href="#">Menu</a>
+      <a href="#">Our Story</a>
+      <a href="#">Contact</a>
+    </nav>
+    <div class="contact-line">📞 02-123-4567 &nbsp; | &nbsp; Open Daily 10:00–22:00</div>
+  </header>
+
+  <div class="hero">
+    <div class="hero-copy">
+      <span class="badge">This Week Only</span>
+      <h1>Signature<br>Burgers</h1>
+      <a href="#" class="btn">Order Now</a>
+    </div>
+    <div class="hero-visual">
+      🍔
+      <div class="price-tag">$99<span>Starting</span></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">
+      <span class="eyebrow">Featured Menu</span>
+      <h2>The Right Pick, Every Bite</h2>
+      <p>Handpicked quality ingredients, freshly prepared every dish, served to you every day</p>
+    </div>
+    <div class="menu-grid">
+      <div class="menu-card">
+        <div class="menu-visual">🍔</div>
+        <h3>Classic Cheeseburger</h3>
+        <p>A generous beef patty, cheddar cheese, our signature sauce</p>
+        <a href="#" class="btn">$129</a>
+      </div>
+      <div class="menu-card">
+        <div class="menu-visual">🍟</div>
+        <h3>Garlic French Fries</h3>
+        <p>Crispy fried potatoes topped with fried garlic</p>
+        <a href="#" class="btn">$69</a>
+      </div>
+      <div class="menu-card">
+        <div class="menu-visual">🥤</div>
+        <h3>Mixed Fruit Soda</h3>
+        <p>Refreshing and cooling, freshly made every glass</p>
+        <a href="#" class="btn">$49</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="events">
+    <div class="events-visual">🎉</div>
+    <div class="events-copy">
+      <span class="eyebrow">Special Events</span>
+      <h2>Live Music Every Friday Night</h2>
+      <p>Enjoy live music with a special menu every Friday night. Book your table in advance for a seat by the stage.</p>
+    </div>
+  </div>
+
+  <div class="section reserve">
+    <span class="eyebrow" style="background: var(--warm); color: #fff; display:inline-block; padding:5px 16px; border-radius:999px; font-size:11px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase;">Reservations</span>
+    <h2 style="font-size:28px; text-transform:uppercase; margin: 10px 0 0;">Reserve Your Table</h2>
+    <div class="reserve-form">
+      <input placeholder="Full Name" />
+      <input placeholder="Phone Number" />
+      <input type="date" />
+      <input placeholder="Number of Guests" />
+      <button class="btn">Confirm Reservation</button>
+    </div>
+  </div>
+
+  <footer>
+    <div class="logo">🍔 The Grill House</div>
+    <div>© 2026 The Grill House — All Rights Reserved</div>
+    <div class="socials">📘 📷 🐦</div>
+  </footer>
+</body>
+</html>

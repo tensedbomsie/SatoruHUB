@@ -90,8 +90,10 @@ const TEXT = {
   },
 }
 
-function itemHref(item: ConceptLink) {
-  return item.url ?? `${import.meta.env.BASE_URL}concepts/${item.file}`
+function itemHref(item: ConceptLink, lang: 'th' | 'en') {
+  if (item.url) return item.url
+  const file = lang === 'en' ? item.file!.replace(/\.html$/, '-en.html') : item.file
+  return `${import.meta.env.BASE_URL}concepts/${file}`
 }
 
 function itemThumb(item: ConceptLink) {
@@ -132,7 +134,7 @@ export default function ConceptsGallery({ lang = 'th' }: { lang?: 'th' | 'en' })
                 <a
                   key={item.url ?? item.file}
                   className="moodboard-tile"
-                  href={itemHref(item)}
+                  href={itemHref(item, lang)}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -157,7 +159,7 @@ export default function ConceptsGallery({ lang = 'th' }: { lang?: 'th' | 'en' })
                   <a
                     key={item.url ?? item.file}
                     className="concept-card card"
-                    href={itemHref(item)}
+                    href={itemHref(item, lang)}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -171,10 +173,10 @@ export default function ConceptsGallery({ lang = 'th' }: { lang?: 'th' | 'en' })
                 {group.items.map((item) => (
                   <div key={item.url ?? item.file} className="concept-preview-card">
                     <div className="concept-thumb">
-                      <iframe className="concept-preview-frame" src={itemHref(item)} title={itemName(item)} loading="lazy" />
+                      <iframe className="concept-preview-frame" src={itemHref(item, lang)} title={itemName(item)} loading="lazy" />
                       <a
                         className="concept-preview-open"
-                        href={itemHref(item)}
+                        href={itemHref(item, lang)}
                         target="_blank"
                         rel="noopener noreferrer"
                         title={t.openFull}

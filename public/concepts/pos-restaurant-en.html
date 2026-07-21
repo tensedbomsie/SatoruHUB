@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>POS — Restaurant/Cafe Template</title>
+<style>
+  :root {
+    --bg: #0a0b0f; --bg-2: #101218;
+    --glass: rgba(255, 255, 255, 0.045); --glass-border: rgba(255, 255, 255, 0.09);
+    --text: #e8e9ee; --text-dim: #8b8d98;
+    --accent: #34d399; --accent-2: #6366f1; --gold: #facc15; --danger: #f87171;
+    --radius: 14px;
+  }
+  * { box-sizing: border-box; }
+  html { color-scheme: dark; }
+  body {
+    margin: 0; font-family: 'Segoe UI', system-ui, sans-serif; color: var(--text);
+    background: radial-gradient(circle at 15% 0%, rgba(99,102,241,0.12), transparent 45%), radial-gradient(circle at 85% 20%, rgba(52,211,153,0.1), transparent 45%), var(--bg);
+    min-height: 100vh;
+  }
+  .glass { background: var(--glass); border: 1px solid var(--glass-border); backdrop-filter: blur(14px); border-radius: var(--radius); }
+
+  .app { display: flex; height: 100vh; }
+  .menu-side { flex: 1; padding: 20px 24px; overflow-y: auto; }
+  .order-side { width: 340px; flex-shrink: 0; padding: 20px; border-left: 1px solid var(--glass-border); display: flex; flex-direction: column; }
+
+  .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+  .topbar h1 { font-size: 20px; margin: 0; }
+  .table-select { display: flex; gap: 8px; }
+  .table-chip { padding: 8px 16px; border-radius: 10px; border: 1px solid var(--glass-border); background: rgba(255,255,255,0.03); font-size: 13px; cursor: pointer; }
+  .table-chip.active { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #06120c; font-weight: 700; border-color: transparent; }
+
+  .cat-tabs { display: flex; gap: 10px; margin-bottom: 18px; flex-wrap: wrap; }
+  .cat-tab { padding: 8px 18px; border-radius: 999px; border: 1px solid var(--glass-border); color: var(--text-dim); font-size: 13px; cursor: pointer; }
+  .cat-tab.active { background: rgba(52,211,153,0.15); border-color: rgba(52,211,153,0.4); color: var(--accent); }
+
+  .menu-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .menu-item { padding: 16px; text-align: center; cursor: pointer; transition: transform 0.12s ease; }
+  .menu-item:hover { transform: translateY(-2px); }
+  .menu-icon { font-size: 32px; margin-bottom: 8px; }
+  .menu-name { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+  .menu-price { font-size: 12px; color: var(--accent); font-weight: 700; }
+
+  .order-side h2 { font-size: 16px; margin: 0 0 4px; }
+  .order-sub { font-size: 12px; color: var(--text-dim); margin: 0 0 16px; }
+  .order-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+  .order-line { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--glass-border); }
+  .order-line-main { flex: 1; }
+  .order-line-name { font-size: 13px; font-weight: 600; }
+  .order-line-price { font-size: 11px; color: var(--text-dim); }
+  .qty-control { display: flex; align-items: center; gap: 8px; }
+  .qty-btn { width: 22px; height: 22px; border-radius: 6px; border: 1px solid var(--glass-border); background: rgba(255,255,255,0.04); color: var(--text); cursor: pointer; font-size: 12px; display: flex; align-items: center; justify-content: center; }
+  .qty-num { font-size: 13px; min-width: 14px; text-align: center; }
+
+  .order-summary { border-top: 1px solid var(--glass-border); padding-top: 14px; margin-top: 14px; }
+  .summary-row { display: flex; justify-content: space-between; font-size: 13px; color: var(--text-dim); margin-bottom: 6px; }
+  .summary-row.total { color: var(--text); font-weight: 700; font-size: 16px; margin-top: 8px; }
+  .checkout-btn { width: 100%; padding: 14px; border-radius: 12px; border: none; background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #06120c; font-weight: 700; font-size: 14px; cursor: pointer; margin-top: 14px; }
+</style>
+</head>
+<body>
+  <div class="app">
+    <div class="menu-side">
+      <div class="topbar">
+        <h1>Menu</h1>
+        <div class="table-select">
+          <div class="table-chip">Table 1</div>
+          <div class="table-chip active">Table 2</div>
+          <div class="table-chip">Table 3</div>
+          <div class="table-chip">Take Away</div>
+        </div>
+      </div>
+
+      <div class="cat-tabs">
+        <div class="cat-tab active">All</div>
+        <div class="cat-tab">Main Dishes</div>
+        <div class="cat-tab">Drinks</div>
+        <div class="cat-tab">Desserts</div>
+        <div class="cat-tab">Snacks</div>
+      </div>
+
+      <div class="menu-grid">
+        <div class="menu-item glass"><div class="menu-icon">🍝</div><div class="menu-name">Pasta Carbonara</div><div class="menu-price">$165</div></div>
+        <div class="menu-item glass"><div class="menu-icon">🍔</div><div class="menu-name">Beef Burger</div><div class="menu-price">$145</div></div>
+        <div class="menu-item glass"><div class="menu-icon">🍕</div><div class="menu-name">Margherita Pizza</div><div class="menu-price">$220</div></div>
+        <div class="menu-item glass"><div class="menu-icon">🥗</div><div class="menu-name">Caesar Salad</div><div class="menu-price">$120</div></div>
+        <div class="menu-item glass"><div class="menu-icon">☕</div><div class="menu-name">Hot Latte</div><div class="menu-price">$65</div></div>
+        <div class="menu-item glass"><div class="menu-icon">🧋</div><div class="menu-name">Bubble Tea</div><div class="menu-price">$55</div></div>
+        <div class="menu-item glass"><div class="menu-icon">🍹</div><div class="menu-name">Virgin Mojito</div><div class="menu-price">$89</div></div>
+        <div class="menu-item glass"><div class="menu-icon">🍰</div><div class="menu-name">Chocolate Cake</div><div class="menu-price">$95</div></div>
+        <div class="menu-item glass"><div class="menu-icon">🍦</div><div class="menu-name">Vanilla Ice Cream</div><div class="menu-price">$60</div></div>
+        <div class="menu-item glass"><div class="menu-icon">🍟</div><div class="menu-name">French Fries</div><div class="menu-price">$70</div></div>
+        <div class="menu-item glass"><div class="menu-icon">🍗</div><div class="menu-name">Korean Fried Chicken</div><div class="menu-price">$130</div></div>
+        <div class="menu-item glass"><div class="menu-icon">🥟</div><div class="menu-name">Fried Gyoza</div><div class="menu-price">$85</div></div>
+      </div>
+    </div>
+
+    <div class="order-side glass" style="border-radius: 0;">
+      <h2>Order — Table 2</h2>
+      <p class="order-sub">4 items</p>
+      <div class="order-list">
+        <div class="order-line">
+          <div class="order-line-main">
+            <div class="order-line-name">Pasta Carbonara</div>
+            <div class="order-line-price">$165</div>
+          </div>
+          <div class="qty-control">
+            <button class="qty-btn">−</button>
+            <span class="qty-num">2</span>
+            <button class="qty-btn">+</button>
+          </div>
+        </div>
+        <div class="order-line">
+          <div class="order-line-main">
+            <div class="order-line-name">Hot Latte</div>
+            <div class="order-line-price">$65</div>
+          </div>
+          <div class="qty-control">
+            <button class="qty-btn">−</button>
+            <span class="qty-num">1</span>
+            <button class="qty-btn">+</button>
+          </div>
+        </div>
+        <div class="order-line">
+          <div class="order-line-main">
+            <div class="order-line-name">French Fries</div>
+            <div class="order-line-price">$70</div>
+          </div>
+          <div class="qty-control">
+            <button class="qty-btn">−</button>
+            <span class="qty-num">1</span>
+            <button class="qty-btn">+</button>
+          </div>
+        </div>
+        <div class="order-line">
+          <div class="order-line-main">
+            <div class="order-line-name">Chocolate Cake</div>
+            <div class="order-line-price">$95</div>
+          </div>
+          <div class="qty-control">
+            <button class="qty-btn">−</button>
+            <span class="qty-num">1</span>
+            <button class="qty-btn">+</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="order-summary">
+        <div class="summary-row"><span>Subtotal</span><span>$560</span></div>
+        <div class="summary-row"><span>Tax (7%)</span><span>$39.20</span></div>
+        <div class="summary-row total"><span>Total</span><span>$599.20</span></div>
+        <button class="checkout-btn">Checkout</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

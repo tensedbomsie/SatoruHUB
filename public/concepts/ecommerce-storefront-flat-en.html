@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Storefront — E-commerce (Flat Design)</title>
+<style>
+  :root {
+    --bg: #fffdf8; --surface: #ffffff;
+    --ink: #241c14; --ink-dim: #7a7166;
+    --warm: #f5a623; --warm-soft: #fbeed9; --red: #d64545; --green: #3fa76b;
+    --line: #ece5d8; --radius: 12px;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: 'Segoe UI', system-ui, sans-serif; color: var(--ink); background: var(--bg); }
+
+  header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 32px; position: sticky; top: 0; z-index: 20;
+    background: var(--surface); border-bottom: 1px solid var(--line);
+  }
+  .logo { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 18px; }
+  .logo-mark { width: 32px; height: 32px; border-radius: 8px; background: var(--warm); display: flex; align-items: center; justify-content: center; }
+  nav { display: flex; gap: 26px; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.02em; }
+  nav a { color: var(--ink-dim); text-decoration: none; }
+  nav a.active { color: var(--ink); }
+  .header-actions { display: flex; align-items: center; gap: 14px; }
+  .icon-btn { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--bg); border: 1px solid var(--line); position: relative; cursor: pointer; }
+  .cart-badge { position: absolute; top: -4px; right: -4px; background: var(--red); color: #fff; font-size: 10px; font-weight: 700; width: 17px; height: 17px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+
+  .hero {
+    margin: 24px 32px; padding: 52px 44px; border-radius: 16px;
+    background: linear-gradient(135deg, var(--warm), #ffc861);
+    display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap;
+  }
+  .hero h1 { font-size: 36px; margin: 0 0 12px; max-width: 480px; text-transform: uppercase; line-height: 1.1; }
+  .hero p { color: rgba(36,28,20,0.65); max-width: 420px; margin: 0 0 22px; font-size: 14px; }
+  .btn { padding: 13px 26px; border-radius: 8px; border: none; background: var(--red); color: #fff; font-weight: 800; cursor: pointer; font-size: 13px; text-transform: uppercase; letter-spacing: 0.03em; }
+  .hero-visual { font-size: 110px; flex-shrink: 0; }
+
+  .categories { display: flex; gap: 12px; padding: 0 32px; margin: 30px 0 10px; overflow-x: auto; }
+  .category-chip { padding: 10px 20px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--ink-dim); font-size: 13px; font-weight: 600; white-space: nowrap; cursor: pointer; }
+  .category-chip.active { background: var(--ink); color: #fff; border-color: var(--ink); }
+
+  .section-title { padding: 0 32px; margin: 30px 0 18px; font-size: 19px; font-weight: 800; text-transform: uppercase; }
+
+  .product-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; padding: 0 32px 40px; }
+  .product-card { overflow: hidden; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); transition: transform 0.12s ease, box-shadow 0.12s ease; }
+  .product-card:hover { transform: translateY(-3px); box-shadow: 0 10px 24px rgba(36,28,20,0.08); }
+  .product-thumb { height: 150px; background: var(--warm-soft); display: flex; align-items: center; justify-content: center; font-size: 44px; }
+  .product-info { padding: 14px 16px 16px; }
+  .product-cat { font-size: 11px; color: var(--ink-dim); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 4px; font-weight: 700; }
+  .product-name { font-weight: 700; font-size: 14px; margin-bottom: 8px; }
+  .product-bottom { display: flex; align-items: center; justify-content: space-between; }
+  .product-price { font-weight: 800; color: var(--red); }
+  .add-btn { width: 30px; height: 30px; border-radius: 8px; border: none; background: var(--ink); color: #fff; cursor: pointer; font-size: 16px; }
+  .rating { font-size: 11px; color: var(--warm); margin-top: 2px; }
+</style>
+</head>
+<body>
+  <header>
+    <div class="logo"><div class="logo-mark">🛍️</div> Storefront</div>
+    <nav>
+      <a href="#" class="active">Home</a>
+      <a href="#">All Products</a>
+      <a href="#">Deals</a>
+      <a href="#">About Us</a>
+    </nav>
+    <div class="header-actions">
+      <div class="icon-btn">🔍</div>
+      <div class="icon-btn">♡</div>
+      <div class="icon-btn">🛒<span class="cart-badge">3</span></div>
+    </div>
+  </header>
+
+  <div class="hero">
+    <div>
+      <h1>Quality Products<br>Delivered to Your Door</h1>
+      <p>Shop a wide range of categories with special deals every week and fast delivery nationwide.</p>
+      <button class="btn">Shop Now</button>
+    </div>
+    <div class="hero-visual">🎁</div>
+  </div>
+
+  <div class="categories">
+    <div class="category-chip active">All</div>
+    <div class="category-chip">Clothing</div>
+    <div class="category-chip">Electronics</div>
+    <div class="category-chip">Home Decor</div>
+    <div class="category-chip">Beauty</div>
+    <div class="category-chip">Sports</div>
+  </div>
+
+  <div class="section-title">Best Sellers</div>
+  <div class="product-grid">
+    <div class="product-card">
+      <div class="product-thumb">👕</div>
+      <div class="product-info">
+        <div class="product-cat">Clothing</div>
+        <div class="product-name">100% Cotton T-Shirt</div>
+        <div class="rating">★★★★★ (128)</div>
+        <div class="product-bottom"><span class="product-price">$390</span><button class="add-btn">+</button></div>
+      </div>
+    </div>
+    <div class="product-card">
+      <div class="product-thumb">🎧</div>
+      <div class="product-info">
+        <div class="product-cat">Electronics</div>
+        <div class="product-name">Wireless Bluetooth Headphones</div>
+        <div class="rating">★★★★☆ (89)</div>
+        <div class="product-bottom"><span class="product-price">$1,290</span><button class="add-btn">+</button></div>
+      </div>
+    </div>
+    <div class="product-card">
+      <div class="product-thumb">🕯️</div>
+      <div class="product-info">
+        <div class="product-cat">Home Decor</div>
+        <div class="product-name">Aromatic Scented Candle</div>
+        <div class="rating">★★★★★ (56)</div>
+        <div class="product-bottom"><span class="product-price">$250</span><button class="add-btn">+</button></div>
+      </div>
+    </div>
+    <div class="product-card">
+      <div class="product-thumb">💄</div>
+      <div class="product-info">
+        <div class="product-cat">Beauty</div>
+        <div class="product-name">Matte Lipstick</div>
+        <div class="rating">★★★★☆ (204)</div>
+        <div class="product-bottom"><span class="product-price">$320</span><button class="add-btn">+</button></div>
+      </div>
+    </div>
+    <div class="product-card">
+      <div class="product-thumb">👟</div>
+      <div class="product-info">
+        <div class="product-cat">Sports</div>
+        <div class="product-name">Running Shoes</div>
+        <div class="rating">★★★★★ (312)</div>
+        <div class="product-bottom"><span class="product-price">$1,890</span><button class="add-btn">+</button></div>
+      </div>
+    </div>
+    <div class="product-card">
+      <div class="product-thumb">⌚</div>
+      <div class="product-info">
+        <div class="product-cat">Electronics</div>
+        <div class="product-name">Smartwatch</div>
+        <div class="rating">★★★★☆ (167)</div>
+        <div class="product-bottom"><span class="product-price">$2,590</span><button class="add-btn">+</button></div>
+      </div>
+    </div>
+    <div class="product-card">
+      <div class="product-thumb">🧴</div>
+      <div class="product-info">
+        <div class="product-cat">Beauty</div>
+        <div class="product-name">Facial Serum</div>
+        <div class="rating">★★★★★ (245)</div>
+        <div class="product-bottom"><span class="product-price">$590</span><button class="add-btn">+</button></div>
+      </div>
+    </div>
+    <div class="product-card">
+      <div class="product-thumb">🎒</div>
+      <div class="product-info">
+        <div class="product-cat">Clothing</div>
+        <div class="product-name">Versatile Backpack</div>
+        <div class="rating">★★★★☆ (98)</div>
+        <div class="product-bottom"><span class="product-price">$790</span><button class="add-btn">+</button></div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

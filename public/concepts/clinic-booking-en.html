@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Clinic — Booking System Template</title>
+<style>
+  :root {
+    --bg: #0a0b0f; --bg-2: #101218;
+    --glass: rgba(255, 255, 255, 0.045); --glass-border: rgba(255, 255, 255, 0.09);
+    --text: #e8e9ee; --text-dim: #8b8d98;
+    --accent: #34d399; --accent-2: #6366f1; --gold: #facc15; --danger: #f87171;
+    --radius: 14px;
+  }
+  * { box-sizing: border-box; }
+  html { color-scheme: dark; }
+  body {
+    margin: 0; font-family: 'Segoe UI', system-ui, sans-serif; color: var(--text);
+    background: radial-gradient(circle at 15% 0%, rgba(99,102,241,0.12), transparent 45%), radial-gradient(circle at 85% 20%, rgba(52,211,153,0.1), transparent 45%), var(--bg);
+    min-height: 100vh;
+  }
+  .glass { background: var(--glass); border: 1px solid var(--glass-border); backdrop-filter: blur(14px); border-radius: var(--radius); }
+
+  .app { display: flex; min-height: 100vh; }
+  .sidebar { width: 232px; flex-shrink: 0; padding: 24px 16px; border-right: 1px solid var(--glass-border); }
+  .brand { display: flex; align-items: center; gap: 10px; padding: 0 8px 24px; font-weight: 700; font-size: 16px; }
+  .brand-mark { width: 34px; height: 34px; border-radius: 10px; background: linear-gradient(135deg, var(--accent), var(--accent-2)); display: flex; align-items: center; justify-content: center; font-size: 16px; }
+  .nav-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 10px; color: var(--text-dim); font-size: 14px; margin-bottom: 2px; }
+  .nav-item.active { background: linear-gradient(135deg, rgba(52,211,153,0.18), rgba(99,102,241,0.18)); color: var(--text); border: 1px solid var(--glass-border); }
+
+  .main { flex: 1; padding: 24px 32px 40px; }
+  .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; }
+  .topbar h1 { font-size: 22px; margin: 0; }
+  .btn-primary { padding: 10px 20px; border-radius: 10px; border: none; background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #06120c; font-weight: 700; font-size: 13px; cursor: pointer; }
+
+  .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 20px; }
+  .stat-card { padding: 18px 20px; }
+  .stat-label { font-size: 13px; color: var(--text-dim); margin-bottom: 8px; }
+  .stat-value { font-size: 24px; font-weight: 700; }
+
+  .content-grid { display: grid; grid-template-columns: 1.6fr 1fr; gap: 16px; margin-bottom: 16px; }
+  .panel { padding: 20px 22px; }
+  .panel-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .panel-header h3 { margin: 0; font-size: 15px; }
+
+  .appt-row { display: flex; align-items: center; gap: 14px; padding: 12px 0; border-bottom: 1px solid var(--glass-border); }
+  .appt-row:last-child { border-bottom: none; }
+  .appt-time { width: 60px; font-size: 13px; color: var(--text-dim); font-weight: 600; flex-shrink: 0; }
+  .appt-avatar { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, var(--accent-2), var(--accent)); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0; }
+  .appt-main { flex: 1; }
+  .appt-name { font-size: 13px; font-weight: 600; }
+  .appt-sub { font-size: 12px; color: var(--text-dim); }
+  .appt-status { font-size: 11px; padding: 3px 10px; border-radius: 999px; background: rgba(52,211,153,0.15); color: var(--accent); border: 1px solid rgba(52,211,153,0.3); }
+  .appt-status.waiting { background: rgba(250,204,21,0.15); color: var(--gold); border-color: rgba(250,204,21,0.3); }
+
+  .cal-mini { text-align: center; }
+  .cal-month { font-weight: 700; margin-bottom: 12px; }
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; font-size: 11px; }
+  .cal-grid .dow { color: var(--text-dim); padding-bottom: 6px; }
+  .cal-grid .day { padding: 7px 0; border-radius: 8px; color: var(--text-dim); }
+  .cal-grid .day.today { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #06120c; font-weight: 700; }
+  .cal-grid .day.has-appt { background: rgba(99,102,241,0.15); color: var(--text); }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { text-align: left; color: var(--text-dim); font-weight: 500; font-size: 12px; padding-bottom: 10px; }
+  td { padding: 10px 8px 10px 0; border-top: 1px solid var(--glass-border); }
+  .search-bar { padding: 10px 14px; border-radius: 10px; border: 1px solid var(--glass-border); background: rgba(255,255,255,0.03); color: var(--text); font-size: 13px; width: 240px; }
+</style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar glass">
+      <div class="brand"><div class="brand-mark">🩺</div><span>Clinic Care</span></div>
+      <div class="nav-item active">▦ Dashboard</div>
+      <div class="nav-item">📅 Appointments</div>
+      <div class="nav-item">🧑‍🤝‍🧑 Patients</div>
+      <div class="nav-item">👨‍⚕️ Doctors</div>
+      <div class="nav-item">💊 Prescriptions</div>
+      <div class="nav-item">⚙️ Settings</div>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <h1>Dashboard</h1>
+        <button class="btn-primary">+ New Appointment</button>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat-card glass"><div class="stat-label">Today's Appointments</div><div class="stat-value">18</div></div>
+        <div class="stat-card glass"><div class="stat-label">Patients Waiting</div><div class="stat-value">4</div></div>
+        <div class="stat-card glass"><div class="stat-label">Open Slots Today</div><div class="stat-value">6</div></div>
+        <div class="stat-card glass"><div class="stat-label">Total Patients</div><div class="stat-value">1,204</div></div>
+      </div>
+
+      <div class="content-grid">
+        <div class="panel glass">
+          <div class="panel-header"><h3>Today's Queue</h3></div>
+          <div class="appt-row">
+            <div class="appt-time">09:00</div>
+            <div class="appt-avatar">J</div>
+            <div class="appt-main"><div class="appt-name">John Doe</div><div class="appt-sub">Dr. Emily Carter — General Checkup</div></div>
+            <div class="appt-status">Done</div>
+          </div>
+          <div class="appt-row">
+            <div class="appt-time">09:30</div>
+            <div class="appt-avatar">A</div>
+            <div class="appt-main"><div class="appt-name">Alex Kim</div><div class="appt-sub">Dr. Michael Chen — Dental Care</div></div>
+            <div class="appt-status">Done</div>
+          </div>
+          <div class="appt-row">
+            <div class="appt-time">10:15</div>
+            <div class="appt-avatar">M</div>
+            <div class="appt-main"><div class="appt-name">Mai Tran</div><div class="appt-sub">Dr. Emily Carter — Follow-up</div></div>
+            <div class="appt-status waiting">Waiting</div>
+          </div>
+          <div class="appt-row">
+            <div class="appt-time">11:00</div>
+            <div class="appt-avatar">S</div>
+            <div class="appt-main"><div class="appt-name">Sarah Lee</div><div class="appt-sub">Dr. Robert Bennett — Health Checkup</div></div>
+            <div class="appt-status waiting">Waiting</div>
+          </div>
+        </div>
+
+        <div class="panel glass cal-mini">
+          <div class="cal-month">July 2026</div>
+          <div class="cal-grid">
+            <div class="dow">Sun</div><div class="dow">Mon</div><div class="dow">Tue</div><div class="dow">Wed</div><div class="dow">Thu</div><div class="dow">Fri</div><div class="dow">Sat</div>
+            <div class="day">29</div><div class="day">30</div><div class="day">1</div><div class="day">2</div><div class="day">3</div><div class="day">4</div><div class="day">5</div>
+            <div class="day">6</div><div class="day has-appt">7</div><div class="day">8</div><div class="day has-appt">9</div><div class="day">10</div><div class="day">11</div><div class="day">12</div>
+            <div class="day">13</div><div class="day">14</div><div class="day has-appt">15</div><div class="day">16</div><div class="day">17</div><div class="day">18</div><div class="day today">19</div>
+            <div class="day">20</div><div class="day">21</div><div class="day">22</div><div class="day">23</div><div class="day">24</div><div class="day">25</div><div class="day">26</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel glass">
+        <div class="panel-header">
+          <h3>Patient List</h3>
+          <input class="search-bar" placeholder="Search patients..." />
+        </div>
+        <table>
+          <thead><tr><th>Name</th><th>Phone</th><th>Last Visit</th><th>Doctor</th></tr></thead>
+          <tbody>
+            <tr><td>John Doe</td><td>081-234-5678</td><td>Jul 19, 2026</td><td>Dr. Emily Carter</td></tr>
+            <tr><td>Alex Kim</td><td>089-876-5432</td><td>Jul 19, 2026</td><td>Dr. Michael Chen</td></tr>
+            <tr><td>Mai Tran</td><td>082-111-2233</td><td>Jul 19, 2026</td><td>Dr. Emily Carter</td></tr>
+            <tr><td>Sarah Lee</td><td>086-999-8888</td><td>Jul 19, 2026</td><td>Dr. Robert Bennett</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

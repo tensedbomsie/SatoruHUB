@@ -19,6 +19,7 @@ import { THEMES, getStoredTheme, applyTheme, setTheme, type ThemeId } from './th
 import ConceptsGallery from './ConceptsGallery'
 import PublicPortfolio from './PublicPortfolio'
 import TestimonialsAdmin from './TestimonialsAdmin'
+import ProjectRequestsAdmin from './ProjectRequestsAdmin'
 import './App.css'
 
 type AppLink = {
@@ -155,7 +156,7 @@ function App() {
   const [techDict, setTechDict] = useState<TechDictionaryStats | null>(null)
   const [showRegister, setShowRegister] = useState(false)
   const [cornerOpen, setCornerOpen] = useState(false)
-  const [view, setView] = useState<'hub' | 'concepts' | 'testimonials'>('hub')
+  const [view, setView] = useState<'hub' | 'concepts' | 'testimonials' | 'requests'>('hub')
   const [showTheme, setShowTheme] = useState(false)
   const [currentTheme, setCurrentTheme] = useState<ThemeId>('dark')
   const [isPortfolio] = useState(() => window.location.pathname.replace(/\/$/, '').endsWith('/PPchanDesignConcepts'))
@@ -209,6 +210,7 @@ function App() {
           <>
             <button onClick={() => setView('concepts')}>🎨 Concepts</button>
             <button onClick={() => setView('testimonials')}>💬 รีวิว</button>
+            <button onClick={() => setView('requests')}>📋 คำขอสร้างเว็บ</button>
             <a className="toolbar-link" href={`${import.meta.env.BASE_URL}PPchanDesignConcepts`} target="_blank" rel="noopener noreferrer">
               🌐 Portfolio
             </a>
@@ -223,6 +225,8 @@ function App() {
         <ConceptsGallery />
       ) : view === 'testimonials' ? (
         <TestimonialsAdmin />
+      ) : view === 'requests' ? (
+        <ProjectRequestsAdmin />
       ) : (
         <div className="hub-grid">
           {APPS.map((app) => (

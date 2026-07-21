@@ -126,9 +126,16 @@
   line-height: 1.7;
 }
 
-.portfolio-cta {
+.portfolio-hero-actions {
   position: relative;
   z-index: 2;
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.portfolio-cta {
   display: inline-block;
   padding: 13px 30px;
   border-radius: 12px;
@@ -136,8 +143,170 @@
   color: #fff;
   font-weight: 700;
   font-size: 14px;
+  font-family: inherit;
   text-decoration: none;
+  border: none;
+  cursor: pointer;
   box-shadow: 0 12px 26px rgba(53, 92, 77, 0.28);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.portfolio-cta:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 16px 32px rgba(53, 92, 77, 0.36);
+}
+
+.portfolio-cta-secondary {
+  background: transparent;
+  color: var(--accent);
+  border: 1.5px solid var(--accent);
+  box-shadow: none;
+}
+
+.portfolio-cta-secondary:hover {
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 16px 32px rgba(53, 92, 77, 0.22);
+}
+
+/* ---------- Scroll reveal ---------- */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+.reveal-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* ---------- Build request wizard modal ---------- */
+.build-modal {
+  width: min(560px, 100%);
+}
+
+.build-modal-steps {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 1rem;
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.build-modal-steps .active {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.style-pick-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin: 1rem 0;
+}
+
+.style-pick-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 10px;
+  border-radius: 12px;
+  border: 1.5px solid var(--glass-border);
+  background: var(--glass);
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.style-pick-card:hover {
+  transform: translateY(-2px);
+}
+
+.style-pick-card.active {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(53, 92, 77, 0.15);
+}
+
+.style-pick-card img {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  object-position: top;
+  border-radius: 8px;
+}
+
+.style-pick-custom-icon {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.style-pick-name {
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--text);
+}
+
+.style-pick-desc {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+}
+
+.build-form-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 1rem 0;
+}
+
+.build-form-fields label {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  font-weight: 600;
+}
+
+.build-form-fields input,
+.build-form-fields textarea,
+.build-form-fields select {
+  padding: 0.55rem 0.7rem;
+  border-radius: 8px;
+  border: 1px solid var(--glass-border);
+  background: var(--modal-bg);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.85rem;
+  resize: vertical;
+}
+
+.build-modal-done {
+  text-align: center;
+  padding: 1rem 0.5rem;
+}
+
+.build-modal-done-emoji {
+  font-size: 40px;
+  margin-bottom: 10px;
 }
 
 .portfolio-footer {
@@ -1011,4 +1180,34 @@ button.corner-link {
   display: flex;
   gap: 0.5rem;
   flex-shrink: 0;
+}
+
+.request-business {
+  font-weight: 700;
+  margin: 0 0 0.2rem;
+}
+
+.request-industry {
+  font-weight: 400;
+  color: var(--text-dim);
+}
+
+.request-style {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  margin: 0 0 0.4rem;
+}
+
+.request-contacts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  margin-top: 0.4rem;
+}
+
+.request-preferred {
+  font-weight: 700;
+  color: var(--accent);
 }

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import Reveal from './Reveal'
 
 type ConceptLink = {
   name: string
@@ -127,7 +128,7 @@ export default function ConceptsGallery({ lang = 'th' }: { lang?: 'th' | 'en' })
 
       {conceptMode === 'moodboard' &&
         CONCEPT_GROUPS.map((group) => (
-          <div key={group.title} className="concepts-group">
+          <Reveal key={group.title} className="concepts-group">
             <h2 className="concepts-group-title">{groupTitle(group)}</h2>
             <div className="moodboard-grid">
               {group.items.map((item) => (
@@ -145,7 +146,7 @@ export default function ConceptsGallery({ lang = 'th' }: { lang?: 'th' | 'en' })
                 </a>
               ))}
             </div>
-          </div>
+          </Reveal>
         ))}
 
       {conceptMode !== 'moodboard' &&

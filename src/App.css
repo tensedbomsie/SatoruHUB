@@ -43,6 +43,109 @@
   --modal-bg: #ffffff;
 }
 
+/* ---------- Public portfolio brand (PPchan Design Concept) — always this palette, independent of Nont's Hub theme ---------- */
+.portfolio-brand {
+  --bg: #fff8ef;
+  --glass: #ffffff;
+  --glass-border: #f0e2d0;
+  --text: #2b2420;
+  --text-dim: #8c7f6f;
+  --accent: #7c3aed;
+  --accent-2: #4f46e5;
+  --danger: #dc2626;
+  --card-blur: 0px;
+  --bg-glow-1: rgba(124, 58, 237, 0.1);
+  --bg-glow-2: rgba(79, 70, 229, 0.08);
+  --modal-bg: #fffaf3;
+  background: var(--bg);
+  min-height: 100vh;
+}
+
+.portfolio-hero {
+  position: relative;
+  overflow: hidden;
+  padding: 60px 40px 70px;
+  text-align: center;
+}
+
+.portfolio-hero-blob {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.portfolio-hero-blob.b1 { width: 320px; height: 320px; background: #e4d4ff; top: -140px; right: -80px; }
+.portfolio-hero-blob.b2 { width: 220px; height: 220px; background: #d8c4ff; bottom: -100px; left: 60px; opacity: 0.4; }
+
+.portfolio-wordmark {
+  position: relative;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+  text-transform: uppercase;
+  margin-bottom: 28px;
+}
+
+.portfolio-wordmark .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+}
+
+.portfolio-hero h1 {
+  position: relative;
+  z-index: 2;
+  font-size: 34px;
+  line-height: 1.4;
+  margin: 0 auto 18px;
+  max-width: 640px;
+}
+
+.portfolio-hero h1 .accent {
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.portfolio-hero p {
+  position: relative;
+  z-index: 2;
+  font-size: 15px;
+  color: var(--text-dim);
+  max-width: 460px;
+  margin: 0 auto 30px;
+  line-height: 1.7;
+}
+
+.portfolio-cta {
+  position: relative;
+  z-index: 2;
+  display: inline-block;
+  padding: 13px 30px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: #fff;
+  font-weight: 700;
+  font-size: 14px;
+  text-decoration: none;
+  box-shadow: 0 12px 26px rgba(124, 58, 237, 0.3);
+}
+
+.portfolio-footer {
+  text-align: center;
+  padding: 40px 20px 60px;
+  color: var(--text-dim);
+  font-size: 12.5px;
+}
+
 :root[data-theme='warm'] .card,
 :root[data-theme='warm'] .login-form,
 :root[data-theme='warm'] .toolbar,

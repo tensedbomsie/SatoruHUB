@@ -135,25 +135,21 @@ export default function ConceptsGallery({ lang = 'th' }: { lang?: 'th' | 'en' })
 
       {conceptMode === 'moodboard' &&
         CONCEPT_GROUPS.map((group) => (
-          <Reveal key={group.title} className="concepts-group">
+          <div key={group.title} className="concepts-group">
             <h2 className="concepts-group-title">{groupTitle(group)}</h2>
             <div className="moodboard-grid">
               {group.items.map((item) => (
-                <a
-                  key={item.url ?? item.file}
-                  className="moodboard-tile"
-                  href={itemHref(item, lang)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <img src={itemThumb(item)} alt={itemName(item)} loading="lazy" />
-                  <div className="moodboard-caption">
-                    <span>{item.icon}</span> {itemName(item)}
-                  </div>
-                </a>
+                <Reveal key={item.url ?? item.file} className="moodboard-reveal">
+                  <a className="moodboard-tile" href={itemHref(item, lang)} target="_blank" rel="noopener noreferrer">
+                    <img src={itemThumb(item)} alt={itemName(item)} loading="lazy" />
+                    <div className="moodboard-caption">
+                      <span>{item.icon}</span> {itemName(item)}
+                    </div>
+                  </a>
+                </Reveal>
               ))}
             </div>
-          </Reveal>
+          </div>
         ))}
 
       {conceptMode !== 'moodboard' &&
@@ -164,22 +160,23 @@ export default function ConceptsGallery({ lang = 'th' }: { lang?: 'th' | 'en' })
             {conceptMode === 'grid' ? (
               <div className="concepts-grid">
                 {group.items.map((item) => (
-                  <a
-                    key={item.url ?? item.file}
-                    className="concept-card card"
-                    href={itemHref(item, lang)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <span className="concept-card-icon">{item.icon}</span>
-                    <span className="concept-card-name">{itemName(item)}</span>
-                  </a>
+                  <Reveal key={item.url ?? item.file}>
+                    <a
+                      className="concept-card card"
+                      href={itemHref(item, lang)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <span className="concept-card-icon">{item.icon}</span>
+                      <span className="concept-card-name">{itemName(item)}</span>
+                    </a>
+                  </Reveal>
                 ))}
               </div>
             ) : (
               <div className="concepts-preview-grid">
                 {group.items.map((item) => (
-                  <div key={item.url ?? item.file} className="concept-preview-card">
+                  <Reveal key={item.url ?? item.file} className="concept-preview-card">
                     <div className="concept-thumb">
                       <iframe className="concept-preview-frame" src={itemHref(item, lang)} title={itemName(item)} loading="lazy" />
                       <a
@@ -199,7 +196,7 @@ export default function ConceptsGallery({ lang = 'th' }: { lang?: 'th' | 'en' })
                         <span className="concept-meta-group">{groupTitle(group)}</span>
                       </div>
                     </div>
-                  </div>
+                  </Reveal>
                 ))}
               </div>
             )}

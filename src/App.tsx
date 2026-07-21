@@ -209,6 +209,9 @@ function App() {
           <>
             <button onClick={() => setView('concepts')}>🎨 Concepts</button>
             <button onClick={() => setView('testimonials')}>💬 รีวิว</button>
+            <a className="toolbar-link" href={`${import.meta.env.BASE_URL}?portfolio=1`} target="_blank" rel="noopener noreferrer">
+              🌐 Portfolio
+            </a>
           </>
         )}
         <button onClick={() => setShowTheme(true)}>🌗 ธีม</button>

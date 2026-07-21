@@ -193,7 +193,8 @@ textarea {
   font-size: 0.8rem;
 }
 
-.toolbar button {
+.toolbar button,
+.toolbar a.toolbar-link {
   padding: 0.4rem 0.8rem;
   border-radius: 10px;
   border: 1px solid var(--glass-border);
@@ -201,9 +202,13 @@ textarea {
   color: var(--text);
   cursor: pointer;
   font-size: 0.82rem;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
 }
 
-.toolbar button:hover {
+.toolbar button:hover,
+.toolbar a.toolbar-link:hover {
   background: rgba(255, 255, 255, 0.08);
 }
 

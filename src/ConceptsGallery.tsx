@@ -4,7 +4,9 @@ type ConceptLink = {
   name: string
   nameEn: string
   icon: string
-  file: string
+  file?: string
+  url?: string
+  thumb?: string
 }
 
 type ConceptGroup = {
@@ -14,6 +16,19 @@ type ConceptGroup = {
 }
 
 const CONCEPT_GROUPS: ConceptGroup[] = [
+  {
+    title: 'เว็บไซต์ที่สร้างให้ลูกค้า',
+    titleEn: "Websites I've Built",
+    items: [
+      {
+        name: 'Adorable Grooming by Debbie (Austin, US)',
+        nameEn: 'Adorable Grooming by Debbie (Austin, US)',
+        icon: '🐩',
+        url: 'https://sparkle-pup-style.lovable.app/',
+        thumb: 'client-sparkle-pup-style.png',
+      },
+    ],
+  },
   {
     title: 'Dashboard — สไตล์ต่างๆ',
     titleEn: 'Dashboard — Styles',
@@ -75,6 +90,15 @@ const TEXT = {
   },
 }
 
+function itemHref(item: ConceptLink) {
+  return item.url ?? `${import.meta.env.BASE_URL}concepts/${item.file}`
+}
+
+function itemThumb(item: ConceptLink) {
+  const file = item.thumb ?? item.file!.replace('.html', '.png')
+  return `${import.meta.env.BASE_URL}concepts/thumbs/${file}`
+}
+
 export default function ConceptsGallery({ lang = 'th' }: { lang?: 'th' | 'en' }) {
   const [conceptMode, setConceptMode] = useState<'grid' | 'preview' | 'moodboard'>('grid')
   const t = TEXT[lang]
@@ -103,17 +127,13 @@ export default function ConceptsGallery({ lang = 'th' }: { lang?: 'th' | 'en' })
         <div className="moodboard-grid">
           {CONCEPT_GROUPS.flatMap((group) => group.items).map((item) => (
             <a
-              key={item.file}
+              key={item.url ?? item.file}
               className="moodboard-tile"
-              href={`${import.meta.env.BASE_URL}concepts/${item.file}`}
+              href={itemHref(item)}
               target="_blank"
               rel="noopener noreferrer"
             >
-              <img
-                src={`${import.meta.env.BASE_URL}concepts/thumbs/${item.file.replace('.html', '.png')}`}
-                alt={itemName(item)}
-                loading="lazy"
-              />
+              <img src={itemThumb(item)} alt={itemName(item)} loading="lazy" />
               <div className="moodboard-caption">
                 <span>{item.icon}</span> {itemName(item)}
               </div>
@@ -131,9 +151,9 @@ export default function ConceptsGallery({ lang = 'th' }: { lang?: 'th' | 'en' })
               <div className="concepts-grid">
                 {group.items.map((item) => (
                   <a
-                    key={item.file}
+                    key={item.url ?? item.file}
                     className="concept-card card"
-                    href={`${import.meta.env.BASE_URL}concepts/${item.file}`}
+                    href={itemHref(item)}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -145,17 +165,12 @@ export default function ConceptsGallery({ lang = 'th' }: { lang?: 'th' | 'en' })
             ) : (
               <div className="concepts-preview-grid">
                 {group.items.map((item) => (
-                  <div key={item.file} className="concept-preview-card">
+                  <div key={item.url ?? item.file} className="concept-preview-card">
                     <div className="concept-thumb">
-                      <iframe
-                        className="concept-preview-frame"
-                        src={`${import.meta.env.BASE_URL}concepts/${item.file}`}
-                        title={itemName(item)}
-                        loading="lazy"
-                      />
+                      <iframe className="concept-preview-frame" src={itemHref(item)} title={itemName(item)} loading="lazy" />
                       <a
                         className="concept-preview-open"
-                        href={`${import.meta.env.BASE_URL}concepts/${item.file}`}
+                        href={itemHref(item)}
                         target="_blank"
                         rel="noopener noreferrer"
                         title={t.openFull}

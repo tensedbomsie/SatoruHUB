@@ -18,7 +18,7 @@ type ConceptGroup = {
 const CONCEPT_GROUPS: ConceptGroup[] = [
   {
     title: 'เว็บไซต์ที่สร้างให้ลูกค้า',
-    titleEn: "Websites I've Built",
+    titleEn: 'Website Concepts',
     items: [
       {
         name: 'Adorable Grooming by Debbie (Austin, US)',
@@ -100,7 +100,7 @@ function itemThumb(item: ConceptLink) {
 }
 
 export default function ConceptsGallery({ lang = 'th' }: { lang?: 'th' | 'en' }) {
-  const [conceptMode, setConceptMode] = useState<'grid' | 'preview' | 'moodboard'>('grid')
+  const [conceptMode, setConceptMode] = useState<'grid' | 'preview' | 'moodboard'>('moodboard')
   const t = TEXT[lang]
 
   const groupTitle = (g: ConceptGroup) => (lang === 'en' ? g.titleEn : g.title)
@@ -123,24 +123,28 @@ export default function ConceptsGallery({ lang = 'th' }: { lang?: 'th' | 'en' })
         </div>
       </div>
 
-      {conceptMode === 'moodboard' && (
-        <div className="moodboard-grid">
-          {CONCEPT_GROUPS.flatMap((group) => group.items).map((item) => (
-            <a
-              key={item.url ?? item.file}
-              className="moodboard-tile"
-              href={itemHref(item)}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <img src={itemThumb(item)} alt={itemName(item)} loading="lazy" />
-              <div className="moodboard-caption">
-                <span>{item.icon}</span> {itemName(item)}
-              </div>
-            </a>
-          ))}
-        </div>
-      )}
+      {conceptMode === 'moodboard' &&
+        CONCEPT_GROUPS.map((group) => (
+          <div key={group.title} className="concepts-group">
+            <h2 className="concepts-group-title">{groupTitle(group)}</h2>
+            <div className="moodboard-grid">
+              {group.items.map((item) => (
+                <a
+                  key={item.url ?? item.file}
+                  className="moodboard-tile"
+                  href={itemHref(item)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <img src={itemThumb(item)} alt={itemName(item)} loading="lazy" />
+                  <div className="moodboard-caption">
+                    <span>{item.icon}</span> {itemName(item)}
+                  </div>
+                </a>
+              ))}
+            </div>
+          </div>
+        ))}
 
       {conceptMode !== 'moodboard' &&
         CONCEPT_GROUPS.map((group) => (

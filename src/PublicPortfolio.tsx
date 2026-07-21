@@ -12,13 +12,13 @@ export default function PublicPortfolio() {
           <span className="dot"></span> PPchan Design Concept
         </div>
         <h1>
-          Build a <span className="accent">system</span> that's easy to use,
+          Choose a <span className="accent">concept</span>.
           <br />
-          so you can focus on your business
+          Make it yours.
         </h1>
         <p>
-          Browse real systems and design concepts I've built. See something you like, or want it tailored to your
-          business? Scroll down and take a look — or leave a note below.
+          Find a design style that fits your business. Every concept can be customized to match your brand and
+          workflow.
         </p>
         <a className="portfolio-cta" href="#gallery">
           View My Work ↓

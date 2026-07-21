@@ -158,7 +158,7 @@ function App() {
   const [view, setView] = useState<'hub' | 'concepts' | 'testimonials'>('hub')
   const [showTheme, setShowTheme] = useState(false)
   const [currentTheme, setCurrentTheme] = useState<ThemeId>('dark')
-  const [isPortfolio] = useState(() => new URLSearchParams(window.location.search).has('portfolio'))
+  const [isPortfolio] = useState(() => window.location.pathname.replace(/\/$/, '').endsWith('/PPchanDesignConcepts'))
 
   useEffect(() => {
     const stored = getStoredTheme()
@@ -209,7 +209,7 @@ function App() {
           <>
             <button onClick={() => setView('concepts')}>🎨 Concepts</button>
             <button onClick={() => setView('testimonials')}>💬 รีวิว</button>
-            <a className="toolbar-link" href={`${import.meta.env.BASE_URL}?portfolio=1`} target="_blank" rel="noopener noreferrer">
+            <a className="toolbar-link" href={`${import.meta.env.BASE_URL}PPchanDesignConcepts`} target="_blank" rel="noopener noreferrer">
               🌐 Portfolio
             </a>
           </>

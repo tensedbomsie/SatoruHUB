@@ -45,18 +45,18 @@
 
 /* ---------- Public portfolio brand (PPchan Design Concept) — always this palette, independent of Nont's Hub theme ---------- */
 .portfolio-brand {
-  --bg: #fff8ef;
+  --bg: #f8f3eb;
   --glass: #ffffff;
-  --glass-border: #f0e2d0;
-  --text: #2b2420;
-  --text-dim: #8c7f6f;
-  --accent: #7c3aed;
-  --accent-2: #4f46e5;
+  --glass-border: #e5d8c8;
+  --text: #2f2926;
+  --text-dim: #6b6259;
+  --accent: #355c4d;
+  --accent-2: #d89a6a;
   --danger: #dc2626;
   --card-blur: 0px;
-  --bg-glow-1: rgba(124, 58, 237, 0.1);
-  --bg-glow-2: rgba(79, 70, 229, 0.08);
-  --modal-bg: #fffaf3;
+  --bg-glow-1: rgba(53, 92, 77, 0.09);
+  --bg-glow-2: rgba(216, 154, 106, 0.1);
+  --modal-bg: #fbf7f0;
   background: var(--bg);
   min-height: 100vh;
 }
@@ -75,8 +75,8 @@
   pointer-events: none;
 }
 
-.portfolio-hero-blob.b1 { width: 320px; height: 320px; background: #e4d4ff; top: -140px; right: -80px; }
-.portfolio-hero-blob.b2 { width: 220px; height: 220px; background: #d8c4ff; bottom: -100px; left: 60px; opacity: 0.4; }
+.portfolio-hero-blob.b1 { width: 320px; height: 320px; background: #c9dad2; top: -140px; right: -80px; }
+.portfolio-hero-blob.b2 { width: 220px; height: 220px; background: #f0d9bd; bottom: -100px; left: 60px; opacity: 0.4; }
 
 .portfolio-wordmark {
   position: relative;
@@ -136,7 +136,7 @@
   font-weight: 700;
   font-size: 14px;
   text-decoration: none;
-  box-shadow: 0 12px 26px rgba(124, 58, 237, 0.3);
+  box-shadow: 0 12px 26px rgba(53, 92, 77, 0.28);
 }
 
 .portfolio-footer {

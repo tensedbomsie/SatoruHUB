@@ -172,13 +172,47 @@
 /* ---------- Scroll reveal ---------- */
 .reveal {
   opacity: 0;
-  transform: translateY(28px);
-  transition: opacity 0.7s ease, transform 0.7s ease;
+  transform: translateY(28px) scale(0.95);
+  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .reveal-in {
   opacity: 1;
-  transform: translateY(0);
+  transform: translateY(0) scale(1);
+}
+
+/* ---------- Floating "Let's build yours" button ---------- */
+.portfolio-fab {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 500;
+  opacity: 0;
+  transform: translateY(20px) scale(0.85);
+  pointer-events: none;
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+
+.portfolio-fab-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+@media (max-width: 640px) {
+  .portfolio-fab {
+    right: 16px;
+    bottom: 16px;
+    padding: 11px 20px;
+    font-size: 13px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .portfolio-fab {
+    transition: opacity 0.2s ease;
+    transform: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

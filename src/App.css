@@ -58,6 +58,7 @@
   --bg-glow-2: rgba(216, 154, 106, 0.1);
   --modal-bg: #fbf7f0;
   background: var(--bg);
+  color: var(--text);
   min-height: 100vh;
 }
 

@@ -18,6 +18,7 @@ import {
 import { THEMES, getStoredTheme, applyTheme, setTheme, type ThemeId } from './theme'
 import ConceptsGallery from './ConceptsGallery'
 import PublicPortfolio from './PublicPortfolio'
+import TestimonialsAdmin from './TestimonialsAdmin'
 import './App.css'
 
 type AppLink = {
@@ -154,7 +155,7 @@ function App() {
   const [techDict, setTechDict] = useState<TechDictionaryStats | null>(null)
   const [showRegister, setShowRegister] = useState(false)
   const [cornerOpen, setCornerOpen] = useState(false)
-  const [view, setView] = useState<'hub' | 'concepts'>('hub')
+  const [view, setView] = useState<'hub' | 'concepts' | 'testimonials'>('hub')
   const [showTheme, setShowTheme] = useState(false)
   const [currentTheme, setCurrentTheme] = useState<ThemeId>('dark')
   const [isPortfolio] = useState(() => new URLSearchParams(window.location.search).has('portfolio'))
@@ -198,13 +199,18 @@ function App() {
   return (
     <div className="hub-page fade-in">
       <div className="toolbar">
-        {view === 'concepts' ? (
+        {view !== 'hub' ? (
           <button onClick={() => setView('hub')}>← กลับ</button>
         ) : (
           <h1>🏠 Satoru HUB</h1>
         )}
         <span className="spacer" />
-        {view === 'hub' && <button onClick={() => setView('concepts')}>🎨 Concepts</button>}
+        {view === 'hub' && (
+          <>
+            <button onClick={() => setView('concepts')}>🎨 Concepts</button>
+            <button onClick={() => setView('testimonials')}>💬 รีวิว</button>
+          </>
+        )}
         <button onClick={() => setShowTheme(true)}>🌗 ธีม</button>
         <span className="user-email">{session.user.email}</span>
         <button onClick={() => supabase.auth.signOut()}>ออกจากระบบ</button>
@@ -212,6 +218,8 @@ function App() {
 
       {view === 'concepts' ? (
         <ConceptsGallery />
+      ) : view === 'testimonials' ? (
+        <TestimonialsAdmin />
       ) : (
         <div className="hub-grid">
           {APPS.map((app) => (

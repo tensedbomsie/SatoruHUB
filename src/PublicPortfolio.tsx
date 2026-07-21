@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { getStoredTheme, applyTheme } from './theme'
 import ConceptsGallery from './ConceptsGallery'
+import { TestimonialsList, TestimonialForm } from './Testimonials'
 
 export default function PublicPortfolio() {
   useEffect(() => {
@@ -19,6 +20,9 @@ export default function PublicPortfolio() {
       </p>
 
       <ConceptsGallery lang="en" />
+
+      <TestimonialsList lang="en" />
+      <TestimonialForm lang="en" />
     </div>
   )
 }

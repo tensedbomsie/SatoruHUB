@@ -22,6 +22,7 @@ const CONCEPT_GROUPS: ConceptGroup[] = [
       { name: 'Minimal Apple/Linear', nameEn: 'Minimal Apple/Linear', icon: '◆', file: 'dashboard-v1-minimal-apple.html' },
       { name: 'Vercel/Startup SaaS', nameEn: 'Vercel/Startup SaaS', icon: '▲', file: 'dashboard-v2-vercel-saas.html' },
       { name: 'Glassmorphism Glow', nameEn: 'Glassmorphism Glow', icon: '✦', file: 'dashboard-v3-glow-glass.html' },
+      { name: 'Premium Workflow', nameEn: 'Premium Workflow', icon: '⚙️', file: 'dashboard-premium-workflow.html' },
     ],
   },
   {
@@ -41,6 +42,13 @@ const CONCEPT_GROUPS: ConceptGroup[] = [
       { name: 'E-commerce Storefront', nameEn: 'E-commerce Storefront', icon: '🛍️', file: 'ecommerce-storefront-flat.html' },
       { name: 'POS ร้านอาหาร/คาเฟ่', nameEn: 'Restaurant/Cafe POS', icon: '🍽️', file: 'pos-restaurant-flat.html' },
       { name: 'Landing Page ร้านอาหาร', nameEn: 'Restaurant Landing Page', icon: '🍔', file: 'restaurant-landing-warm-minimal.html' },
+    ],
+  },
+  {
+    title: 'Business Templates — Premium Brand',
+    titleEn: 'Business Templates — Premium Brand',
+    items: [
+      { name: 'AMBRE — E-commerce ระดับพรีเมียม', nameEn: 'AMBRE — Premium E-commerce', icon: '🏺', file: 'ecommerce-premium-brand.html' },
     ],
   },
   {

@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Dashboard — Premium Workflow</title>
+<style>
+  :root {
+    --bg: #08090d;
+    --bg-2: #0d0f16;
+    --glass: rgba(255, 255, 255, 0.05);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --text: #f0f1f5;
+    --text-dim: #8b8d98;
+    --accent: #a78bfa;
+    --accent-2: #6366f1;
+    --gold: #fbbf24;
+    --danger: #f87171;
+    --success: #34d399;
+    --radius: 16px;
+  }
+  * { box-sizing: border-box; }
+  html { color-scheme: dark; }
+  body {
+    margin: 0; font-family: 'Segoe UI', system-ui, sans-serif; color: var(--text);
+    background:
+      radial-gradient(circle at 12% 0%, rgba(167,139,250,0.16), transparent 45%),
+      radial-gradient(circle at 88% 15%, rgba(99,102,241,0.14), transparent 45%),
+      var(--bg);
+    min-height: 100vh;
+  }
+  .glass { background: var(--glass); border: 1px solid var(--glass-border); backdrop-filter: blur(18px); border-radius: var(--radius); box-shadow: 0 1px 0 rgba(255,255,255,0.04) inset, 0 20px 40px rgba(0,0,0,0.35); }
+
+  .app { display: flex; min-height: 100vh; }
+
+  .sidebar { width: 236px; flex-shrink: 0; padding: 24px 16px; display: flex; flex-direction: column; gap: 4px; border-right: 1px solid var(--glass-border); }
+  .brand { display: flex; align-items: center; gap: 10px; padding: 0 8px 26px; font-weight: 700; font-size: 16px; }
+  .brand-mark { width: 34px; height: 34px; border-radius: 10px; background: linear-gradient(135deg, var(--accent), var(--accent-2)); display: flex; align-items: center; justify-content: center; font-size: 16px; box-shadow: 0 0 22px rgba(167,139,250,0.45); }
+  .nav-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 10px; color: var(--text-dim); font-size: 14px; }
+  .nav-item .icon { width: 18px; text-align: center; opacity: 0.85; }
+  .nav-item.active { background: linear-gradient(135deg, rgba(167,139,250,0.2), rgba(99,102,241,0.18)); color: var(--text); border: 1px solid var(--glass-border); }
+  .nav-section-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-dim); opacity: 0.6; padding: 16px 12px 6px; }
+
+  .main { flex: 1; padding: 26px 34px 44px; min-width: 0; }
+  .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 26px; }
+  .topbar h1 { font-size: 23px; margin: 0; letter-spacing: -0.01em; }
+  .user-chip { display: flex; align-items: center; gap: 10px; padding: 6px 14px 6px 6px; border-radius: 999px; }
+  .avatar { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, var(--accent-2), var(--accent)); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; }
+
+  /* KPI cards with sparkline */
+  .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 20px; }
+  .stat-card { padding: 20px 22px; position: relative; overflow: hidden; }
+  .stat-label { font-size: 13px; color: var(--text-dim); margin-bottom: 8px; }
+  .stat-value { font-size: 25px; font-weight: 800; letter-spacing: -0.01em; }
+  .stat-delta { font-size: 12px; color: var(--success); margin-top: 6px; }
+  .stat-spark { position: absolute; bottom: 0; left: 0; right: 0; height: 34px; opacity: 0.55; }
+
+  /* Workflow */
+  .workflow-panel { padding: 24px 28px; margin-bottom: 20px; }
+  .workflow-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; }
+  .workflow-header h3 { margin: 0; font-size: 15px; }
+  .workflow-header .pill { font-size: 11.5px; color: var(--text-dim); background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); padding: 4px 11px; border-radius: 999px; }
+  .workflow-row { display: flex; align-items: center; gap: 0; }
+  .workflow-node { flex: 1; text-align: center; padding: 18px 10px; border-radius: 14px; background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); position: relative; }
+  .workflow-node .icon-wrap { width: 46px; height: 46px; margin: 0 auto 10px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 21px; }
+  .workflow-node .wf-label { font-size: 13px; font-weight: 700; margin-bottom: 3px; }
+  .workflow-node .wf-value { font-size: 18px; font-weight: 800; }
+  .workflow-node .wf-sub { font-size: 11px; color: var(--text-dim); }
+  .workflow-arrow { position: relative; flex-shrink: 0; width: 46px; height: 20px; display: flex; align-items: center; justify-content: center; }
+  .wf-line { position: absolute; left: 0; right: 0; top: 50%; height: 1.5px; transform: translateY(-50%); opacity: 0.7; }
+  .wf-dot { position: relative; width: 7px; height: 7px; border-radius: 50%; }
+
+  .n-orders .icon-wrap { background: rgba(167,139,250,0.18); color: var(--accent); }
+  .n-inventory .icon-wrap { background: rgba(99,102,241,0.18); color: #a5b4fc; }
+  .n-analytics .icon-wrap { background: rgba(52,211,153,0.18); color: var(--success); }
+  .n-reports .icon-wrap { background: rgba(251,191,36,0.18); color: var(--gold); }
+
+  /* content grid */
+  .content-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 16px; }
+  .panel { padding: 22px 24px; }
+  .panel-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .panel-header h3 { margin: 0; font-size: 15px; }
+  .panel-header .pill { font-size: 11.5px; color: var(--text-dim); background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); padding: 4px 11px; border-radius: 999px; }
+  .chart-axis { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-dim); margin-top: 8px; }
+
+  .product-row { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--glass-border); font-size: 13px; }
+  .product-row:last-child { border-bottom: none; }
+  .letter-badge { width: 28px; height: 28px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0; }
+  .row-main { flex: 1; min-width: 0; }
+  .row-title { font-weight: 600; }
+  .row-amount { font-weight: 700; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { text-align: left; color: var(--text-dim); font-weight: 500; font-size: 12px; padding-bottom: 10px; }
+  td { padding: 10px 8px 10px 0; border-top: 1px solid var(--glass-border); }
+  .status-badge { font-size: 11px; padding: 3px 10px; border-radius: 999px; background: rgba(52,211,153,0.15); color: var(--success); border: 1px solid rgba(52,211,153,0.3); }
+  .status-badge.pending { background: rgba(167,139,250,0.16); color: var(--accent); border-color: rgba(167,139,250,0.35); }
+</style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar glass" style="border-radius:0;">
+      <div class="brand"><div class="brand-mark">🧩</div> Satoru Admin</div>
+      <div class="nav-item active"><span class="icon">▦</span> Dashboard</div>
+      <div class="nav-item"><span class="icon">📁</span> Projects</div>
+      <div class="nav-item"><span class="icon">👥</span> Users</div>
+      <div class="nav-item"><span class="icon">📦</span> Products</div>
+      <div class="nav-item"><span class="icon">🧾</span> Orders</div>
+      <div class="nav-item"><span class="icon">📈</span> Analytics</div>
+      <div class="nav-section-label">Other</div>
+      <div class="nav-item"><span class="icon">📄</span> Reports</div>
+      <div class="nav-item"><span class="icon">⚙️</span> Settings</div>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <h1>Dashboard</h1>
+        <div class="user-chip glass"><div class="avatar">N</div></div>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat-card glass">
+          <div class="stat-label">Total Sales</div>
+          <div class="stat-value">฿125,430</div>
+          <div class="stat-delta">▲ 8.2%</div>
+          <svg class="stat-spark" viewBox="0 0 200 34" preserveAspectRatio="none"><polyline points="0,26 30,20 60,24 90,10 120,16 150,6 180,12 200,4" fill="none" stroke="#a78bfa" stroke-width="2"/></svg>
+        </div>
+        <div class="stat-card glass">
+          <div class="stat-label">Orders</div>
+          <div class="stat-value">320</div>
+          <div class="stat-delta">▲ 15.3%</div>
+          <svg class="stat-spark" viewBox="0 0 200 34" preserveAspectRatio="none"><polyline points="0,20 30,24 60,14 90,18 120,8 150,14 180,4 200,10" fill="none" stroke="#6366f1" stroke-width="2"/></svg>
+        </div>
+        <div class="stat-card glass">
+          <div class="stat-label">Active Users</div>
+          <div class="stat-value">1,250</div>
+          <div class="stat-delta">▲ 12.5%</div>
+          <svg class="stat-spark" viewBox="0 0 200 34" preserveAspectRatio="none"><polyline points="0,24 30,18 60,20 90,10 120,14 150,8 180,10 200,2" fill="none" stroke="#34d399" stroke-width="2"/></svg>
+        </div>
+        <div class="stat-card glass">
+          <div class="stat-label">Active Projects</div>
+          <div class="stat-value">18</div>
+          <div class="stat-delta">▲ 4.5%</div>
+          <svg class="stat-spark" viewBox="0 0 200 34" preserveAspectRatio="none"><polyline points="0,18 30,20 60,12 90,16 120,10 150,12 180,6 200,8" fill="none" stroke="#fbbf24" stroke-width="2"/></svg>
+        </div>
+      </div>
+
+      <div class="workflow-panel glass">
+        <div class="workflow-header">
+          <h3>Business Workflow</h3>
+          <span class="pill">ข้อมูลไหลแบบเรียลไทม์</span>
+        </div>
+        <div class="workflow-row">
+          <div class="workflow-node n-orders">
+            <div class="icon-wrap">🧾</div>
+            <div class="wf-label">Orders</div>
+            <div class="wf-value">320</div>
+            <div class="wf-sub">รับออเดอร์วันนี้</div>
+          </div>
+          <div class="workflow-arrow">
+            <div class="wf-line" style="background: linear-gradient(90deg, transparent, #a78bfa, transparent);"></div>
+            <div class="wf-dot" style="background: #a78bfa; box-shadow: 0 0 14px 4px rgba(167,139,250,0.65), 0 0 4px 1px rgba(167,139,250,0.9);"></div>
+          </div>
+          <div class="workflow-node n-inventory">
+            <div class="icon-wrap">📦</div>
+            <div class="wf-label">Inventory</div>
+            <div class="wf-value">1,842</div>
+            <div class="wf-sub">สต็อกอัปเดตอัตโนมัติ</div>
+          </div>
+          <div class="workflow-arrow">
+            <div class="wf-line" style="background: linear-gradient(90deg, transparent, #818cf8, transparent);"></div>
+            <div class="wf-dot" style="background: #818cf8; box-shadow: 0 0 14px 4px rgba(129,140,248,0.65), 0 0 4px 1px rgba(129,140,248,0.9);"></div>
+          </div>
+          <div class="workflow-node n-analytics">
+            <div class="icon-wrap">📈</div>
+            <div class="wf-label">Analytics</div>
+            <div class="wf-value">+12.5%</div>
+            <div class="wf-sub">แนวโน้มยอดขาย</div>
+          </div>
+          <div class="workflow-arrow">
+            <div class="wf-line" style="background: linear-gradient(90deg, transparent, #34d399, transparent);"></div>
+            <div class="wf-dot" style="background: #34d399; box-shadow: 0 0 14px 4px rgba(52,211,153,0.65), 0 0 4px 1px rgba(52,211,153,0.9);"></div>
+          </div>
+          <div class="workflow-node n-reports">
+            <div class="icon-wrap">📄</div>
+            <div class="wf-label">Reports</div>
+            <div class="wf-value">4</div>
+            <div class="wf-sub">รายงานพร้อมส่งออก</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-grid">
+        <div class="panel glass">
+          <div class="panel-header"><h3>Analytics Overview</h3><span class="pill">This Week</span></div>
+          <svg viewBox="0 0 560 170" width="100%" height="170" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="lineFillP" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#a78bfa" stop-opacity="0.35"/>
+                <stop offset="100%" stop-color="#a78bfa" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+            <polyline points="0,115 80,88 160,122 240,58 320,90 400,38 480,66 560,20" fill="none" stroke="#a78bfa" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+            <polygon points="0,115 80,88 160,122 240,58 320,90 400,38 480,66 560,20 560,170 0,170" fill="url(#lineFillP)"/>
+          </svg>
+          <div class="chart-axis"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
+        </div>
+
+        <div class="panel glass">
+          <div class="panel-header"><h3>Top Products</h3></div>
+          <div class="product-row"><div class="letter-badge" style="background:rgba(167,139,250,0.18); color:var(--accent);">A</div><div class="row-main"><div class="row-title">Product A</div></div><div class="row-amount">฿12,420</div></div>
+          <div class="product-row"><div class="letter-badge" style="background:rgba(99,102,241,0.18); color:#a5b4fc;">B</div><div class="row-main"><div class="row-title">Product B</div></div><div class="row-amount">฿8,210</div></div>
+          <div class="product-row"><div class="letter-badge" style="background:rgba(52,211,153,0.18); color:var(--success);">C</div><div class="row-main"><div class="row-title">Product C</div></div><div class="row-amount">฿6,150</div></div>
+          <div class="product-row"><div class="letter-badge" style="background:rgba(251,191,36,0.18); color:var(--gold);">D</div><div class="row-main"><div class="row-title">Product D</div></div><div class="row-amount">฿4,230</div></div>
+        </div>
+      </div>
+
+      <div class="panel glass">
+        <div class="panel-header"><h3>Recent Orders</h3></div>
+        <table>
+          <thead><tr><th>Order ID</th><th>Customer</th><th>Status</th><th>Amount</th></tr></thead>
+          <tbody>
+            <tr><td>#1024</td><td>John Doe</td><td><span class="status-badge">Completed</span></td><td>฿2,450</td></tr>
+            <tr><td>#1023</td><td>Jane Smith</td><td><span class="status-badge">Completed</span></td><td>฿1,180</td></tr>
+            <tr><td>#1022</td><td>Alex Kim</td><td><span class="status-badge pending">Pending</span></td><td>฿3,920</td></tr>
+            <tr><td>#1021</td><td>Mai Tran</td><td><span class="status-badge">Completed</span></td><td>฿880</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

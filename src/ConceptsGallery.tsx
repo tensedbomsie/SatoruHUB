@@ -56,6 +56,13 @@ const CONCEPT_GROUPS: ConceptGroup[] = [
         url: 'https://tensedbomsie.github.io/MissDsPetGrooming/',
         thumb: 'client-missdspetgrooming.png',
       },
+      {
+        name: 'Pasteleria Colin (Eugene, US)',
+        nameEn: 'Pasteleria Colin (Eugene, US)',
+        icon: '🎂',
+        url: 'https://tensedbomsie.github.io/PasteleriaColin/',
+        thumb: 'client-pasteleriacolin.png',
+      },
     ],
   },
   {

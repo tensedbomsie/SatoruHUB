@@ -42,6 +42,13 @@ const CONCEPT_GROUPS: ConceptGroup[] = [
         url: 'https://tensedbomsie.github.io/VDental/',
         thumb: 'client-vdental.png',
       },
+      {
+        name: 'The Wylie Dog Grooming (Charlotte, US)',
+        nameEn: 'The Wylie Dog Grooming (Charlotte, US)',
+        icon: '🐶',
+        url: 'https://tensedbomsie.github.io/WylieDogGrooming/',
+        thumb: 'client-wyliedog.png',
+      },
     ],
   },
   {

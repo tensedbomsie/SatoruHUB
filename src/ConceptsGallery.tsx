@@ -35,6 +35,13 @@ const CONCEPT_GROUPS: ConceptGroup[] = [
         url: 'https://tensedbomsie.github.io/StrandSalonSpa/',
         thumb: 'client-strand-beauty-glow.png',
       },
+      {
+        name: 'V Dental Health & Aesthetics (Charlotte, US)',
+        nameEn: 'V Dental Health & Aesthetics (Charlotte, US)',
+        icon: '😁',
+        url: 'https://tensedbomsie.github.io/VDental/',
+        thumb: 'client-vdental.png',
+      },
     ],
   },
   {

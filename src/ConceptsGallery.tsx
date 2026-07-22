@@ -49,6 +49,13 @@ const CONCEPT_GROUPS: ConceptGroup[] = [
         url: 'https://tensedbomsie.github.io/WylieDogGrooming/',
         thumb: 'client-wyliedog.png',
       },
+      {
+        name: "Miss. D's Pet Grooming (Charlotte, US)",
+        nameEn: "Miss. D's Pet Grooming (Charlotte, US)",
+        icon: '🚐',
+        url: 'https://tensedbomsie.github.io/MissDsPetGrooming/',
+        thumb: 'client-missdspetgrooming.png',
+      },
     ],
   },
   {

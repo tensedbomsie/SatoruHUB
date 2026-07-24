@@ -16,6 +16,7 @@ import {
   type TechDictionaryStats,
 } from './liveStats'
 import { THEMES, getStoredTheme, applyTheme, setTheme, type ThemeId } from './theme'
+import { getStoredHubName, setHubName, DEFAULT_HUB_NAME } from './hubSettings'
 import ConceptsGallery from './ConceptsGallery'
 import PublicPortfolio from './PublicPortfolio'
 import TestimonialsAdmin from './TestimonialsAdmin'
@@ -157,19 +158,31 @@ function App() {
   const [showRegister, setShowRegister] = useState(false)
   const [cornerOpen, setCornerOpen] = useState(false)
   const [view, setView] = useState<'hub' | 'concepts' | 'testimonials' | 'requests'>('hub')
-  const [showTheme, setShowTheme] = useState(false)
+  const [showSettings, setShowSettings] = useState(false)
   const [currentTheme, setCurrentTheme] = useState<ThemeId>('dark')
+  const [hubName, setHubNameState] = useState(DEFAULT_HUB_NAME)
+  const [nameDraft, setNameDraft] = useState(DEFAULT_HUB_NAME)
   const [isPortfolio] = useState(() => window.location.pathname.replace(/\/$/, '').endsWith('/PPchanDesignConcepts'))
 
   useEffect(() => {
     const stored = getStoredTheme()
     setCurrentTheme(stored)
     applyTheme(stored)
+    const storedName = getStoredHubName()
+    setHubNameState(storedName)
+    setNameDraft(storedName)
   }, [])
 
   const chooseTheme = (id: ThemeId) => {
     setTheme(id)
     setCurrentTheme(id)
+  }
+
+  const saveHubName = () => {
+    const trimmed = nameDraft.trim() || DEFAULT_HUB_NAME
+    setHubName(trimmed)
+    setHubNameState(trimmed)
+    setNameDraft(trimmed)
   }
 
   useEffect(() => {
@@ -203,7 +216,7 @@ function App() {
         {view !== 'hub' ? (
           <button onClick={() => setView('hub')}>← กลับ</button>
         ) : (
-          <h1>🏠 Satoru HUB</h1>
+          <h1>🏠 {hubName}</h1>
         )}
         <span className="spacer" />
         {view === 'hub' && (
@@ -216,7 +229,7 @@ function App() {
             </a>
           </>
         )}
-        <button onClick={() => setShowTheme(true)}>🌗 ธีม</button>
+        <button onClick={() => setShowSettings(true)} title="ตั้งค่า">⚙️ ตั้งค่า</button>
         <span className="user-email">{session.user.email}</span>
         <button onClick={() => supabase.auth.signOut()}>ออกจากระบบ</button>
       </div>
@@ -317,31 +330,51 @@ function App() {
         </div>
       )}
 
-      {showTheme && (
-        <div className="modal-backdrop" onClick={() => setShowTheme(false)}>
-          <div className="modal theme-modal" onClick={(e) => e.stopPropagation()}>
-            <h2>เลือกธีมของ Hub</h2>
-            <p className="modal-sub">เปลี่ยนทันที ไม่ต้อง deploy ใหม่ — ธีมที่เลือกจะซิงก์ไปทุกแอปในเครือด้วย</p>
-            <div className="theme-grid">
-              {THEMES.map((t) => (
-                <button
-                  key={t.id}
-                  className={`theme-card${currentTheme === t.id ? ' active' : ''}`}
-                  onClick={() => chooseTheme(t.id)}
-                >
-                  <div className="theme-card-swatch" style={{ background: t.bg }}>
-                    <span className="theme-swatch-dot" style={{ background: t.accent }} />
-                    <span className="theme-swatch-dot" style={{ background: t.accent2 }} />
-                  </div>
-                  <div className="theme-card-label">
-                    <span className="theme-card-name">{t.name}</span>
-                    <span className="theme-card-desc">{t.desc}</span>
-                  </div>
+      {showSettings && (
+        <div className="modal-backdrop" onClick={() => setShowSettings(false)}>
+          <div className="modal settings-modal" onClick={(e) => e.stopPropagation()}>
+            <h2>⚙️ ตั้งค่า</h2>
+            <p className="modal-sub">การตั้งค่าเหล่านี้เก็บในเครื่องนี้ และซิงก์ไปทุกแอปในเครือด้วย</p>
+
+            <div className="settings-section">
+              <h3 className="settings-section-title">ชื่อฮับ</h3>
+              <div className="settings-name-row">
+                <input
+                  value={nameDraft}
+                  onChange={(e) => setNameDraft(e.target.value)}
+                  placeholder={DEFAULT_HUB_NAME}
+                  maxLength={40}
+                />
+                <button className="btn btn-primary" onClick={saveHubName} disabled={nameDraft.trim() === hubName}>
+                  บันทึก
                 </button>
-              ))}
+              </div>
             </div>
+
+            <div className="settings-section">
+              <h3 className="settings-section-title">ธีม</h3>
+              <div className="theme-grid">
+                {THEMES.map((t) => (
+                  <button
+                    key={t.id}
+                    className={`theme-card${currentTheme === t.id ? ' active' : ''}`}
+                    onClick={() => chooseTheme(t.id)}
+                  >
+                    <div className="theme-card-swatch" style={{ background: t.bg }}>
+                      <span className="theme-swatch-dot" style={{ background: t.accent }} />
+                      <span className="theme-swatch-dot" style={{ background: t.accent2 }} />
+                    </div>
+                    <div className="theme-card-label">
+                      <span className="theme-card-name">{t.name}</span>
+                      <span className="theme-card-desc">{t.desc}</span>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+
             <div className="modal-actions">
-              <button className="btn" onClick={() => setShowTheme(false)}>ปิด</button>
+              <button className="btn" onClick={() => setShowSettings(false)}>ปิด</button>
             </div>
           </div>
         </div>

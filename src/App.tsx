@@ -162,7 +162,12 @@ function App() {
   const [currentTheme, setCurrentTheme] = useState<ThemeId>('dark')
   const [hubName, setHubNameState] = useState(DEFAULT_HUB_NAME)
   const [nameDraft, setNameDraft] = useState(DEFAULT_HUB_NAME)
-  const [isPortfolio] = useState(() => window.location.pathname.replace(/\/$/, '').endsWith('/PPchanDesignConcepts'))
+  const [isPortfolio] = useState(() => {
+    const path = window.location.pathname.replace(/\/$/, '')
+    if (path.endsWith('/PPchanDesignConcepts')) return true
+    const host = window.location.hostname
+    return (host === 'ppchan.com' || host === 'www.ppchan.com') && path === ''
+  })
 
   useEffect(() => {
     const stored = getStoredTheme()

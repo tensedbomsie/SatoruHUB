@@ -111,14 +111,14 @@ const CONCEPT_GROUPS: ConceptGroup[] = [
 
 const TEXT = {
   th: {
-    intro: 'รวมงานออกแบบ/เทมเพลตที่ทำไว้',
+    intro: 'ทุกระบบก็ต้องมีหน้าตา — นี่คือตัวอย่างงานออกแบบที่ห่อระบบเหล่านั้นไว้',
     cards: '⬛ การ์ด',
     preview: '👁️ ดูรวมในหน้านี้',
     moodboard: '🖼️ Moodboard',
     openFull: 'เปิดเต็มจอ',
   },
   en: {
-    intro: 'A collection of design work and templates',
+    intro: 'Every system needs a home — here\'s the design work that wraps around them',
     cards: '⬛ Cards',
     preview: '👁️ Preview Here',
     moodboard: '🖼️ Moodboard',

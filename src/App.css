@@ -153,7 +153,7 @@
 
 .portfolio-cta:hover {
   transform: translateY(-3px) scale(1.02);
-  box-shadow: 0 16px 32px rgba(53, 92, 77, 0.36);
+  box-shadow: 0 16px 32px rgba(53, 92, 77, 0.36), 0 0 24px rgba(216, 154, 106, 0.45);
 }
 
 .portfolio-cta-secondary {
@@ -439,6 +439,79 @@
   transform: translateY(0) scale(1);
 }
 
+/* ---------- Liquid section nav ---------- */
+.portfolio-liquid-nav {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  z-index: 400;
+  display: flex;
+  gap: 2px;
+  padding: 6px;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+  border-radius: 999px;
+  box-shadow: 0 8px 28px rgba(53, 92, 77, 0.14);
+  opacity: 0;
+  transform: translateX(-50%) translateY(-16px);
+  pointer-events: none;
+  transition: opacity 0.4s ease, transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.portfolio-liquid-nav-visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+  pointer-events: auto;
+}
+
+.portfolio-liquid-pill {
+  position: absolute;
+  top: 6px;
+  left: 0;
+  height: calc(100% - 12px);
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  box-shadow: 0 0 18px rgba(216, 154, 106, 0.55), 0 0 4px rgba(53, 92, 77, 0.35);
+  transition: transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1), width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  z-index: 0;
+}
+
+.portfolio-liquid-link {
+  position: relative;
+  z-index: 1;
+  padding: 9px 18px;
+  font-size: 13px;
+  font-weight: 700;
+  font-family: inherit;
+  color: var(--text-dim);
+  background: transparent;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: color 0.3s ease;
+  white-space: nowrap;
+}
+
+.portfolio-liquid-link.active {
+  color: #fff;
+}
+
+@media (max-width: 760px) {
+  .portfolio-liquid-nav {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .portfolio-liquid-nav,
+  .portfolio-liquid-pill {
+    transition: opacity 0.2s ease;
+    transform: none;
+  }
+}
+
 /* ---------- Floating "Let's build yours" button ---------- */
 .portfolio-fab {
   position: fixed;
@@ -448,7 +521,7 @@
   opacity: 0;
   transform: translateY(20px) scale(0.85);
   pointer-events: none;
-  transition: opacity 0.35s ease, transform 0.35s ease;
+  transition: opacity 0.35s ease, transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .portfolio-fab-visible {

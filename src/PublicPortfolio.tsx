@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { TestimonialsList, TestimonialForm } from './Testimonials'
 import BuildRequestModal from './BuildRequestModal'
 import Reveal from './Reveal'
+import PortfolioNav from './PortfolioNav'
 
 type Solution = {
   eyebrow: string
@@ -79,6 +81,7 @@ export default function PublicPortfolio() {
 
   return (
     <div className="portfolio-brand fade-in">
+      <PortfolioNav visible={!heroVisible} />
       <section className="portfolio-hero" ref={heroRef}>
         <div className="portfolio-hero-blob b1"></div>
         <div className="portfolio-hero-blob b2"></div>
@@ -253,12 +256,15 @@ export default function PublicPortfolio() {
 
       <footer className="portfolio-footer">© 2026 PPchan Design Concept</footer>
 
-      <button
-        className={`portfolio-cta portfolio-fab${heroVisible ? '' : ' portfolio-fab-visible'}`}
-        onClick={() => setShowBuildModal(true)}
-      >
-        Let's build yours →
-      </button>
+      {createPortal(
+        <button
+          className={`portfolio-cta portfolio-fab${heroVisible ? '' : ' portfolio-fab-visible'}`}
+          onClick={() => setShowBuildModal(true)}
+        >
+          Let's build yours →
+        </button>,
+        document.body,
+      )}
 
       {showBuildModal && <BuildRequestModal onClose={() => setShowBuildModal(false)} />}
     </div>

@@ -70,6 +70,12 @@ const APPS: AppLink[] = [
   },
 ]
 
+type QuickLink = { name: string; icon: string; url: string }
+
+const QUICK_LINKS: QuickLink[] = [
+  { name: 'YouTube', icon: '▶️', url: 'https://www.youtube.com/' },
+]
+
 const fmt = (n: number) => n.toLocaleString('th-TH', { maximumFractionDigits: 0 })
 
 function HubCardStats({
@@ -159,6 +165,7 @@ function App() {
   const [showRegister, setShowRegister] = useState(false)
   const [cornerOpen, setCornerOpen] = useState(false)
   const [view, setView] = useState<'hub' | 'concepts' | 'testimonials' | 'requests'>('hub')
+  const [showQuickLinks, setShowQuickLinks] = useState(false)
   const [showSettings, setShowSettings] = useState(false)
   const [currentTheme, setCurrentTheme] = useState<ThemeId>('dark')
   const [hubName, setHubNameState] = useState(DEFAULT_HUB_NAME)
@@ -252,14 +259,37 @@ function App() {
       ) : view === 'requests' ? (
         <ProjectRequestsAdmin />
       ) : (
-        <div className="hub-grid">
-          {APPS.map((app) => (
-            <a key={app.name} className="hub-card card" href={app.url}>
-              <span className="hub-card-icon">{app.icon}</span>
-              <span className="hub-card-name">{app.name}</span>
-              <HubCardStats app={app} storyboard={storyboard} food={food} money={money} movie={movie} techDict={techDict} />
-            </a>
-          ))}
+        <div className="flip-zone">
+          <button
+            className="flip-trigger"
+            onClick={() => setShowQuickLinks((v) => !v)}
+            title="พลิกดูลิงก์ที่ใช้บ่อย"
+          >
+            🔄
+          </button>
+          <div className={`flip-scene${showQuickLinks ? ' flipped' : ''}`}>
+            <div className="flip-face flip-front">
+              <div className="hub-grid">
+                {APPS.map((app) => (
+                  <a key={app.name} className="hub-card card" href={app.url}>
+                    <span className="hub-card-icon">{app.icon}</span>
+                    <span className="hub-card-name">{app.name}</span>
+                    <HubCardStats app={app} storyboard={storyboard} food={food} money={money} movie={movie} techDict={techDict} />
+                  </a>
+                ))}
+              </div>
+            </div>
+            <div className="flip-face flip-back">
+              <div className="hub-grid quick-links-grid">
+                {QUICK_LINKS.map((link) => (
+                  <a key={link.name} className="hub-card card" href={link.url} target="_blank" rel="noopener noreferrer">
+                    <span className="hub-card-icon">{link.icon}</span>
+                    <span className="hub-card-name">{link.name}</span>
+                  </a>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
       )}
 

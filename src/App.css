@@ -699,8 +699,25 @@ body {
     radial-gradient(circle at 15% 0%, var(--bg-glow-1), transparent 45%),
     radial-gradient(circle at 85% 20%, var(--bg-glow-2), transparent 45%),
     var(--bg);
+  background-size: 140% 140%;
+  animation: driftGlow 22s ease-in-out infinite alternate;
   transition: background-color 0.2s ease;
   min-height: 100vh;
+}
+
+@keyframes driftGlow {
+  0% {
+    background-position: 0% 0%, 100% 20%, 0% 0%;
+  }
+  100% {
+    background-position: 10% 15%, 85% 40%, 0% 0%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body {
+    animation: none;
+  }
 }
 
 button {
@@ -804,6 +821,7 @@ textarea {
 /* ---------- Shell ---------- */
 .hub-page {
   min-height: 100vh;
+  padding-bottom: 2.4rem;
 }
 
 .toolbar {
@@ -843,11 +861,68 @@ textarea {
   text-decoration: none;
   display: inline-flex;
   align-items: center;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
 }
 
 .toolbar button:hover,
 .toolbar a.toolbar-link:hover {
   background: rgba(255, 255, 255, 0.08);
+  transform: translateY(-2px) scale(1.04);
+  border-color: color-mix(in srgb, var(--accent) 50%, var(--glass-border));
+  box-shadow: 0 0 16px color-mix(in srgb, var(--accent) 30%, transparent);
+}
+
+/* ---------- Bottom marquee ticker ---------- */
+.marquee-ticker {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 300;
+  overflow: hidden;
+  padding: 0.55rem 0;
+  background: var(--glass);
+  border-top: 1px solid var(--glass-border);
+  backdrop-filter: var(--card-blur);
+  -webkit-backdrop-filter: var(--card-blur);
+  box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.18);
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marqueeScroll 32s linear infinite;
+}
+
+.marquee-segment {
+  flex: 0 0 auto;
+  padding-right: 3rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  white-space: nowrap;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2), var(--accent));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@keyframes marqueeScroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.marquee-ticker:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: none;
+  }
 }
 
 /* ---------- Hub grid ---------- */
@@ -869,12 +944,13 @@ textarea {
   padding: 2rem 1.2rem;
   text-decoration: none;
   color: var(--text);
-  transition: transform 0.18s ease, background 0.18s ease;
+  transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.3s ease, box-shadow 0.3s ease;
 }
 
 .hub-card:hover {
-  transform: translateY(-4px);
+  transform: translateY(-6px) scale(1.03);
   background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 0 1px var(--glass-border), 0 12px 32px rgba(0, 0, 0, 0.25), 0 0 28px color-mix(in srgb, var(--accent) 35%, transparent);
 }
 
 .hub-card-icon {
@@ -1158,7 +1234,7 @@ textarea {
 .corner-links {
   position: fixed;
   right: 1rem;
-  bottom: 1rem;
+  bottom: 3.6rem;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1233,7 +1309,7 @@ textarea {
 .side-link-left {
   position: fixed;
   left: 1rem;
-  bottom: 1rem;
+  bottom: 3.6rem;
   z-index: 900;
 }
 

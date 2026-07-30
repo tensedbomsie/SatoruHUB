@@ -21,6 +21,7 @@ import ConceptsGallery from './ConceptsGallery'
 import PublicPortfolio from './PublicPortfolio'
 import TestimonialsAdmin from './TestimonialsAdmin'
 import ProjectRequestsAdmin from './ProjectRequestsAdmin'
+import MarqueeTicker from './MarqueeTicker'
 import './App.css'
 
 type AppLink = {
@@ -256,6 +257,8 @@ function App() {
           ))}
         </div>
       )}
+
+      <MarqueeTicker storyboard={storyboard} food={food} money={money} movie={movie} techDict={techDict} />
 
       <a
         className="side-link-left"

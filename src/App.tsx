@@ -227,15 +227,20 @@ function App() {
         <span className="spacer" />
         {view === 'hub' && (
           <>
-            <button onClick={() => setView('concepts')}>🎨 Concepts</button>
-            <button onClick={() => setView('testimonials')}>💬 รีวิว</button>
-            <button onClick={() => setView('requests')}>📋 คำขอสร้างเว็บ</button>
-            <a className="toolbar-link" href={`${import.meta.env.BASE_URL}PPchanDesignConcepts`} target="_blank" rel="noopener noreferrer">
+            <button className="nav-btn nav-btn-1" onClick={() => setView('concepts')}>🎨 Concepts</button>
+            <button className="nav-btn nav-btn-2" onClick={() => setView('testimonials')}>💬 รีวิว</button>
+            <button className="nav-btn nav-btn-3" onClick={() => setView('requests')}>📋 คำขอสร้างเว็บ</button>
+            <a
+              className="toolbar-link nav-btn nav-btn-4"
+              href={`${import.meta.env.BASE_URL}PPchanDesignConcepts`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               🌐 Portfolio
             </a>
           </>
         )}
-        <button onClick={() => setShowSettings(true)} title="ตั้งค่า">⚙️ ตั้งค่า</button>
+        <button className="nav-btn nav-btn-5" onClick={() => setShowSettings(true)} title="ตั้งค่า">⚙️ ตั้งค่า</button>
         <span className="user-email">{session.user.email}</span>
         <button onClick={() => supabase.auth.signOut()}>ออกจากระบบ</button>
       </div>

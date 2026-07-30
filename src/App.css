@@ -872,6 +872,33 @@ textarea {
   box-shadow: 0 0 16px color-mix(in srgb, var(--accent) 30%, transparent);
 }
 
+/* ---------- Nav button categorical colors (dark & business = dark surface) ---------- */
+:root:not([data-theme='warm']) .nav-btn-1 { --nav-color: #3987e5; }
+:root:not([data-theme='warm']) .nav-btn-2 { --nav-color: #d95926; }
+:root:not([data-theme='warm']) .nav-btn-3 { --nav-color: #199e70; }
+:root:not([data-theme='warm']) .nav-btn-4 { --nav-color: #c98500; }
+:root:not([data-theme='warm']) .nav-btn-5 { --nav-color: #d55181; }
+
+:root[data-theme='warm'] .nav-btn-1 { --nav-color: #2a78d6; }
+:root[data-theme='warm'] .nav-btn-2 { --nav-color: #eb6834; }
+:root[data-theme='warm'] .nav-btn-3 { --nav-color: #1baf7a; }
+:root[data-theme='warm'] .nav-btn-4 { --nav-color: #b8890a; }
+:root[data-theme='warm'] .nav-btn-5 { --nav-color: #e87ba4; }
+
+.nav-btn {
+  color: #fff;
+  border-color: color-mix(in srgb, var(--nav-color) 60%, black 15%);
+  background: var(--nav-color);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+}
+
+.nav-btn:hover {
+  color: #fff;
+  border-color: var(--nav-color);
+  background: color-mix(in srgb, var(--nav-color) 88%, white 12%);
+  box-shadow: 0 0 18px color-mix(in srgb, var(--nav-color) 55%, transparent);
+}
+
 /* ---------- Bottom marquee ticker ---------- */
 .marquee-ticker {
   position: fixed;

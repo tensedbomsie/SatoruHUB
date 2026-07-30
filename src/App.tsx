@@ -70,11 +70,31 @@ const APPS: AppLink[] = [
   },
 ]
 
-type QuickLink = { name: string; icon: string; url: string }
+type QuickLink = { name: string; icon: 'youtube' | string; url: string }
 
-const QUICK_LINKS: QuickLink[] = [
-  { name: 'YouTube', icon: '▶️', url: 'https://www.youtube.com/' },
+const QUICK_LINKS: QuickLink[] = [{ name: 'YouTube', icon: 'youtube', url: 'https://www.youtube.com/' }]
+
+type FavoriteChannel = { name: string; url: string }
+
+const FAVORITE_CHANNELS: FavoriteChannel[] = [
+  { name: 'Ohana', url: 'https://www.youtube.com/@ohanaclip' },
+  { name: 'Wednesday Night', url: 'https://www.youtube.com/@wednesdaynight' },
 ]
+
+function QuickLinkIcon({ icon }: { icon: string }) {
+  if (icon === 'youtube') {
+    return (
+      <svg viewBox="0 0 24 24" width="34" height="34" aria-hidden="true">
+        <path
+          fill="#FF0000"
+          d="M23.498 6.186a2.994 2.994 0 0 0-2.107-2.117C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.391.524A2.994 2.994 0 0 0 .502 6.186 31.26 31.26 0 0 0 0 12a31.26 31.26 0 0 0 .502 5.814 2.994 2.994 0 0 0 2.107 2.117c1.886.524 9.391.524 9.391.524s7.505 0 9.391-.524a2.994 2.994 0 0 0 2.107-2.117A31.26 31.26 0 0 0 24 12a31.26 31.26 0 0 0-.502-5.814z"
+        />
+        <path fill="#fff" d="M9.75 15.02V8.98L15.5 12l-5.75 3.02z" />
+      </svg>
+    )
+  }
+  return <span className="hub-card-icon">{icon}</span>
+}
 
 const fmt = (n: number) => n.toLocaleString('th-TH', { maximumFractionDigits: 0 })
 
@@ -166,6 +186,7 @@ function App() {
   const [cornerOpen, setCornerOpen] = useState(false)
   const [view, setView] = useState<'hub' | 'concepts' | 'testimonials' | 'requests'>('hub')
   const [showQuickLinks, setShowQuickLinks] = useState(false)
+  const [showFavorites, setShowFavorites] = useState(false)
   const [showSettings, setShowSettings] = useState(false)
   const [currentTheme, setCurrentTheme] = useState<ThemeId>('dark')
   const [hubName, setHubNameState] = useState(DEFAULT_HUB_NAME)
@@ -280,13 +301,38 @@ function App() {
               </div>
             </div>
             <div className="flip-face flip-back">
-              <div className="hub-grid quick-links-grid">
-                {QUICK_LINKS.map((link) => (
-                  <a key={link.name} className="hub-card card" href={link.url} target="_blank" rel="noopener noreferrer">
-                    <span className="hub-card-icon">{link.icon}</span>
-                    <span className="hub-card-name">{link.name}</span>
-                  </a>
-                ))}
+              <div className="quick-links-column">
+                <div className="youtube-bar">
+                  <button
+                    className="youtube-bar-hamburger"
+                    onClick={() => setShowFavorites((v) => !v)}
+                    title="ช่องโปรด"
+                  >
+                    ☰
+                  </button>
+                  <div className="youtube-bar-body">
+                    {!showFavorites ? (
+                      <a
+                        key="yt"
+                        className="youtube-bar-main fade-in"
+                        href={QUICK_LINKS[0].url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <QuickLinkIcon icon={QUICK_LINKS[0].icon} />
+                        <span className="hub-card-name">{QUICK_LINKS[0].name}</span>
+                      </a>
+                    ) : (
+                      <div key="favs" className="favorites-list fade-in">
+                        {FAVORITE_CHANNELS.map((ch) => (
+                          <a key={ch.name} className="favorites-list-item" href={ch.url} target="_blank" rel="noopener noreferrer">
+                            {ch.name}
+                          </a>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
           </div>

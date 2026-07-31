@@ -98,6 +98,14 @@ export default function PublicPortfolio() {
           Every business has its own way of working. We design the digital tools that fit around that — instead of
           asking your business to adapt to generic software.
         </p>
+        <a
+          className="portfolio-hero-demo-chip"
+          href="https://bookingdemo.ppchan.com"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          🗓️ See it in action — live Booking System demo →
+        </a>
         <div className="portfolio-hero-actions">
           <a className="portfolio-cta" href="#bridge">
             See how we think ↓

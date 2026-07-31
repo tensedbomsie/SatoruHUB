@@ -68,6 +68,12 @@ const APPS: AppLink[] = [
     icon: '📖',
     url: 'https://tensedbomsie.github.io/TechDictionary/',
   },
+  {
+    name: 'Booking Demo',
+    description: 'ระบบจองคิวตัวอย่างที่ใช้เสนอลูกค้าจริง พร้อม auto-invoice และ dashboard',
+    icon: '🗓️',
+    url: 'https://bookingdemo.ppchan.com/',
+  },
 ]
 
 type QuickLink = { name: string; icon: 'youtube' | string; url: string }

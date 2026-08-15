@@ -122,6 +122,34 @@ export async function fetchTechDictionaryStats(): Promise<TechDictionaryStats | 
   }
 }
 
+export type WorkoutStats = {
+  lastPerformedAt: string | null
+  totalSets: number
+  exerciseNames: string[]
+}
+
+export async function fetchWorkoutStats(): Promise<WorkoutStats | null> {
+  try {
+    const { data } = await supabase
+      .from('workouts')
+      .select('performed_at, workout_exercises(exercises(name), sets(reps, weight))')
+      .order('performed_at', { ascending: false })
+      .limit(1)
+
+    if (!data || data.length === 0) return { lastPerformedAt: null, totalSets: 0, exerciseNames: [] }
+    const w = data[0] as any
+    let totalSets = 0
+    const names: string[] = []
+    for (const we of w.workout_exercises ?? []) {
+      if (we.exercises?.name) names.push(we.exercises.name)
+      totalSets += (we.sets ?? []).length
+    }
+    return { lastPerformedAt: w.performed_at, totalSets, exerciseNames: names }
+  } catch {
+    return null
+  }
+}
+
 export async function fetchMovieHubStats(): Promise<MovieHubStats | null> {
   try {
     const { data } = await supabase

@@ -3,14 +3,15 @@ import type { Session } from '@supabase/supabase-js'
 import { supabase } from './lib/supabase'
 import Login from './Login'
 import {
-  timeAgo,
   fetchStoryboardStats,
   fetchFoodDiaryStats,
+  fetchWorkoutStats,
   fetchMoneyDiaryStats,
   fetchMovieHubStats,
   fetchTechDictionaryStats,
   type StoryboardStats,
   type FoodDiaryStats,
+  type WorkoutStats,
   type MoneyDiaryStats,
   type MovieHubStats,
   type TechDictionaryStats,
@@ -22,6 +23,9 @@ import PublicPortfolio from './PublicPortfolio'
 import TestimonialsAdmin from './TestimonialsAdmin'
 import ProjectRequestsAdmin from './ProjectRequestsAdmin'
 import MarqueeTicker from './MarqueeTicker'
+import FloatingChat from './FloatingChat'
+import HubWheel from './HubWheel'
+import HubSidebar from './HubSidebar'
 import './App.css'
 
 type AppLink = {
@@ -102,89 +106,12 @@ function QuickLinkIcon({ icon }: { icon: string }) {
   return <span className="hub-card-icon">{icon}</span>
 }
 
-const fmt = (n: number) => n.toLocaleString('th-TH', { maximumFractionDigits: 0 })
-
-function HubCardStats({
-  app,
-  storyboard,
-  food,
-  money,
-  movie,
-  techDict,
-}: {
-  app: AppLink
-  storyboard: StoryboardStats | null
-  food: FoodDiaryStats | null
-  money: MoneyDiaryStats | null
-  movie: MovieHubStats | null
-  techDict: TechDictionaryStats | null
-}) {
-  if (app.name === 'Storyboard') {
-    if (!storyboard) return <span className="hub-card-desc">{app.description}</span>
-    return (
-      <div className="hub-card-stats">
-        <span className="stat-line">{storyboard.count} Projects</span>
-        {storyboard.latestName && (
-          <>
-            <span className="stat-line-sub">ล่าสุด: {storyboard.latestName}</span>
-            {storyboard.latestUpdatedAt && (
-              <span className="stat-line-sub">แก้ไข {timeAgo(storyboard.latestUpdatedAt)}</span>
-            )}
-          </>
-        )}
-      </div>
-    )
-  }
-
-  if (app.name === 'Food Diary') {
-    if (!food) return <span className="hub-card-desc">{app.description}</span>
-    return (
-      <div className="hub-card-stats">
-        <span className="stat-line">🔥 {fmt(food.kcalToday)} kcal วันนี้</span>
-        <span className="stat-line-sub">🥩 โปรตีน {fmt(food.proteinToday)}g วันนี้</span>
-      </div>
-    )
-  }
-
-  if (app.name === 'Money Diary') {
-    if (!money) return <span className="hub-card-desc">{app.description}</span>
-    return (
-      <div className="hub-card-stats">
-        <span className="stat-line">รายรับวันนี้ ฿{fmt(money.incomeToday)}</span>
-        <span className="stat-line-sub">รายรับเดือนนี้ ฿{fmt(money.incomeMonth)}</span>
-      </div>
-    )
-  }
-
-  if (app.name === 'Movie Hub') {
-    if (!movie) return <span className="hub-card-desc">{app.description}</span>
-    if (!movie.title) return <span className="hub-card-desc">{app.description}</span>
-    return (
-      <div className="hub-card-stats">
-        <span className="stat-line-sub">ดูล่าสุด: {movie.title}</span>
-        {movie.rating != null && <span className="stat-line">⭐ {Number(movie.rating).toFixed(1)}</span>}
-      </div>
-    )
-  }
-
-  if (app.name === 'Tech Dictionary') {
-    if (!techDict || techDict.count === 0) return <span className="hub-card-desc">{app.description}</span>
-    return (
-      <div className="hub-card-stats">
-        <span className="stat-line">📖 {techDict.count} คำศัพท์</span>
-        <span className="stat-line-sub">{techDict.categoryCount} หมวดหมู่</span>
-      </div>
-    )
-  }
-
-  return <span className="hub-card-desc">{app.description}</span>
-}
-
 function App() {
   const [session, setSession] = useState<Session | null>(null)
   const [checked, setChecked] = useState(false)
   const [storyboard, setStoryboard] = useState<StoryboardStats | null>(null)
   const [food, setFood] = useState<FoodDiaryStats | null>(null)
+  const [workout, setWorkout] = useState<WorkoutStats | null>(null)
   const [money, setMoney] = useState<MoneyDiaryStats | null>(null)
   const [movie, setMovie] = useState<MovieHubStats | null>(null)
   const [techDict, setTechDict] = useState<TechDictionaryStats | null>(null)
@@ -195,6 +122,9 @@ function App() {
   const [showFavorites, setShowFavorites] = useState(false)
   const [showSettings, setShowSettings] = useState(false)
   const [currentTheme, setCurrentTheme] = useState<ThemeId>('dark')
+  const [chatOpen, setChatOpen] = useState(false)
+  const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [lastSync, setLastSync] = useState<Date | null>(null)
   const [hubName, setHubNameState] = useState(DEFAULT_HUB_NAME)
   const [nameDraft, setNameDraft] = useState(DEFAULT_HUB_NAME)
   const [isPortfolio] = useState(() => {
@@ -238,11 +168,14 @@ function App() {
 
   useEffect(() => {
     if (!session) return
-    fetchStoryboardStats().then(setStoryboard)
-    fetchFoodDiaryStats().then(setFood)
-    fetchMoneyDiaryStats().then(setMoney)
-    fetchMovieHubStats().then(setMovie)
-    fetchTechDictionaryStats().then(setTechDict)
+    Promise.all([
+      fetchStoryboardStats().then(setStoryboard),
+      fetchFoodDiaryStats().then(setFood),
+      fetchWorkoutStats().then(setWorkout),
+      fetchMoneyDiaryStats().then(setMoney),
+      fetchMovieHubStats().then(setMovie),
+      fetchTechDictionaryStats().then(setTechDict),
+    ]).then(() => setLastSync(new Date()))
   }, [session])
 
   if (isPortfolio) return <PublicPortfolio />
@@ -252,6 +185,18 @@ function App() {
 
   return (
     <div className="hub-page fade-in">
+      {view === 'hub' && (
+        <video
+          className="hub-bg-video"
+          src={`${import.meta.env.BASE_URL}bg-space.mp4`}
+          autoPlay
+          muted
+          loop
+          playsInline
+        />
+      )}
+      <div className="hub-bg-overlay" />
+      <div className="hub-content">
       <div className="toolbar">
         {view !== 'hub' ? (
           <button onClick={() => setView('hub')}>← กลับ</button>
@@ -286,7 +231,15 @@ function App() {
       ) : view === 'requests' ? (
         <ProjectRequestsAdmin />
       ) : (
-        <div className="flip-zone">
+        <div className={`flip-zone${sidebarOpen ? ' sidebar-open' : ''}`}>
+          <HubSidebar
+            open={sidebarOpen}
+            onClose={() => setSidebarOpen((v) => !v)}
+            food={food}
+            workout={workout}
+            money={money}
+            movie={movie}
+          />
           <button
             className="flip-trigger"
             onClick={() => setShowQuickLinks((v) => !v)}
@@ -296,15 +249,18 @@ function App() {
           </button>
           <div className={`flip-scene${showQuickLinks ? ' flipped' : ''}`}>
             <div className="flip-face flip-front">
-              <div className="hub-grid">
-                {APPS.map((app) => (
-                  <a key={app.name} className="hub-card card" href={app.url}>
-                    <span className="hub-card-icon">{app.icon}</span>
-                    <span className="hub-card-name">{app.name}</span>
-                    <HubCardStats app={app} storyboard={storyboard} food={food} money={money} movie={movie} techDict={techDict} />
-                  </a>
-                ))}
-              </div>
+              <HubWheel
+                apps={APPS}
+                onCenterClick={() => setChatOpen((v) => !v)}
+                centerActive={chatOpen}
+                storyboard={storyboard}
+                food={food}
+                workout={workout}
+                money={money}
+                movie={movie}
+                techDict={techDict}
+                lastSync={lastSync}
+              />
             </div>
             <div className="flip-face flip-back">
               <div className="quick-links-column">
@@ -474,6 +430,9 @@ function App() {
           </div>
         </div>
       )}
+
+      <FloatingChat open={chatOpen} onOpenChange={setChatOpen} hideBubble={view === 'hub'} />
+      </div>
     </div>
   )
 }

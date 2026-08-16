@@ -22,7 +22,6 @@ import ConceptsGallery from './ConceptsGallery'
 import PublicPortfolio from './PublicPortfolio'
 import TestimonialsAdmin from './TestimonialsAdmin'
 import ProjectRequestsAdmin from './ProjectRequestsAdmin'
-import MarqueeTicker from './MarqueeTicker'
 import FloatingChat from './FloatingChat'
 import HubWheel from './HubWheel'
 import HubSidebar from './HubSidebar'
@@ -302,8 +301,6 @@ function App() {
           </div>
         </div>
       )}
-
-      <MarqueeTicker storyboard={storyboard} food={food} money={money} movie={movie} techDict={techDict} />
 
       <a
         className="side-link-left"

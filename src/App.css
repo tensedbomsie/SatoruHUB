@@ -846,7 +846,6 @@ textarea {
 /* ---------- Shell ---------- */
 .hub-page {
   min-height: 100vh;
-  padding-bottom: 2.4rem;
   position: relative;
 }
 

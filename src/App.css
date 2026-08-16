@@ -1320,7 +1320,7 @@ textarea {
   cursor: pointer;
   color: var(--text);
   box-shadow: 0 0 18px color-mix(in srgb, var(--accent) 22%, transparent);
-  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease, opacity 0.5s ease;
   z-index: 3;
   font-family: inherit;
   animation: hubCenterPulse 4.5s ease-in-out infinite;
@@ -1345,6 +1345,15 @@ textarea {
   box-shadow: 0 0 34px color-mix(in srgb, var(--accent-2) 50%, transparent);
   border-color: var(--accent-2);
   animation: none;
+}
+
+/* the center button lives outside .hub-wheel-vortex-wrap (it must stay
+   clickable to re-toggle even while the wedge ring is sucked away) — but it
+   should still visually vanish once the chat panel is open, otherwise it's
+   left floating behind the panel forever. */
+.hub-wheel.vortex .hub-wheel-center {
+  opacity: 0;
+  pointer-events: none;
 }
 
 .hub-wheel-center.inspecting {
@@ -2374,6 +2383,68 @@ button.corner-link {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.app-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  animation: appOverlayIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes appOverlayIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.app-overlay-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.6rem 1rem;
+  background: var(--glass);
+  border-bottom: 1px solid var(--glass-border);
+  backdrop-filter: var(--card-blur);
+  -webkit-backdrop-filter: var(--card-blur);
+  flex-shrink: 0;
+}
+
+.app-overlay-title {
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.app-overlay-close {
+  border: 1px solid var(--glass-border);
+  background: var(--glass);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.35rem 0.8rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.app-overlay-close:hover {
+  background: rgba(255, 255, 255, 0.09);
+  border-color: var(--accent);
+}
+
+.app-overlay-frame {
+  flex: 1;
+  width: 100%;
+  border: none;
 }
 
 .fc-panel {

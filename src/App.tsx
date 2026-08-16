@@ -125,6 +125,7 @@ function App() {
   const [chatOpen, setChatOpen] = useState(false)
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [lastSync, setLastSync] = useState<Date | null>(null)
+  const [activeApp, setActiveApp] = useState<Pick<AppLink, 'name' | 'icon' | 'url'> | null>(null)
   const [hubName, setHubNameState] = useState(DEFAULT_HUB_NAME)
   const [nameDraft, setNameDraft] = useState(DEFAULT_HUB_NAME)
   const [isPortfolio] = useState(() => {
@@ -253,6 +254,7 @@ function App() {
                 apps={APPS}
                 onCenterClick={() => setChatOpen((v) => !v)}
                 centerActive={chatOpen}
+                onAppOpen={setActiveApp}
                 storyboard={storyboard}
                 food={food}
                 workout={workout}
@@ -432,6 +434,16 @@ function App() {
       )}
 
       <FloatingChat open={chatOpen} onOpenChange={setChatOpen} hideBubble={view === 'hub'} />
+
+      {activeApp && (
+        <div className="app-overlay">
+          <div className="app-overlay-bar">
+            <span className="app-overlay-title">{activeApp.icon} {activeApp.name}</span>
+            <button className="app-overlay-close" onClick={() => setActiveApp(null)}>✕ กลับ</button>
+          </div>
+          <iframe className="app-overlay-frame" src={activeApp.url} title={activeApp.name} />
+        </div>
+      )}
       </div>
     </div>
   )

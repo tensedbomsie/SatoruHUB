@@ -79,6 +79,7 @@ export default function HubWheel({
   apps,
   onCenterClick,
   centerActive,
+  onAppOpen,
   storyboard,
   food,
   workout,
@@ -90,6 +91,7 @@ export default function HubWheel({
   apps: WheelApp[]
   onCenterClick: () => void
   centerActive: boolean
+  onAppOpen: (app: WheelApp) => void
   storyboard: StoryboardStats | null
   food: FoodDiaryStats | null
   workout: WorkoutStats | null
@@ -160,6 +162,11 @@ export default function HubWheel({
                   href={app.url}
                   onMouseEnter={() => setHovered(app.name)}
                   onMouseLeave={() => setHovered(null)}
+                  onClick={(e) => {
+                    if (e.ctrlKey || e.metaKey || e.shiftKey || e.button !== 0) return
+                    e.preventDefault()
+                    onAppOpen(app)
+                  }}
                 >
                   <path
                     className={`hub-wheel-wedge-path${isHovered ? ' is-hovered' : ''}${isDimmed ? ' is-dimmed' : ''}`}

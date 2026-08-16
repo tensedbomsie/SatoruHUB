@@ -10,6 +10,17 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg'],
+      workbox: {
+        // hub.ppchan.com also serves every other app in the family at the
+        // same origin (/FoodDiary/, /WorkoutTracker/, etc., embedded in the
+        // wheel's iframe overlay) — without this, this SW's SPA fallback
+        // hijacks navigation to those paths too and serves SatoruHUB's own
+        // cached shell instead, which then 404s trying to load its own
+        // asset paths relative to the wrong subpath.
+        navigateFallbackDenylist: [
+          /^\/(Storyboard|FoodDiary|WorkoutTracker|MovieHub|MoneyDiary|TechDictionary|BookingDemoLite|BookingSystemDemo)\//,
+        ],
+      },
       manifest: {
         name: 'Satoru HUB',
         short_name: 'Satoru HUB',

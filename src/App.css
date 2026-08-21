@@ -165,13 +165,17 @@
   text-align: left;
 }
 
+.portfolio-demo-strip {
+  display: flex;
+  justify-content: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--glass-border);
+}
+
 .portfolio-hero-demo-chip {
-  position: relative;
-  z-index: 2;
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  margin-top: 24px;
   padding: 9px 18px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.7);
@@ -304,30 +308,13 @@
 }
 
 .bridge-tag {
-  position: relative;
-  padding: 8px 16px 8px 22px;
+  padding: 8px 16px;
   border: 1px solid var(--glass-border);
   border-radius: 999px;
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.03em;
   color: var(--text-dim);
-}
-
-.bridge-tag::before {
-  content: '';
-  position: absolute;
-  left: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: var(--accent-2);
-}
-
-.bridge-tag:nth-child(odd)::before {
-  background: var(--accent);
 }
 
 /* ---------- What We Do (outcome journey) ---------- */

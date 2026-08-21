@@ -104,14 +104,6 @@ export default function PublicPortfolio() {
               See how we think ↓
             </a>
           </div>
-          <a
-            className="portfolio-hero-demo-chip"
-            href="https://bookingdemo.ppchan.com"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            🗓️ Try the live Booking System demo →
-          </a>
         </div>
 
         <div className="portfolio-hero-index" aria-hidden="true">
@@ -123,6 +115,17 @@ export default function PublicPortfolio() {
           <span>Process</span>
         </div>
       </section>
+
+      <div className="portfolio-demo-strip">
+        <a
+          className="portfolio-hero-demo-chip"
+          href="https://bookingdemo.ppchan.com"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          🗓️ Try the live Booking System demo →
+        </a>
+      </div>
 
       <section className="portfolio-bridge" id="bridge">
         <Reveal>

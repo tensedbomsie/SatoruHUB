@@ -17,9 +17,9 @@ type Solution = {
 const SOLUTIONS: Solution[] = [
   {
     eyebrow: 'Mobile Pet Grooming',
-    challenge: 'A mobile groomer needed to explain why house-calls beat the salon — before anyone would trust the idea.',
+    challenge: 'A mobile groomer needed to explain why house-calls beat the salon, before anyone would trust the idea.',
     tools: ['Website'],
-    outcome: 'A calm, story-led site built around "we come to you" — not a generic grooming template.',
+    outcome: 'A calm, story-led site built around "we come to you," not a generic grooming template.',
     url: 'https://tensedbomsie.github.io/MissDsPetGrooming/',
     thumb: 'client-missdspetgrooming.png',
   },
@@ -35,7 +35,7 @@ const SOLUTIONS: Solution[] = [
     eyebrow: 'Salon & Spa',
     challenge: 'The same pricing questions kept coming in over DM, one at a time.',
     tools: ['Website'],
-    outcome: 'Every service and price laid out clearly — no more "how much for a haircut?" DMs.',
+    outcome: 'Every service and price laid out clearly. No more "how much for a haircut?" DMs.',
     url: 'https://tensedbomsie.github.io/StrandSalonSpa/',
     thumb: 'client-strand-beauty-glow.png',
   },
@@ -49,10 +49,10 @@ const SOLUTIONS: Solution[] = [
   },
   {
     eyebrow: 'Booking System',
-    challenge: 'Customers had to call or message just to check availability — and staff had to answer every one.',
+    challenge: 'Customers had to call or message just to check availability, and staff had to answer every one.',
     tools: ['Website', 'Self-serve Booking', 'Owner Dashboard'],
     outcome:
-      'Customers pick their own time and confirm it themselves — the owner sees every booking in one place instead of a notebook.',
+      'Customers pick their own time and confirm it themselves. The owner sees every booking in one place instead of a notebook.',
     url: 'https://tensedbomsie.github.io/BookingSystemDemo/',
     thumb: 'client-bookingsystemdemo.png',
   },
@@ -93,7 +93,7 @@ export default function PublicPortfolio() {
             Your <span className="accent">tools</span> should too.
           </h1>
           <p>
-            Every business has its own way of working. We design the digital tools that fit around that — instead of
+            Every business has its own way of working. We design the digital tools that fit around that, instead of
             asking your business to adapt to generic software.
           </p>
           <div className="portfolio-hero-actions">
@@ -110,7 +110,7 @@ export default function PublicPortfolio() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            🗓️ See it in action — live Booking System demo →
+            🗓️ Try the live Booking System demo →
           </a>
         </div>
 
@@ -131,7 +131,7 @@ export default function PublicPortfolio() {
         <Reveal>
           <p className="bridge-lead">
             Which usually means it wasn't really built for anyone in particular. A salon doesn't run like a bakery. A
-            clinic doesn't run like a repair shop — so the tools each of them uses probably shouldn't look the same
+            clinic doesn't run like a repair shop, so the tools each of them uses probably shouldn't look the same
             either.
           </p>
         </Reveal>
@@ -154,7 +154,7 @@ export default function PublicPortfolio() {
             <br />
             <br />
             We're a small team that spends time understanding how a business actually works before suggesting
-            anything — because the right tool depends entirely on the business it's for.
+            anything, because the right tool depends entirely on the business it's for.
             <br />
             <br />
             Sometimes that's a beautifully designed website. Sometimes it's a booking calendar that runs itself.
@@ -162,7 +162,7 @@ export default function PublicPortfolio() {
             chats.
             <br />
             <br />
-            We'd rather understand your business first, and build something that actually fits — even if that means
+            We'd rather understand your business first, and build something that actually fits, even if that means
             building less than you expected.
           </p>
         </Reveal>
@@ -192,7 +192,7 @@ export default function PublicPortfolio() {
           </Reveal>
         </div>
         <Reveal>
-          <p className="wwd-closing">Website. Dashboard. Automation. These are the tools — not the point.</p>
+          <p className="wwd-closing">Website. Dashboard. Automation. These are the tools, not the point.</p>
         </Reveal>
       </section>
 
@@ -255,7 +255,7 @@ export default function PublicPortfolio() {
           <h2>Let's explore your business together.</h2>
         </Reveal>
         <Reveal>
-          <p>No pitch, no packages upfront — just a conversation about how things run today.</p>
+          <p>No pitch, no packages upfront, just a conversation about how things run today.</p>
         </Reveal>
         <Reveal>
           <button className="portfolio-cta" onClick={() => setShowBuildModal(true)}>

@@ -83,8 +83,6 @@ export default function PublicPortfolio() {
     <div className="portfolio-brand fade-in">
       <PortfolioNav visible={!heroVisible} />
       <section className="portfolio-hero" ref={heroRef}>
-        <div className="portfolio-hero-grid" aria-hidden="true"></div>
-
         <div className="portfolio-hero-inner">
           <div className="portfolio-wordmark">
             <span className="dot"></span> PPchan Design Concept

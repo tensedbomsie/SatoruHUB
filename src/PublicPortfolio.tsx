@@ -106,13 +106,17 @@ export default function PublicPortfolio() {
           </div>
         </div>
 
-        <div className="portfolio-hero-index" aria-hidden="true">
-          <span>01</span>
-          <span>Philosophy</span>
-          <span>02</span>
-          <span>Solutions</span>
-          <span>03</span>
-          <span>Process</span>
+        <div className="portfolio-hero-visual">
+          <img
+            src={`${import.meta.env.BASE_URL}concepts/portfolio-hero-mockup.png`}
+            alt="A booking system dashboard and customer scheduling screen, part of a project we built"
+            loading="eager"
+          />
+          <div className="portfolio-hero-index" aria-hidden="true">
+            <span>01 Philosophy</span>
+            <span>02 Solutions</span>
+            <span>03 Process</span>
+          </div>
         </div>
       </section>
 

@@ -98,7 +98,7 @@ export default function PublicPortfolio() {
           </p>
           <div className="portfolio-hero-actions">
             <button className="portfolio-cta portfolio-cta-secondary" onClick={() => setShowBuildModal(true)}>
-              Let's talk about your business →
+              Start the conversation →
             </button>
             <a className="portfolio-cta-ghost" href="#bridge">
               See how we think ↓
@@ -169,9 +169,6 @@ export default function PublicPortfolio() {
       </section>
 
       <section className="portfolio-section" id="whatwedo">
-        <Reveal>
-          <div className="ps-eyebrow">What We Do</div>
-        </Reveal>
         <div className="wwd-journey">
           <Reveal className="wwd-step">
             <h3>Help people find you</h3>
@@ -197,9 +194,6 @@ export default function PublicPortfolio() {
       </section>
 
       <section className="portfolio-solutions" id="solutions">
-        <Reveal>
-          <div className="ps-eyebrow">Featured Solutions</div>
-        </Reveal>
         <Reveal>
           <h2 className="ps-heading">A few real projects, and what they actually do.</h2>
         </Reveal>

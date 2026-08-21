@@ -83,36 +83,46 @@ export default function PublicPortfolio() {
     <div className="portfolio-brand fade-in">
       <PortfolioNav visible={!heroVisible} />
       <section className="portfolio-hero" ref={heroRef}>
-        <div className="portfolio-hero-blob b1"></div>
-        <div className="portfolio-hero-blob b2"></div>
+        <div className="portfolio-hero-grid" aria-hidden="true"></div>
 
-        <div className="portfolio-wordmark">
-          <span className="dot"></span> PPchan Design Concept
-        </div>
-        <h1>
-          Every business works differently.
-          <br />
-          Your <span className="accent">tools</span> should too.
-        </h1>
-        <p>
-          Every business has its own way of working. We design the digital tools that fit around that — instead of
-          asking your business to adapt to generic software.
-        </p>
-        <a
-          className="portfolio-hero-demo-chip"
-          href="https://bookingdemo.ppchan.com"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          🗓️ See it in action — live Booking System demo →
-        </a>
-        <div className="portfolio-hero-actions">
-          <a className="portfolio-cta" href="#bridge">
-            See how we think ↓
+        <div className="portfolio-hero-inner">
+          <div className="portfolio-wordmark">
+            <span className="dot"></span> PPchan Design Concept
+          </div>
+          <h1>
+            Every business works differently.
+            <br />
+            Your <span className="accent">tools</span> should too.
+          </h1>
+          <p>
+            Every business has its own way of working. We design the digital tools that fit around that — instead of
+            asking your business to adapt to generic software.
+          </p>
+          <div className="portfolio-hero-actions">
+            <button className="portfolio-cta portfolio-cta-secondary" onClick={() => setShowBuildModal(true)}>
+              Let's talk about your business →
+            </button>
+            <a className="portfolio-cta-ghost" href="#bridge">
+              See how we think ↓
+            </a>
+          </div>
+          <a
+            className="portfolio-hero-demo-chip"
+            href="https://bookingdemo.ppchan.com"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            🗓️ See it in action — live Booking System demo →
           </a>
-          <button className="portfolio-cta portfolio-cta-secondary" onClick={() => setShowBuildModal(true)}>
-            Let's talk about your business →
-          </button>
+        </div>
+
+        <div className="portfolio-hero-index" aria-hidden="true">
+          <span>01</span>
+          <span>Philosophy</span>
+          <span>02</span>
+          <span>Solutions</span>
+          <span>03</span>
+          <span>Process</span>
         </div>
       </section>
 
@@ -128,10 +138,11 @@ export default function PublicPortfolio() {
           </p>
         </Reveal>
         <Reveal className="bridge-illustration">
-          <svg width="180" height="120" viewBox="0 0 180 120" fill="none" aria-hidden="true">
-            <rect x="8" y="8" width="88" height="88" rx="20" stroke="var(--accent-2)" strokeWidth="2" opacity="0.55" />
-            <circle cx="128" cy="60" r="52" stroke="var(--accent)" strokeWidth="2" opacity="0.65" />
-          </svg>
+          {['Salon', 'Bakery', 'Clinic', 'Repair Shop'].map((biz) => (
+            <span key={biz} className="bridge-tag">
+              {biz}
+            </span>
+          ))}
         </Reveal>
       </section>
 

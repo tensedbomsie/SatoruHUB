@@ -438,7 +438,22 @@ function App() {
             <span className="app-overlay-title">{activeApp.icon} {activeApp.name}</span>
             <button className="app-overlay-close" onClick={() => setActiveApp(null)}>✕ กลับ</button>
           </div>
-          <iframe className="app-overlay-frame" src={activeApp.url} title={activeApp.name} />
+          <iframe
+            className="app-overlay-frame"
+            src={activeApp.url}
+            title={activeApp.name}
+            onLoad={(e) => {
+              // Sub-apps share this Hub's Supabase project. Hand off the
+              // already-authenticated session so they skip their own login
+              // screen instead of asking the owner to sign in a second time.
+              if (session) {
+                e.currentTarget.contentWindow?.postMessage(
+                  { source: 'satoru-hub', type: 'session', session },
+                  new URL(activeApp.url).origin
+                )
+              }
+            }}
+          />
         </div>
       )}
       </div>

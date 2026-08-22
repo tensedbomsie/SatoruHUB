@@ -2,12 +2,18 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
+// Tauri sets TAURI_ENV_PLATFORM during `tauri build`/`tauri dev`. The packaged
+// .exe already bundles every asset locally, so the PWA service worker adds no
+// offline benefit there and only causes rebuilds to keep serving a stale
+// cached UI until it's manually cleared — skip it for that build target.
+const isTauri = !!process.env.TAURI_ENV_PLATFORM
+
 // https://vite.dev/config/
 export default defineConfig({
   base: './',
   plugins: [
     react(),
-    VitePWA({
+    !isTauri && VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg'],
       workbox: {

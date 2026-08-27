@@ -7,6 +7,7 @@ import PortfolioNav from './PortfolioNav'
 
 type Solution = {
   eyebrow: string
+  slug: string
   challenge: string
   tools: string[]
   outcome: string
@@ -17,6 +18,7 @@ type Solution = {
 const SOLUTIONS: Solution[] = [
   {
     eyebrow: 'Mobile Pet Grooming',
+    slug: 'mobile-pet-grooming',
     challenge: 'A mobile groomer needed to explain why house-calls beat the salon, before anyone would trust the idea.',
     tools: ['Website'],
     outcome: 'A calm, story-led site built around "we come to you," not a generic grooming template.',
@@ -25,6 +27,7 @@ const SOLUTIONS: Solution[] = [
   },
   {
     eyebrow: 'Dental Clinic',
+    slug: 'dental-clinic',
     challenge: 'A new dental practice needed to earn trust with patients who had never met them before.',
     tools: ['Website'],
     outcome: 'A modern, reassuring first impression for patients choosing a new dentist.',
@@ -33,6 +36,7 @@ const SOLUTIONS: Solution[] = [
   },
   {
     eyebrow: 'Salon & Spa',
+    slug: 'salon-spa',
     challenge: 'The same pricing questions kept coming in over DM, one at a time.',
     tools: ['Website'],
     outcome: 'Every service and price laid out clearly. No more "how much for a haircut?" DMs.',
@@ -41,6 +45,7 @@ const SOLUTIONS: Solution[] = [
   },
   {
     eyebrow: 'Bakery',
+    slug: 'bakery',
     challenge: 'Custom cake requests were scattered across Instagram comments and DMs.',
     tools: ['Website'],
     outcome: 'A custom-order story front and center, with a clear way to reach out about a cake.',
@@ -49,6 +54,7 @@ const SOLUTIONS: Solution[] = [
   },
   {
     eyebrow: 'Booking System',
+    slug: 'booking-system',
     challenge: 'Customers had to call or message just to check availability, and staff had to answer every one.',
     tools: ['Website', 'Self-serve Booking', 'Owner Dashboard'],
     outcome:
@@ -77,6 +83,15 @@ export default function PublicPortfolio() {
     const observer = new IntersectionObserver(([entry]) => setHeroVisible(entry.isIntersecting), { threshold: 0 })
     observer.observe(el)
     return () => observer.disconnect()
+  }, [])
+
+  useEffect(() => {
+    const hash = window.location.hash.replace('#', '')
+    if (!hash) return
+    const timer = setTimeout(() => {
+      document.getElementById(hash)?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }, 300)
+    return () => clearTimeout(timer)
   }, [])
 
   return (
@@ -206,7 +221,7 @@ export default function PublicPortfolio() {
         </Reveal>
         <div className="solutions-grid">
           {SOLUTIONS.map((s) => (
-            <Reveal key={s.eyebrow} className="solution-card">
+            <Reveal key={s.eyebrow} id={s.slug} className="solution-card">
               <a href={s.url} target="_blank" rel="noopener noreferrer" className="solution-thumb">
                 <img src={`${import.meta.env.BASE_URL}concepts/thumbs/${s.thumb}`} alt={s.eyebrow} loading="lazy" />
               </a>

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Reveal from './Reveal'
 
 type ConceptLink = {
@@ -8,6 +8,7 @@ type ConceptLink = {
   file?: string
   url?: string
   thumb?: string
+  slug?: string
 }
 
 type ConceptGroup = {
@@ -27,6 +28,7 @@ const CONCEPT_GROUPS: ConceptGroup[] = [
         icon: '🐩',
         url: 'https://tensedbomsie.github.io/AdorableGrooming/',
         thumb: 'client-sparkle-pup-style.png',
+        slug: 'adorable-grooming',
       },
       {
         name: 'The Strand Salon & Spa (San Antonio, US)',
@@ -34,6 +36,7 @@ const CONCEPT_GROUPS: ConceptGroup[] = [
         icon: '💈',
         url: 'https://tensedbomsie.github.io/StrandSalonSpa/',
         thumb: 'client-strand-beauty-glow.png',
+        slug: 'strand-salon-spa',
       },
       {
         name: 'V Dental Health & Aesthetics (Charlotte, US)',
@@ -41,6 +44,7 @@ const CONCEPT_GROUPS: ConceptGroup[] = [
         icon: '😁',
         url: 'https://tensedbomsie.github.io/VDental/',
         thumb: 'client-vdental.png',
+        slug: 'v-dental',
       },
       {
         name: 'The Wylie Dog Grooming (Charlotte, US)',
@@ -48,6 +52,7 @@ const CONCEPT_GROUPS: ConceptGroup[] = [
         icon: '🐶',
         url: 'https://tensedbomsie.github.io/WylieDogGrooming/',
         thumb: 'client-wyliedog.png',
+        slug: 'wylie-dog-grooming',
       },
       {
         name: "Miss. D's Pet Grooming (Charlotte, US)",
@@ -55,6 +60,7 @@ const CONCEPT_GROUPS: ConceptGroup[] = [
         icon: '🚐',
         url: 'https://tensedbomsie.github.io/MissDsPetGrooming/',
         thumb: 'client-missdspetgrooming.png',
+        slug: 'miss-ds-pet-grooming',
       },
       {
         name: 'Pasteleria Colin (Eugene, US)',
@@ -62,6 +68,7 @@ const CONCEPT_GROUPS: ConceptGroup[] = [
         icon: '🎂',
         url: 'https://tensedbomsie.github.io/PasteleriaColin/',
         thumb: 'client-pasteleriacolin.png',
+        slug: 'pasteleria-colin',
       },
     ],
   },
@@ -141,6 +148,15 @@ export default function ConceptsGallery({ lang = 'th' }: { lang?: 'th' | 'en' })
   const [conceptMode, setConceptMode] = useState<'grid' | 'preview' | 'moodboard'>('moodboard')
   const t = TEXT[lang]
 
+  useEffect(() => {
+    const hash = window.location.hash.replace('#', '')
+    if (!hash) return
+    const timer = setTimeout(() => {
+      document.getElementById(hash)?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }, 300)
+    return () => clearTimeout(timer)
+  }, [])
+
   const groupTitle = (g: ConceptGroup) => (lang === 'en' ? g.titleEn : g.title)
   const itemName = (i: ConceptLink) => (lang === 'en' ? i.nameEn : i.name)
 
@@ -168,7 +184,7 @@ export default function ConceptsGallery({ lang = 'th' }: { lang?: 'th' | 'en' })
             <div className="moodboard-grid">
               {group.items.map((item) => (
                 <Reveal key={item.url ?? item.file} className="moodboard-reveal">
-                  <a className="moodboard-tile" href={itemHref(item, lang)} target="_blank" rel="noopener noreferrer">
+                  <a id={item.slug} className="moodboard-tile" href={itemHref(item, lang)} target="_blank" rel="noopener noreferrer">
                     <img src={itemThumb(item)} alt={itemName(item)} loading="lazy" />
                     <div className="moodboard-caption">
                       <span>{item.icon}</span> {itemName(item)}
@@ -190,6 +206,7 @@ export default function ConceptsGallery({ lang = 'th' }: { lang?: 'th' | 'en' })
                 {group.items.map((item) => (
                   <Reveal key={item.url ?? item.file}>
                     <a
+                      id={item.slug}
                       className="concept-card card"
                       href={itemHref(item, lang)}
                       target="_blank"
@@ -204,7 +221,7 @@ export default function ConceptsGallery({ lang = 'th' }: { lang?: 'th' | 'en' })
             ) : (
               <div className="concepts-preview-grid">
                 {group.items.map((item) => (
-                  <Reveal key={item.url ?? item.file} className="concept-preview-card">
+                  <Reveal key={item.url ?? item.file} id={item.slug} className="concept-preview-card">
                     <div className="concept-thumb">
                       <iframe className="concept-preview-frame" src={itemHref(item, lang)} title={itemName(item)} loading="lazy" />
                       <a

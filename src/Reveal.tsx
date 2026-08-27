@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 
-export default function Reveal({ children, className = '' }: { children: React.ReactNode; className?: string }) {
+export default function Reveal({ children, className = '', id }: { children: React.ReactNode; className?: string; id?: string }) {
   const ref = useRef<HTMLDivElement>(null)
   const [visible, setVisible] = useState(false)
 
@@ -21,7 +21,7 @@ export default function Reveal({ children, className = '' }: { children: React.R
   }, [])
 
   return (
-    <div ref={ref} className={`reveal${visible ? ' reveal-in' : ''}${className ? ` ${className}` : ''}`}>
+    <div ref={ref} id={id} className={`reveal${visible ? ' reveal-in' : ''}${className ? ` ${className}` : ''}`}>
       {children}
     </div>
   )

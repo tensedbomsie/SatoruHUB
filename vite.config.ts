@@ -24,7 +24,7 @@ export default defineConfig({
         // cached shell instead, which then 404s trying to load its own
         // asset paths relative to the wrong subpath.
         navigateFallbackDenylist: [
-          /^\/(Storyboard|FoodDiary|WorkoutTracker|MovieHub|MoneyDiary|TechDictionary|BookingDemoLite|BookingSystemDemo|LeadDemos)\//,
+          /^\/(Storyboard|FoodDiary|WorkoutTracker|MovieHub|MoneyDiary|TechDictionary|BookingDemoLite|BookingSystemDemo|LeadDemos|NewsReader)\//,
         ],
       },
       manifest: {

@@ -77,6 +77,12 @@ const APPS: AppLink[] = [
     icon: '🗓️',
     url: 'https://bookingdemo.ppchan.com/',
   },
+  {
+    name: 'Daybrief',
+    description: 'แอปข่าวเช้าส่วนตัว เลือกหมวด+ภูมิภาคแล้วดึงข่าวจริงมาสรุปพร้อมลิงก์แหล่งที่มา',
+    icon: '☀️',
+    url: 'https://hub.ppchan.com/NewsReader/',
+  },
 ]
 
 type QuickLink = { name: string; icon: 'youtube' | string; url: string }

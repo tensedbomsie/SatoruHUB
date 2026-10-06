@@ -113,6 +113,67 @@
               "title": "การเมืองปัจจุบัน (เช็คซ้ำก่อนสอบ)"
             }
           ]
+        },
+        {
+          "slug": "mgt2102",
+          "title": "MGT2102 การจัดการการดำเนินงาน",
+          "coverLabel": "MGT2102",
+          "subtitle": "การจัดการการดำเนินงาน",
+          "author": "ทบทวนก่อนสอบ เสียงชาย",
+          "cloth": "moss",
+          "sourceDir": "E:/projYT/reading/audio_mgt2102_el",
+          "tracks": [
+            {
+              "file": "00_intro.mp3",
+              "path": "mgt2102/00-intro.mp3",
+              "title": "บทนำ"
+            },
+            {
+              "file": "01_เครื่องมือคุณภาพ7อย่าง.mp3",
+              "path": "mgt2102/01-quality-tools.mp3",
+              "title": "เครื่องมือคุณภาพ 7 อย่าง"
+            },
+            {
+              "file": "02_ระบบมาตรฐานคุณภาพ.mp3",
+              "path": "mgt2102/02-quality-systems.mp3",
+              "title": "ระบบและมาตรฐานคุณภาพ"
+            },
+            {
+              "file": "03_การพยากรณ์.mp3",
+              "path": "mgt2102/03-forecasting.mp3",
+              "title": "การพยากรณ์"
+            },
+            {
+              "file": "04_การศึกษางาน.mp3",
+              "path": "mgt2102/04-work-study.mp3",
+              "title": "การศึกษางานและออกแบบงาน"
+            },
+            {
+              "file": "05_ไลน์บาลานซิง.mp3",
+              "path": "mgt2102/05-line-balancing.mp3",
+              "title": "Line Balancing และ Cycle Time"
+            },
+            {
+              "file": "06_แฟกเตอร์เรทติง.mp3",
+              "path": "mgt2102/06-factor-rating.mp3",
+              "title": "Factor Rating เลือกทำเล"
+            },
+            {
+              "file": "07_ความยั่งยืนและอีเอสจี.mp3",
+              "path": "mgt2102/07-sustainability-esg.mp3",
+              "title": "ความยั่งยืนและ ESG"
+            },
+            {
+              "file": "08_โซ่อุปทานขั้นสูง.mp3",
+              "path": "mgt2102/08-supply-chain.mp3",
+              "title": "กลยุทธ์โซ่อุปทานขั้นสูง"
+            },
+            {
+              "file": "09_อีโอคิว.mp3",
+              "path": "mgt2102/09-eoq.mp3",
+              "title": "EOQ"
+            }
+          ]
         }
       ]
     },

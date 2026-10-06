@@ -107,6 +107,15 @@ export function IconChevronLeft({ size, className }: IconProps) {
   )
 }
 
+export function IconBook({ size, className }: IconProps) {
+  return (
+    <svg {...base(size)} className={className}>
+      <path d="M5 4.5A1.5 1.5 0 0 1 6.5 3H19v15H6.5A1.5 1.5 0 0 0 5 19.5Z" />
+      <path d="M5 19.5A1.5 1.5 0 0 0 6.5 21H19v-3" />
+    </svg>
+  )
+}
+
 export function IconChevronRight({ size, className }: IconProps) {
   return (
     <svg {...base(size)} className={className}>

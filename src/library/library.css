@@ -122,7 +122,8 @@
 
 :root.lib-route .toolbar button,
 :root.lib-route .toolbar a.toolbar-link {
-  border-radius: 14px;
+  /* r-sm: at ~31px tall anything rounder reads as a status pill */
+  border-radius: 10px;
   border-color: rgba(255, 255, 255, 0.08);
   background: #1e2028;
   color: #f1f2f6;
@@ -265,9 +266,16 @@
   color: var(--text);
 }
 
+/* three listening states, three silhouettes: outline / filled tint / bare check */
 .lib-pill.is-done {
-  background: var(--card-2);
-  color: var(--text-dim);
+  background: transparent;
+  border-color: transparent;
+  padding-left: 4px;
+  color: var(--accent);
+}
+
+.lib-pill > svg {
+  flex: none;
 }
 
 .lib-pill.is-live {
@@ -662,11 +670,20 @@
   background: #262651;
 }
 
+.lib-cover-pill.is-done {
+  padding-left: 7px;
+  background: rgba(8, 9, 12, 0.72);
+}
+
+/* too small for lettering: a square tinted key with a book glyph */
 .lib-cover-thumb {
-  --lib-book-w: 40px;
   flex: none;
-  width: 40px;
+  width: 44px;
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
   border-radius: var(--r-sm);
+  color: rgba(241, 242, 246, 0.82);
 }
 
 .lib-cover-detail {
@@ -1110,7 +1127,7 @@
   padding: 6px;
   border-radius: var(--r-md);
   border: 1px solid var(--border);
-  background: #1a1b23;
+  background: var(--card-2);
   box-shadow: 0 16px 34px -14px rgba(0, 0, 0, 0.9);
   animation: lib-pop 0.16s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
@@ -1135,7 +1152,7 @@
 }
 
 .lib-menu-item:hover {
-  background: var(--card-2);
+  background: rgba(255, 255, 255, 0.06);
 }
 
 .lib-menu-item.is-on {
@@ -1210,7 +1227,8 @@
 }
 
 .lib-scrub-bar:hover::-webkit-slider-thumb,
-.lib-scrub-bar:active::-webkit-slider-thumb {
+.lib-scrub-bar:active::-webkit-slider-thumb,
+.lib-scrub-bar:focus-visible::-webkit-slider-thumb {
   opacity: 1;
 }
 
@@ -1246,9 +1264,7 @@
   border-radius: var(--r-lg) var(--r-lg) 0 0;
   border: 1px solid var(--border);
   border-bottom: 0;
-  background:
-    radial-gradient(120% 40% at 50% 0%, rgba(var(--accent-rgb), 0.12), rgba(var(--accent-rgb), 0) 70%),
-    #101117;
+  background: var(--lib-solid);
   box-shadow: 0 -20px 50px -20px rgba(0, 0, 0, 0.9);
   animation: lib-sheet-in 0.24s cubic-bezier(0.2, 0.8, 0.2, 1);
   scrollbar-width: thin;
@@ -1391,8 +1407,10 @@
 
 /* ---------- small screens ---------- */
 @media (max-width: 760px) {
+  /* the bottom gutter lets the last rows scroll clear of the Hub's
+     floating chat bubble and side link */
   .lib-page {
-    padding: 18px 16px 32px;
+    padding: 18px 16px 104px;
   }
 
   .lib-title {

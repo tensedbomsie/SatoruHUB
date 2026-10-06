@@ -144,7 +144,7 @@ function ResumeStrip({ navigate }: { navigate: Nav }) {
           {playing ? 'กำลังฟัง' : 'ฟังต่อ'}: {track.title}
         </span>
         <span className="lib-resume-meta">
-          {at > 3 ? `${playing ? '' : 'ค้างที่ '}${fmtClock(at)}/${fmtClock(track.durationSeconds)} · ` : ''}
+          {at > 3 ? `${playing ? '' : 'ค้างที่ '}${fmtClock(at)}/${fmtClock(dur)} · ` : ''}
           ตอน {index + 1}/{book.tracks.length} · {book.title}
         </span>
         {at > 3 && dur > 0 && (
@@ -370,7 +370,10 @@ function BookPage({ book, shelf, navigate }: { book: Book; shelf: Shelf; navigat
                       )}
                     </span>
                     <span className="lib-track-side" aria-hidden="true">
-                      <span className={`lib-pill is-${pillKind}`}>{pillText}</span>
+                      <span className={`lib-pill is-${pillKind}`}>
+                        {pillKind === 'done' && <IconCheck size={13} />}
+                        {pillText}
+                      </span>
                       <span className="lib-track-dur lib-num">{fmtClock(t.durationSeconds)}</span>
                     </span>
                   </button>

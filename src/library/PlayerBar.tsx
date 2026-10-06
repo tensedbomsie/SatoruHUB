@@ -48,7 +48,7 @@ export default function PlayerBar({ onOpenBook }: { onOpenBook: (slug: string) =
 
   return (
     <>
-      <div className="lib-player" role="region" aria-label="ตัวเล่นเสียง">
+      <div className="lib-sq lib-player" role="region" aria-label="ตัวเล่นเสียง">
         <Scrubber variant="bar" />
         <div className="lib-player-row">
           <button className="lib-player-info" onClick={() => lib.setSheetOpen(true)} aria-label={`เปิดตัวเล่นเต็ม: ${track.title}`}>
@@ -89,7 +89,7 @@ export default function PlayerBar({ onOpenBook }: { onOpenBook: (slug: string) =
             </span>
             <div className="lib-menu-anchor">
               <button
-                className={`lib-chip${lib.rate !== 1 ? ' is-on' : ''}`}
+                className={`lib-ctl${lib.rate !== 1 ? ' is-on' : ''}`}
                 onClick={() => setMenu(menu === 'rate' ? null : 'rate')}
                 aria-expanded={menu === 'rate'}
                 aria-label={`ความเร็ว ${fmtRate(lib.rate)}`}
@@ -116,7 +116,7 @@ export default function PlayerBar({ onOpenBook }: { onOpenBook: (slug: string) =
             </div>
             <div className="lib-menu-anchor">
               <button
-                className={`lib-chip${sleepText ? ' is-on' : ''}`}
+                className={`lib-ctl${sleepText ? ' is-on' : ''}`}
                 onClick={() => setMenu(menu === 'sleep' ? null : 'sleep')}
                 aria-expanded={menu === 'sleep'}
                 aria-label={sleepText ? `ตั้งเวลาปิด เหลือ ${sleepText}` : 'ตั้งเวลาปิดเสียง'}
@@ -257,7 +257,7 @@ function PlayerSheet({ onOpenBook }: { onOpenBook: (slug: string) => void }) {
   const remaining = Math.max(0, lib.duration - lib.position)
 
   return (
-    <div className="lib-sheet-backdrop" onClick={() => setSheetOpen(false)}>
+    <div className="lib-sq lib-sheet-backdrop" onClick={() => setSheetOpen(false)}>
       <div
         className="lib-sheet"
         ref={sheetRef}

@@ -1,101 +1,154 @@
 /* ==========================================================================
-   Library (ห้องสมุดเสียง)
-   Every color comes from a token below, set per Hub theme. The shelf takes
-   its material from the theme: smoked charcoal (Dark Glassmorphism), cool
-   slate (Business Dark), light oak (Flat Warm). Books are cloth-bound.
+   Library (ห้องสมุดเสียง) in the ATLAS Squircle Control Deck language.
+
+   The Library owns its look: every token below is scoped to `.lib-sq`
+   (the page root, the player and the player sheet), so the Hub's three
+   themes keep styling every other screen and nothing here leaks out.
+   Token values are copied from the shipped Squircle sources:
+   E:\GithubNewsReader\src\index.css (Daybrief) and
+   E:\GithubTemplateLibrary\tutoring-center-dashboard.html.
+
+   Radius has three steps on purpose: --r-sm for small inner parts,
+   --r-md for controls and covers, --r-lg for panels. A pill (--r-pill)
+   always means "state" and is never a button.
    ========================================================================== */
 
+/* Cover tints live on :root because the Media Session artwork (artwork.ts)
+   reads them from the document root to draw the lock-screen image. */
 :root {
   --lib-player-space: 0px;
-  --lib-dim: var(--text-dim);
-  --lib-accent-text: var(--accent);
-  --lib-on-accent: #04130c;
-  --lib-back: #111319;
-  --lib-back-edge: rgba(255, 255, 255, 0.05);
-  --lib-back-shadow: rgba(0, 0, 0, 0.7);
-  --lib-plank-top: #2d303b;
-  --lib-plank-front: #1c1e26;
-  --lib-plank-hi: rgba(255, 255, 255, 0.1);
-  --lib-plank-shadow: rgba(0, 0, 0, 0.65);
-  --lib-plate: #ece6d6;
-  --lib-plate-ink: #24211b;
-  --lib-plate-dim: #5d564a;
-  --lib-plate-frame: #8d8576;
-  --lib-cloth-ink: #2f4a7a;
-  --lib-cloth-moss: #3d6b4e;
-  --lib-cloth-clay: #9a4b33;
-  --lib-cloth-dusk: #5a4888;
-  --lib-cloth-ochre: #8a6220;
-  --lib-cloth-plum: #7a3c60;
-  --lib-cover-ink: #f4efe4;
-  --lib-shade: rgba(0, 0, 0, 0.28);
-  --lib-shade-strong: rgba(0, 0, 0, 0.55);
-  --lib-sheen: rgba(255, 255, 255, 0.1);
-  --lib-book-shadow: rgba(0, 0, 0, 0.6);
-  --lib-ribbon: var(--accent);
-  --lib-ghost: rgba(255, 255, 255, 0.16);
-  --lib-player-bg: #101118;
-  --lib-scrim: rgba(0, 0, 0, 0.6);
-  --lib-track: rgba(255, 255, 255, 0.14);
-  --lib-hover: rgba(255, 255, 255, 0.06);
+  --lib-cloth-ink: #2c3d6e;
+  --lib-cloth-moss: #284a3c;
+  --lib-cloth-clay: #5a3327;
+  --lib-cloth-dusk: #3b336e;
+  --lib-cloth-ochre: #54431c;
+  --lib-cloth-plum: #522d48;
+  --lib-cover-ink: #f1f2f6;
 }
 
-:root[data-theme='business'] {
-  --lib-on-accent: #031317;
-  --lib-back: #121a26;
-  --lib-back-edge: rgba(148, 190, 255, 0.1);
-  --lib-plank-top: #3a4a63;
-  --lib-plank-front: #243045;
-  --lib-cloth-ink: #2b5a8a;
-  --lib-cloth-dusk: #5b4a9e;
-  --lib-player-bg: #13161d;
-  --lib-ribbon: var(--accent-2);
+.lib-sq {
+  /* surfaces */
+  --bg: #08090c;
+  --card: rgba(21, 22, 29, 0.92);
+  --card-2: #1e2028;
+  --inset: #0c0d12;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-soft: rgba(255, 255, 255, 0.06);
+  /* ink */
+  --text: #f1f2f6;
+  --text-dim: #9ca0ae;
+  --text-dimmer: #6a6d7b;
+  /* signal */
+  --accent: #8b8bfa;
+  --accent-rgb: 139, 139, 250;
+  --accent-2: #6366f1;
+  --on-accent: #0c0a1a;
+  --danger: #f87171;
+  --danger-rgb: 248, 113, 113;
+  /* squircle radii */
+  --r-sm: 10px;
+  --r-md: 14px;
+  --r-lg: 22px;
+  --r-pill: 999px;
+  /* fixed surfaces (player, sheet, popover) sit over arbitrary Hub pages,
+     so they use the opaque version of --card */
+  --lib-solid: #15161d;
+  --lib-raise: inset 0 1px 0 rgba(255, 255, 255, 0.035);
+
+  color-scheme: dark;
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans Thai', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 
-:root[data-theme='warm'] {
-  --lib-dim: #6f5f48;
-  --lib-accent-text: #c2410c;
-  --lib-on-accent: #1f1206;
-  --lib-back: #f3e6d2;
-  --lib-back-edge: #e6d3b6;
-  --lib-back-shadow: rgba(90, 60, 30, 0.25);
-  --lib-plank-top: #dcbd90;
-  --lib-plank-front: #c49a66;
-  --lib-plank-hi: rgba(255, 255, 255, 0.45);
-  --lib-plank-shadow: rgba(90, 60, 30, 0.35);
-  --lib-plate: #fffaf0;
-  --lib-plate-ink: #2b2118;
-  --lib-plate-dim: #6b5a44;
-  --lib-plate-frame: #a07c4f;
-  --lib-cloth-ink: #2e5590;
-  --lib-cloth-moss: #3d7352;
-  --lib-cloth-clay: #a94f2e;
-  --lib-cloth-dusk: #5d4b8c;
-  --lib-cloth-ochre: #8f641a;
-  --lib-cloth-plum: #8a3f6a;
-  --lib-cover-ink: #fbf6ec;
-  --lib-shade: rgba(40, 25, 10, 0.22);
-  --lib-shade-strong: rgba(60, 40, 20, 0.3);
-  --lib-sheen: rgba(255, 255, 255, 0.14);
-  --lib-book-shadow: rgba(70, 45, 20, 0.35);
-  --lib-ghost: rgba(120, 90, 50, 0.4);
-  --lib-player-bg: #fffaf2;
-  --lib-scrim: rgba(43, 33, 24, 0.35);
-  --lib-track: rgba(43, 33, 24, 0.15);
-  --lib-hover: rgba(43, 33, 24, 0.05);
+.lib-sq ::selection {
+  background: rgba(var(--accent-rgb), 0.35);
+  color: var(--text);
 }
 
+.lib-sq :is(button, a, input):focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* zero-specificity reset so every component class below can set its own ink */
+:where(.lib-sq) :where(button) {
+  font: inherit;
+  color: inherit;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.lib-num {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- route ground: the Squircle backdrop + dot grain ---------- */
+:root.lib-route body {
+  background:
+    radial-gradient(115% 54% at 50% -2%, rgba(139, 139, 250, 0.17), rgba(139, 139, 250, 0) 60%),
+    radial-gradient(60% 40% at 92% 0%, rgba(99, 102, 241, 0.1), rgba(99, 102, 241, 0) 58%),
+    #08090c;
+  background-size: auto;
+  background-attachment: fixed;
+  animation: none;
+  color-scheme: dark;
+}
+
+/* ATLAS's grain is a dot grid, not noise. It sits under the content. */
+:root.lib-route .hub-content::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.055) 1px, transparent 1px);
+  background-size: 13px 13px;
+  opacity: 0.55;
+}
+
+/* The Hub toolbar stays the Hub's, but while the Library is open it takes
+   Squircle ink so the screen reads as one surface in every theme. */
+:root.lib-route .toolbar {
+  --text: #f1f2f6;
+  --text-dim: #9ca0ae;
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --accent: #8b8bfa;
+  color: #f1f2f6;
+  background: rgba(8, 9, 12, 0.72);
+  border-bottom-color: rgba(255, 255, 255, 0.06);
+  box-shadow: none;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans Thai', system-ui, sans-serif;
+}
+
+:root.lib-route .toolbar button,
+:root.lib-route .toolbar a.toolbar-link {
+  border-radius: 14px;
+  border-color: rgba(255, 255, 255, 0.08);
+  background: #1e2028;
+  color: #f1f2f6;
+  text-shadow: none;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+:root.lib-route .toolbar button:hover,
+:root.lib-route .toolbar a.toolbar-link:hover {
+  transform: none;
+  box-shadow: none;
+  background: #262833;
+  border-color: rgba(139, 139, 250, 0.36);
+}
+
+/* ---------- make room for the docked player everywhere in the Hub ---------- */
 :root.lib-has-player {
-  --lib-player-space: 76px;
+  --lib-player-space: calc(100px + env(safe-area-inset-bottom));
 }
 
 @media (max-width: 760px) {
   :root.lib-has-player {
-    --lib-player-space: 68px;
+    --lib-player-space: calc(86px + env(safe-area-inset-bottom));
   }
 }
 
-/* Make room for the player everywhere in the Hub, not just inside the Library. */
 .lib-has-player .corner-links,
 .lib-has-player .side-link-left {
   bottom: calc(3.6rem + var(--lib-player-space));
@@ -110,57 +163,41 @@
   padding-bottom: var(--lib-player-space);
 }
 
-.lib-num {
-  font-variant-numeric: tabular-nums;
-}
-
 /* ---------- page ---------- */
 .lib-page {
-  max-width: 1080px;
+  max-width: 1120px;
   margin: 0 auto;
-  padding: 2rem 1.5rem 3rem;
-  color: var(--text);
+  padding: 28px 24px 48px;
 }
 
-.lib-page ::selection {
-  background: color-mix(in srgb, var(--accent) 35%, transparent);
-  color: var(--text);
-}
-
-.lib-page :is(button, a):focus-visible,
-.lib-player :is(button, input):focus-visible,
-.lib-sheet :is(button, input):focus-visible {
-  outline: 2px solid var(--lib-accent-text);
-  outline-offset: 3px;
-}
-
-.lib-page code {
+.lib-sq code {
   font-family: ui-monospace, 'Cascadia Mono', Consolas, monospace;
-  font-size: 0.85em;
-  padding: 0.05em 0.35em;
-  border-radius: 5px;
-  background: var(--lib-hover);
-  border: 1px solid var(--glass-border);
+  font-size: 0.84em;
+  padding: 0.08em 0.4em;
+  border-radius: 6px;
+  background: var(--inset);
+  border: 1px solid var(--border);
   white-space: nowrap;
 }
 
 .lib-head {
-  margin-bottom: 1.5rem;
+  margin: 0 0 20px;
+  padding: 0 4px;
 }
 
 .lib-title {
   margin: 0;
-  font-size: 1.75rem;
-  font-weight: 800;
-  line-height: 1.2;
+  font-size: 1.6rem;
+  font-weight: 600;
+  line-height: 1.25;
   letter-spacing: -0.01em;
   text-wrap: balance;
 }
 
 .lib-head-meta {
-  margin: 0.4rem 0 0;
-  color: var(--lib-dim);
-  font-size: 0.92rem;
+  margin: 6px 0 0;
+  color: var(--text-dim);
+  font-size: 0.88rem;
   line-height: 1.5;
 }
 
@@ -168,63 +205,116 @@
   background: none;
   border: 0;
   padding: 0;
-  font: inherit;
-  color: var(--lib-accent-text);
+  color: var(--accent);
   font-weight: 600;
   cursor: pointer;
   text-underline-offset: 3px;
+  border-radius: 4px;
 }
 
 .lib-inline-link:hover {
   text-decoration: underline;
 }
 
+/* secondary action: raised plate */
 .lib-btn {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.6rem 1rem;
-  border-radius: 10px;
-  border: 1px solid var(--glass-border);
-  background: var(--glass);
+  justify-content: center;
+  gap: 8px;
+  min-height: 42px;
+  padding: 0 16px;
+  border-radius: var(--r-md);
+  border: 1px solid var(--border);
+  background: var(--card-2);
   color: var(--text);
-  font: inherit;
+  font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
   transition: background 0.15s ease, border-color 0.15s ease;
 }
 
 .lib-btn:hover {
-  border-color: var(--lib-accent-text);
+  background: #262833;
+  border-color: rgba(var(--accent-rgb), 0.36);
+}
+
+/* ---------- status pills (state only) ---------- */
+.lib-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 22px;
+  padding: 0 9px;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--border);
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+  color: var(--text-dim);
+}
+
+.lib-pill.is-new {
+  background: transparent;
+}
+
+.lib-pill.is-progress {
+  background: rgba(var(--accent-rgb), 0.18);
+  border-color: rgba(var(--accent-rgb), 0.36);
+  color: var(--text);
+}
+
+.lib-pill.is-done {
+  background: var(--card-2);
+  color: var(--text-dim);
+}
+
+.lib-pill.is-live {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
+}
+
+.lib-pill.is-error {
+  background: rgba(var(--danger-rgb), 0.12);
+  border-color: rgba(var(--danger-rgb), 0.32);
+  color: var(--danger);
 }
 
 /* ---------- loading / empty / error ---------- */
 .lib-state {
   max-width: 34rem;
-  margin: 3rem auto;
+  margin: 48px auto;
+  padding: 28px 24px;
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.75rem;
+  gap: 12px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  box-shadow: var(--lib-raise);
 }
 
 .lib-state-title {
   margin: 0;
-  font-size: 1.3rem;
-  font-weight: 800;
+  font-size: 1.2rem;
+  font-weight: 600;
 }
 
 .lib-state-text {
   margin: 0;
-  color: var(--lib-dim);
-  line-height: 1.65;
+  color: var(--text-dim);
+  line-height: 1.7;
+  font-size: 0.92rem;
 }
 
 .lib-skel {
   display: block;
-  border-radius: 6px;
-  background: var(--lib-hover);
+  border-radius: var(--r-sm);
+  background: var(--card-2);
   animation: lib-pulse 1.4s ease-in-out infinite;
 }
 .lib-skel-title {
@@ -236,11 +326,14 @@
   height: 14px;
   margin-top: 10px;
 }
+.lib-shelf-head-skel .lib-skel-line {
+  margin-top: 0;
+  width: 120px;
+}
 .lib-skel-book {
   width: 100%;
-  height: calc(var(--lib-book-h) * 0.92);
-  margin-top: calc(var(--lib-book-h) * 0.08);
-  border-radius: 3px 7px 7px 3px;
+  aspect-ratio: 2 / 3;
+  border-radius: var(--r-md);
 }
 
 @keyframes lib-pulse {
@@ -249,30 +342,46 @@
   }
 }
 
-/* ---------- continue strip ---------- */
+/* ---------- meter (book progress, resume) ---------- */
+.lib-meter {
+  display: block;
+  height: 6px;
+  border-radius: 4px;
+  background: var(--inset);
+  box-shadow: inset 0 0 0 1px var(--border-soft);
+  overflow: hidden;
+}
+
+.lib-meter > span {
+  display: block;
+  height: 100%;
+  border-radius: 4px;
+  background: var(--accent);
+}
+
+/* ---------- continue listening: a Now Playing module ---------- */
 .lib-resume {
-  display: flex;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
   gap: 14px;
   padding: 12px 14px 12px 12px;
-  margin: 0 0 2.25rem;
-  border-radius: 14px;
-  background: var(--glass);
-  border: 1px solid var(--glass-border);
-  max-width: 640px;
+  margin: 0 0 14px;
+  border-radius: var(--r-lg);
+  background: var(--card);
+  border: 1px solid var(--border);
+  box-shadow: var(--lib-raise);
 }
 
 .lib-resume-book {
-  flex: none;
   background: none;
   border: 0;
   padding: 0;
   cursor: pointer;
-  border-radius: 4px;
+  border-radius: var(--r-sm);
 }
 
 .lib-resume-text {
-  flex: 1;
   min-width: 0;
   display: flex;
   flex-direction: column;
@@ -280,96 +389,124 @@
 }
 
 .lib-resume-title {
-  font-weight: 700;
-  font-size: 1rem;
+  font-weight: 600;
+  font-size: 0.98rem;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .lib-resume-meta {
-  font-size: 0.82rem;
-  color: var(--lib-dim);
+  font-size: 0.8rem;
+  color: var(--text-dim);
   font-variant-numeric: tabular-nums;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.lib-play-round {
-  flex: none;
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  border: 0;
-  display: grid;
-  place-items: center;
-  background: var(--accent);
-  color: var(--lib-on-accent);
-  cursor: pointer;
-  transition: transform 0.15s ease, background 0.15s ease;
+.lib-resume-meter {
+  max-width: 260px;
+  height: 4px;
+  margin-top: 6px;
 }
 
-.lib-play-round:hover {
-  background: color-mix(in srgb, var(--accent) 86%, white);
-}
-
-.lib-play-round:active {
-  transform: scale(0.95);
-}
-
-/* ---------- the bookcase ---------- */
+/* ---------- the bookcase: shelves are panels, books dock in a recessed bay ---------- */
 .lib-case {
   display: flex;
   flex-direction: column;
-  gap: 2.25rem;
+  gap: 14px;
 }
 
 .lib-shelf {
-  --lib-book-w: 112px;
-  --lib-book-h: calc(var(--lib-book-w) * 1.5);
-  --lib-cavity-top: 26px;
-  --lib-plank-h: 40px;
-  position: relative;
+  --lib-book-w: 132px;
+  padding: 6px 8px 8px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  box-shadow: var(--lib-raise);
 }
 
 .lib-shelf-large {
-  --lib-book-w: 140px;
+  --lib-book-w: 148px;
 }
 
-/* back wall of the shelf cavity, with the board above casting a shadow */
-.lib-shelf::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  height: calc(var(--lib-cavity-top) + var(--lib-book-h));
-  background: var(--lib-back);
-  border: 1px solid var(--lib-back-edge);
-  border-bottom: 0;
-  border-radius: 12px 12px 0 0;
-  box-shadow: inset 0 16px 18px -14px var(--lib-back-shadow);
+.lib-shelf-head {
+  width: 100%;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 10px 10px 12px;
+  border: 0;
+  border-radius: var(--r-md);
+  background: none;
+  text-align: left;
+  cursor: pointer;
 }
 
-.lib-shelf-scroll {
-  position: relative;
-  z-index: 1;
+.lib-shelf-head-skel {
+  cursor: default;
+}
+
+.lib-shelf-title {
+  font-size: 1.02rem;
+  font-weight: 600;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lib-shelf-count {
+  flex: none;
+  font-size: 0.8rem;
+  color: var(--text-dim);
+}
+
+.lib-shelf-chev {
+  flex: none;
+  margin-left: auto;
+  align-self: center;
+  color: var(--text-dim);
+  transition: transform 0.18s ease, color 0.18s ease;
+}
+
+.lib-shelf-head:hover .lib-shelf-chev {
+  color: var(--text);
+  transform: translateX(2px);
+}
+
+/* the bay: a recessed tray books stand in */
+.lib-bay {
+  background: var(--inset);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--r-md);
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.5);
   overflow-x: auto;
   overscroll-behavior-x: contain;
   scroll-snap-type: x proximity;
   scrollbar-width: thin;
-  scrollbar-color: var(--glass-border) transparent;
+  scrollbar-color: var(--card-2) transparent;
 }
 
 .lib-shelf-books {
   list-style: none;
   margin: 0;
   display: flex;
-  gap: 22px;
-  padding: var(--lib-cavity-top) 24px 4px;
+  gap: 16px;
+  padding: 16px;
   width: max-content;
   min-width: 100%;
+}
+
+.lib-shelf-large .lib-bay {
+  overflow: visible;
+}
+
+.lib-shelf-large .lib-shelf-books {
+  width: auto;
+  flex-wrap: wrap;
+  gap: 20px 18px;
 }
 
 .lib-slot {
@@ -377,48 +514,47 @@
   flex: none;
   display: flex;
   flex-direction: column;
+  gap: 10px;
   scroll-snap-align: start;
-  scroll-margin-left: 24px;
+  scroll-margin-left: 16px;
 }
 
 .lib-book {
-  height: var(--lib-book-h);
-  display: flex;
-  align-items: flex-end;
+  display: block;
+  width: 100%;
   padding: 0;
   border: 0;
   background: none;
   cursor: pointer;
-  border-radius: 4px;
+  border-radius: var(--r-md);
 }
 
 .lib-book .lib-cover {
   transition: transform 0.18s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.18s ease;
 }
 
-.lib-book:hover .lib-cover,
-.lib-book:focus-visible .lib-cover {
-  transform: translateY(-6px);
+.lib-book:hover .lib-cover {
+  transform: translateY(-3px);
 }
 
 .lib-book.is-playing .lib-cover {
   box-shadow:
-    0 0 0 2px var(--lib-back),
+    0 0 0 2px var(--inset),
     0 0 0 4px var(--accent),
-    4px 8px 12px -4px var(--lib-book-shadow);
+    0 10px 18px -12px rgba(0, 0, 0, 0.8);
 }
 
 .lib-slot-caption {
-  margin-top: calc(var(--lib-plank-h) + 12px);
   display: flex;
   flex-direction: column;
   gap: 3px;
+  padding: 0 2px;
 }
 
 .lib-slot-title {
   font-size: 0.86rem;
-  font-weight: 700;
-  line-height: 1.35;
+  font-weight: 600;
+  line-height: 1.4;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -427,129 +563,58 @@
 
 .lib-slot-meta {
   font-size: 0.76rem;
-  color: var(--lib-dim);
+  color: var(--text-dim);
 }
 
-/* the board books stand on: top face, front face, cast shadow */
-.lib-plank {
-  position: absolute;
-  z-index: 2;
-  left: -6px;
-  right: -6px;
-  top: calc(var(--lib-cavity-top) + var(--lib-book-h));
-  height: var(--lib-plank-h);
-  border-radius: 3px;
-  background: linear-gradient(to bottom, var(--lib-plank-top) 0 8px, var(--lib-plank-front) 8px);
-  box-shadow:
-    inset 0 1px 0 var(--lib-plank-hi),
-    inset 0 9px 0 -8px var(--lib-shade),
-    0 12px 16px -10px var(--lib-plank-shadow);
-}
-
-/* paper label slid into the board's label holder */
-.lib-plate {
-  position: absolute;
-  left: 22px;
-  top: 12px;
-  display: inline-flex;
-  align-items: baseline;
-  gap: 8px;
-  max-width: calc(100% - 44px);
-  height: 24px;
-  padding: 0 10px;
-  border-radius: 2px;
-  border: 1px solid var(--lib-plate-frame);
-  background: var(--lib-plate);
-  color: var(--lib-plate-ink);
-  box-shadow: 0 1px 2px var(--lib-shade);
-  font: inherit;
-  line-height: 22px;
-  cursor: pointer;
-  transition: transform 0.15s ease;
-}
-
-.lib-plate:hover {
-  transform: translateY(-1px);
-}
-
-.lib-plate-title {
-  font-size: 0.85rem;
-  font-weight: 800;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.lib-plate-count {
-  flex: none;
-  font-size: 0.74rem;
-  font-weight: 600;
-  color: var(--lib-plate-dim);
-}
-
-/* empty shelf: two pencil outlines where books will go, plus how to fill it */
+/* empty shelf: open slots where books will dock, plus how to fill them */
 .lib-shelf-empty {
-  height: calc(var(--lib-cavity-top) + var(--lib-book-h));
-  margin-bottom: calc(var(--lib-plank-h) + 12px);
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   gap: 14px;
-  padding: 0 24px;
+  padding: 16px;
 }
 
 .lib-ghost-book {
   flex: none;
-  width: calc(var(--lib-book-w) * 0.78);
-  height: calc(var(--lib-book-h) * 0.78);
-  border: 1.5px dashed var(--lib-ghost);
-  border-bottom: 0;
-  border-radius: 3px 7px 0 0;
-}
-
-.lib-ghost-book-2 {
-  height: calc(var(--lib-book-h) * 0.66);
+  width: calc(var(--lib-book-w) * 0.62);
+  aspect-ratio: 2 / 3;
+  border: 1.5px dashed rgba(255, 255, 255, 0.16);
+  border-radius: var(--r-md);
 }
 
 .lib-shelf-empty-text {
-  align-self: center;
-  margin: 0 0 0 10px;
-  max-width: 36ch;
+  margin: 0 0 0 6px;
+  max-width: 40ch;
   display: flex;
   flex-direction: column;
   gap: 4px;
   font-size: 0.86rem;
-  line-height: 1.6;
-  color: var(--lib-dim);
+  line-height: 1.7;
+  color: var(--text-dim);
 }
 
 .lib-shelf-empty-text strong {
   color: var(--text);
   font-size: 0.95rem;
+  font-weight: 600;
 }
 
-/* ---------- cloth-bound cover ---------- */
+/* ---------- cover: a tinted squircle plate ---------- */
 .lib-cover {
   --cloth: var(--lib-cloth-ink);
   position: relative;
   display: block;
   width: 100%;
-  height: calc(var(--lib-book-h) * var(--lib-book-scale, 1));
-  border-radius: 3px 7px 7px 3px;
-  /* flat matte cloth; the only relief is the hinge groove beside the spine */
-  background-color: var(--cloth);
-  background-image: linear-gradient(
-    90deg,
-    var(--lib-shade) 0 7%,
-    var(--lib-sheen) 7% 8%,
-    var(--lib-shade) 8% 8.6%,
-    transparent 8.6%
-  );
+  aspect-ratio: 2 / 3;
+  border-radius: var(--r-md);
+  background: var(--cloth);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow:
-    inset -2px 0 0 var(--lib-shade),
-    inset 0 1px 0 var(--lib-sheen),
-    4px 6px 10px -4px var(--lib-book-shadow);
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 10px 18px -12px rgba(0, 0, 0, 0.8);
   color: var(--lib-cover-ink);
   text-align: left;
+  overflow: hidden;
 }
 
 .lib-cover[data-cloth='moss'] { --cloth: var(--lib-cloth-moss); }
@@ -560,245 +625,185 @@
 
 .lib-cover-face {
   position: absolute;
-  top: 14%;
-  left: 17%;
-  right: 9%;
+  top: 11%;
+  left: 11%;
+  right: 11%;
   display: flex;
   flex-direction: column;
-  gap: 7px;
+  gap: 8px;
 }
 
 .lib-cover-label {
-  font-weight: 800;
-  font-size: calc(var(--lib-book-w) * 0.15);
+  font-weight: 700;
+  font-size: calc(var(--lib-book-w) * 0.145);
   line-height: 1.1;
-  letter-spacing: 0.02em;
+  letter-spacing: -0.01em;
   overflow-wrap: anywhere;
 }
 
 .lib-cover-sub {
-  padding-top: 7px;
-  border-top: 1px solid color-mix(in srgb, var(--lib-cover-ink) 45%, transparent);
-  font-size: calc(var(--lib-book-w) * 0.098);
+  padding-top: 8px;
+  border-top: 1px solid rgba(241, 242, 246, 0.32);
+  font-size: calc(var(--lib-book-w) * 0.095);
   font-weight: 600;
-  line-height: 1.35;
-  opacity: 0.92;
+  line-height: 1.4;
+  color: rgba(241, 242, 246, 0.86);
 }
 
-/* a slip of paper left in the book: listening is in progress */
-.lib-ribbon {
+/* status pill riding on the cover: needs its own dark backing on any tint */
+.lib-cover-pill {
   position: absolute;
-  top: -12px;
-  right: 22%;
-  width: 14px;
-  height: 16px;
-  border-radius: 2px 2px 0 0;
-  background: var(--lib-ribbon);
-  box-shadow: 0 -1px 0 var(--lib-sheen) inset;
+  left: 9%;
+  bottom: 8%;
+  background: rgba(8, 9, 12, 0.72);
 }
 
-.lib-cover-done {
-  position: absolute;
-  left: 17%;
-  bottom: 9%;
-  padding: 2px 8px;
-  border-radius: 999px;
-  font-size: calc(var(--lib-book-w) * 0.085);
-  font-weight: 700;
-  background: color-mix(in srgb, var(--lib-cover-ink) 18%, transparent);
-  border: 1px solid color-mix(in srgb, var(--lib-cover-ink) 40%, transparent);
+.lib-cover-pill.is-progress {
+  background: #262651;
 }
 
 .lib-cover-thumb {
   --lib-book-w: 40px;
   flex: none;
   width: 40px;
-  height: 58px;
-  border-radius: 2px 4px 4px 2px;
-  box-shadow:
-    inset -1px 0 0 var(--lib-shade),
-    2px 3px 6px -3px var(--lib-book-shadow);
-}
-
-/* too small for legible lettering: the thumbnail is the cloth and hinge only */
-.lib-cover-thumb .lib-cover-face {
-  display: none;
+  border-radius: var(--r-sm);
 }
 
 .lib-cover-detail {
-  --lib-book-w: 220px;
-  width: 220px;
-  height: 330px;
-}
-
-/* ---------- shelf page list ---------- */
-.lib-booklist {
-  list-style: none;
-  margin: 2.5rem 0 0;
-  padding: 0;
-  border-top: 1px solid var(--glass-border);
-  max-width: 760px;
-}
-
-.lib-booklist-row {
-  width: 100%;
-  display: grid;
-  grid-template-columns: 40px minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 14px;
-  padding: 12px 8px;
-  border: 0;
-  border-bottom: 1px solid var(--glass-border);
-  background: none;
-  color: var(--text);
-  font: inherit;
-  text-align: left;
-  cursor: pointer;
-}
-
-.lib-booklist-row:hover {
-  background: var(--lib-hover);
-}
-
-.lib-booklist-text {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  min-width: 0;
-}
-
-.lib-booklist-title {
-  font-weight: 700;
-}
-
-.lib-booklist-meta,
-.lib-booklist-state {
-  font-size: 0.82rem;
-  color: var(--lib-dim);
-}
-
-.lib-booklist-state.is-progress {
-  color: var(--lib-accent-text);
-  font-weight: 600;
+  --lib-book-w: 232px;
+  width: 232px;
+  border-radius: var(--r-lg);
 }
 
 /* ---------- book page ---------- */
 .lib-book-page {
   display: grid;
-  grid-template-columns: 220px minmax(0, 1fr);
-  gap: 2.75rem;
+  grid-template-columns: 232px minmax(0, 1fr);
+  gap: 32px;
   align-items: start;
 }
 
 .lib-book-aside {
   position: sticky;
-  top: 1.5rem;
+  top: 24px;
 }
 
 .lib-book-main {
-  max-width: 720px;
+  min-width: 0;
+  max-width: 760px;
+}
+
+.lib-book-head {
+  padding: 0 4px;
 }
 
 .lib-book-progress {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-top: 1rem;
+  margin: 16px 4px 0;
 }
 
-.lib-meter {
+.lib-book-progress .lib-meter {
   width: 200px;
   max-width: 50%;
-  height: 6px;
-  border-radius: 3px;
-  background: var(--lib-track);
-  overflow: hidden;
-}
-
-.lib-meter > span {
-  display: block;
-  height: 100%;
-  background: var(--accent);
-  border-radius: 3px;
 }
 
 .lib-book-progress-text {
-  font-size: 0.85rem;
-  color: var(--lib-dim);
-  font-variant-numeric: tabular-nums;
+  font-size: 0.84rem;
+  color: var(--text-dim);
 }
 
+/* primary action: the one solid accent plate on the screen */
 .lib-primary {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  margin-top: 1.25rem;
-  padding: 0.8rem 1.25rem 0.8rem 1rem;
+  min-height: 48px;
+  margin-top: 18px;
+  padding: 0 20px 0 16px;
   border: 0;
-  border-radius: 12px;
+  border-radius: var(--r-md);
   background: var(--accent);
-  color: var(--lib-on-accent);
-  font: inherit;
-  font-size: 0.98rem;
+  color: var(--on-accent);
+  font-size: 0.96rem;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
   cursor: pointer;
-  transition: background 0.15s ease, transform 0.15s ease;
+  transition: filter 0.12s ease, transform 0.12s ease;
 }
 
 .lib-primary:hover {
-  background: color-mix(in srgb, var(--accent) 86%, white);
+  filter: brightness(1.07);
 }
 
 .lib-primary:active {
   transform: scale(0.98);
 }
 
+.lib-book-empty {
+  margin-top: 18px;
+}
+
+/* episode list: one plate, hairline rows */
 .lib-tracks {
   list-style: none;
-  margin: 1.75rem 0 0;
-  padding: 0;
-  border-top: 1px solid var(--glass-border);
+  margin: 22px 0 0;
+  padding: 6px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  box-shadow: var(--lib-raise);
+}
+
+.lib-tracks > li + li {
+  border-top: 1px solid var(--border-soft);
 }
 
 .lib-track {
   width: 100%;
-  min-height: 62px;
+  min-height: 60px;
   display: grid;
-  grid-template-columns: 2.25rem minmax(0, 1fr) auto;
+  grid-template-columns: 32px minmax(0, 1fr) auto;
   align-items: center;
   gap: 12px;
-  padding: 11px 10px 11px 4px;
+  padding: 10px 12px 10px 10px;
   border: 0;
-  border-bottom: 1px solid var(--glass-border);
+  border-radius: var(--r-md);
   background: none;
-  color: var(--text);
-  font: inherit;
   text-align: left;
   cursor: pointer;
   transition: background 0.15s ease;
 }
 
 .lib-track:hover {
-  background: var(--lib-hover);
+  background: rgba(255, 255, 255, 0.04);
 }
 
 .lib-track.is-current {
-  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  background: rgba(var(--accent-rgb), 0.1);
 }
 
 .lib-track-num {
+  width: 32px;
+  height: 32px;
   display: grid;
   place-items: center;
-  font-size: 0.92rem;
+  border-radius: var(--r-sm);
+  background: var(--card-2);
+  font-size: 0.84rem;
   font-weight: 600;
-  color: var(--lib-dim);
-  font-variant-numeric: tabular-nums;
+  color: var(--text-dim);
 }
 
-.lib-track.is-done .lib-track-num,
+.lib-track.is-done .lib-track-num {
+  color: var(--accent);
+  background: rgba(var(--accent-rgb), 0.12);
+}
+
 .lib-track.is-current .lib-track-num {
-  color: var(--lib-accent-text);
+  background: var(--accent);
+  color: var(--on-accent);
 }
 
 .lib-track-body {
@@ -809,57 +814,61 @@
 }
 
 .lib-track-title {
-  font-size: 0.98rem;
-  font-weight: 650;
+  font-size: 0.95rem;
+  font-weight: 600;
   line-height: 1.4;
 }
 
 .lib-track-status {
-  font-size: 0.8rem;
-  color: var(--lib-dim);
-  font-variant-numeric: tabular-nums;
+  font-size: 0.78rem;
+  color: var(--text-dim);
 }
 
-.lib-track.is-progress .lib-track-status,
 .lib-track.is-current .lib-track-status {
-  color: var(--lib-accent-text);
-  font-weight: 600;
+  color: var(--text);
 }
 
 .lib-track-bar {
   display: block;
   width: min(220px, 100%);
-  height: 3px;
+  height: 4px;
   margin-top: 4px;
   border-radius: 2px;
-  background: var(--lib-track);
+  background: var(--inset);
   overflow: hidden;
 }
 
 .lib-track-bar > span {
   display: block;
   height: 100%;
+  border-radius: 2px;
   background: var(--accent);
 }
 
+.lib-track-side {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 5px;
+}
+
 .lib-track-dur {
-  font-size: 0.85rem;
-  color: var(--lib-dim);
-  font-variant-numeric: tabular-nums;
+  font-size: 0.8rem;
+  color: var(--text-dim);
 }
 
 .lib-eq {
   display: inline-flex;
   align-items: flex-end;
   gap: 2px;
-  height: 14px;
+  height: 13px;
 }
 
 .lib-eq > span {
   width: 3px;
   height: 100%;
   border-radius: 1px;
-  background: var(--lib-accent-text);
+  background: currentColor;
   transform-origin: bottom;
   animation: lib-eq 0.9s ease-in-out infinite;
 }
@@ -882,18 +891,22 @@
   }
 }
 
-/* ---------- player bar ---------- */
+/* ---------- player: a docked module ---------- */
 .lib-player {
   position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  left: 12px;
+  right: 12px;
+  bottom: calc(12px + env(safe-area-inset-bottom));
   z-index: 400;
-  background: var(--lib-player-bg);
-  border-top: 1px solid var(--glass-border);
-  box-shadow: 0 -10px 28px -16px var(--lib-shade-strong);
-  padding-bottom: env(safe-area-inset-bottom);
-  color: var(--text);
+  max-width: 1120px;
+  margin: 0 auto;
+  padding-bottom: 8px;
+  background: var(--lib-solid);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    0 18px 40px -18px rgba(0, 0, 0, 0.85);
 }
 
 .lib-player-row {
@@ -901,10 +914,8 @@
   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center;
   gap: 12px;
-  height: 76px;
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 0 16px;
+  height: 68px;
+  padding: 0 12px 0 10px;
 }
 
 .lib-player-info {
@@ -913,18 +924,16 @@
   gap: 12px;
   min-width: 0;
   padding: 6px;
-  margin-left: -6px;
   border: 0;
-  border-radius: 10px;
+  border-radius: var(--r-md);
   background: none;
-  color: inherit;
-  font: inherit;
   text-align: left;
   cursor: pointer;
+  transition: background 0.15s ease;
 }
 
 .lib-player-info:hover {
-  background: var(--lib-hover);
+  background: rgba(255, 255, 255, 0.04);
 }
 
 .lib-player-text {
@@ -935,8 +944,16 @@
 }
 
 .lib-player-title {
-  font-size: 0.93rem;
-  font-weight: 700;
+  font-size: 0.92rem;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lib-player-sub {
+  font-size: 0.78rem;
+  color: var(--text-dim);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -947,18 +964,10 @@
   align-items: center;
   gap: 4px;
   margin-right: 6px;
-  color: var(--lib-accent-text);
-  font-weight: 700;
+  color: var(--accent);
+  font-weight: 600;
   font-variant-numeric: tabular-nums;
   vertical-align: -1px;
-}
-
-.lib-player-sub {
-  font-size: 0.78rem;
-  color: var(--lib-dim);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .lib-player-controls {
@@ -971,14 +980,14 @@
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: 8px;
+  gap: 6px;
 }
 
 .lib-player-time {
   font-size: 0.8rem;
-  color: var(--lib-dim);
+  color: var(--text-dim);
   font-variant-numeric: tabular-nums;
-  margin-right: 4px;
+  margin-right: 6px;
   white-space: nowrap;
 }
 
@@ -989,61 +998,67 @@
   display: grid;
   place-items: center;
   border: 0;
-  border-radius: 50%;
+  border-radius: var(--r-md);
   background: none;
-  color: var(--text);
   cursor: pointer;
   transition: background 0.15s ease, opacity 0.15s ease;
 }
 
 .lib-icon-btn:hover:not(:disabled) {
-  background: var(--lib-hover);
+  background: var(--card-2);
 }
 
 .lib-icon-btn:disabled {
-  opacity: 0.32;
+  opacity: 0.3;
   cursor: default;
 }
 
 .lib-icon-btn-quiet {
-  color: var(--lib-dim);
+  color: var(--text-dim);
 }
 
+/* play: the accent squircle key */
 .lib-play {
   position: relative;
-  width: 50px;
-  height: 50px;
+  width: 48px;
+  height: 48px;
   flex: none;
   display: grid;
   place-items: center;
   border: 0;
-  border-radius: 50%;
+  border-radius: var(--r-md);
   background: var(--accent);
-  color: var(--lib-on-accent);
+  color: var(--on-accent);
   cursor: pointer;
-  transition: transform 0.15s ease, background 0.15s ease;
+  transition: filter 0.12s ease, transform 0.12s ease;
 }
 
 .lib-play:hover {
-  background: color-mix(in srgb, var(--accent) 86%, white);
+  filter: brightness(1.07);
 }
 
 .lib-play:active {
-  transform: scale(0.94);
+  transform: scale(0.95);
 }
 
 .lib-play-large {
-  width: 76px;
-  height: 76px;
+  width: 72px;
+  height: 72px;
+  border-radius: var(--r-lg);
+}
+
+.lib-play.is-busy > svg {
+  opacity: 0.3;
 }
 
 .lib-play.is-busy::after {
   content: '';
   position: absolute;
-  inset: -5px;
+  width: 40%;
+  height: 40%;
   border-radius: 50%;
-  border: 2px solid transparent;
-  border-top-color: var(--accent);
+  border: 2px solid rgba(12, 10, 26, 0.25);
+  border-top-color: var(--on-accent);
   animation: lib-spin 0.8s linear infinite;
 }
 
@@ -1053,33 +1068,32 @@
   }
 }
 
-.lib-chip {
+/* rate / sleep keys: controls, so squircle, never pills */
+.lib-ctl {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  height: 34px;
-  min-width: 44px;
   justify-content: center;
+  gap: 6px;
+  height: 36px;
+  min-width: 44px;
   padding: 0 11px;
-  border-radius: 999px;
-  border: 1px solid var(--glass-border);
-  background: none;
-  color: var(--text);
-  font: inherit;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--border);
+  background: var(--card-2);
   font-size: 0.82rem;
-  font-weight: 700;
+  font-weight: 600;
   font-variant-numeric: tabular-nums;
   cursor: pointer;
-  transition: border-color 0.15s ease, background 0.15s ease;
+  transition: background 0.15s ease, border-color 0.15s ease;
 }
 
-.lib-chip:hover {
-  background: var(--lib-hover);
+.lib-ctl:hover {
+  background: #262833;
 }
 
-.lib-chip.is-on {
-  border-color: var(--lib-accent-text);
-  color: var(--lib-accent-text);
+.lib-ctl.is-on {
+  background: rgba(var(--accent-rgb), 0.18);
+  border-color: rgba(var(--accent-rgb), 0.36);
 }
 
 .lib-menu-anchor {
@@ -1089,15 +1103,15 @@
 .lib-popover {
   position: absolute;
   right: 0;
-  bottom: calc(100% + 12px);
+  bottom: calc(100% + 14px);
   min-width: 132px;
   display: grid;
   gap: 2px;
   padding: 6px;
-  border-radius: 12px;
-  border: 1px solid var(--glass-border);
-  background: var(--modal-bg);
-  box-shadow: 0 14px 32px -12px var(--lib-shade-strong);
+  border-radius: var(--r-md);
+  border: 1px solid var(--border);
+  background: #1a1b23;
+  box-shadow: 0 16px 34px -14px rgba(0, 0, 0, 0.9);
   animation: lib-pop 0.16s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
@@ -1111,10 +1125,8 @@
 .lib-menu-item {
   padding: 9px 12px;
   border: 0;
-  border-radius: 8px;
+  border-radius: var(--r-sm);
   background: none;
-  color: var(--text);
-  font: inherit;
   font-size: 0.88rem;
   font-weight: 600;
   text-align: left;
@@ -1123,12 +1135,11 @@
 }
 
 .lib-menu-item:hover {
-  background: var(--lib-hover);
+  background: var(--card-2);
 }
 
 .lib-menu-item.is-on {
-  color: var(--lib-accent-text);
-  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  background: rgba(var(--accent-rgb), 0.18);
 }
 
 /* ---------- scrubber ---------- */
@@ -1142,24 +1153,25 @@
   border: 0;
   background: transparent;
   cursor: pointer;
-  --lib-fill: linear-gradient(to right, var(--accent) var(--lib-pct), var(--lib-track) var(--lib-pct));
+  --lib-fill: linear-gradient(to right, var(--accent) var(--lib-pct), var(--inset) var(--lib-pct));
 }
 
 .lib-scrub::-webkit-slider-runnable-track {
   height: var(--lib-scrub-h, 4px);
-  border-radius: 3px;
+  border-radius: 4px;
   background: var(--lib-fill);
+  box-shadow: inset 0 0 0 1px var(--border-soft);
 }
 
 .lib-scrub::-moz-range-track {
   height: var(--lib-scrub-h, 4px);
-  border-radius: 3px;
-  background: var(--lib-track);
+  border-radius: 4px;
+  background: var(--inset);
 }
 
 .lib-scrub::-moz-range-progress {
   height: var(--lib-scrub-h, 4px);
-  border-radius: 3px;
+  border-radius: 4px;
   background: var(--accent);
 }
 
@@ -1168,25 +1180,26 @@
   width: 14px;
   height: 14px;
   margin-top: calc((var(--lib-scrub-h, 4px) - 14px) / 2);
-  border-radius: 50%;
-  border: 0;
-  background: var(--accent);
-  box-shadow: 0 1px 4px var(--lib-shade-strong);
+  border-radius: 5px;
+  border: 2px solid var(--lib-solid);
+  background: var(--text);
 }
 
 .lib-scrub::-moz-range-thumb {
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  border: 0;
-  background: var(--accent);
+  width: 12px;
+  height: 12px;
+  border-radius: 5px;
+  border: 2px solid var(--lib-solid);
+  background: var(--text);
 }
 
+/* inside the docked module, along its lower edge */
 .lib-scrub-bar {
   position: absolute;
-  left: 0;
-  right: 0;
-  top: -6px;
+  left: 18px;
+  right: 18px;
+  bottom: 2px;
+  width: auto;
   height: 12px;
   --lib-scrub-h: 3px;
 }
@@ -1196,13 +1209,14 @@
   transition: opacity 0.15s ease;
 }
 
-.lib-scrub-bar:hover::-webkit-slider-thumb {
+.lib-scrub-bar:hover::-webkit-slider-thumb,
+.lib-scrub-bar:active::-webkit-slider-thumb {
   opacity: 1;
 }
 
 .lib-scrub-sheet {
   height: 28px;
-  --lib-scrub-h: 5px;
+  --lib-scrub-h: 6px;
 }
 
 /* ---------- full player sheet ---------- */
@@ -1213,7 +1227,7 @@
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  background: var(--lib-scrim);
+  background: rgba(4, 5, 8, 0.66);
   animation: lib-fade 0.2s ease;
 }
 
@@ -1226,15 +1240,19 @@
 .lib-sheet {
   width: min(560px, 100%);
   max-height: 94vh;
+  max-height: 94dvh;
   overflow-y: auto;
   padding: 10px 20px calc(24px + env(safe-area-inset-bottom));
-  border-radius: 22px 22px 0 0;
-  border: 1px solid var(--glass-border);
+  border-radius: var(--r-lg) var(--r-lg) 0 0;
+  border: 1px solid var(--border);
   border-bottom: 0;
-  background: var(--modal-bg);
-  color: var(--text);
-  box-shadow: 0 -20px 50px -20px var(--lib-shade-strong);
+  background:
+    radial-gradient(120% 40% at 50% 0%, rgba(var(--accent-rgb), 0.12), rgba(var(--accent-rgb), 0) 70%),
+    #101117;
+  box-shadow: 0 -20px 50px -20px rgba(0, 0, 0, 0.9);
   animation: lib-sheet-in 0.24s cubic-bezier(0.2, 0.8, 0.2, 1);
+  scrollbar-width: thin;
+  scrollbar-color: var(--card-2) transparent;
 }
 
 @keyframes lib-sheet-in {
@@ -1247,8 +1265,7 @@
 .lib-sheet-top {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin: 0 -8px 8px;
+  margin: 0 -8px 10px;
 }
 
 .lib-sheet-hero {
@@ -1256,20 +1273,20 @@
   grid-template-columns: 104px minmax(0, 1fr);
   gap: 18px;
   align-items: center;
-  margin-bottom: 18px;
+  margin-bottom: 20px;
 }
 
 .lib-sheet-hero .lib-cover-detail {
   --lib-book-w: 104px;
   width: 104px;
-  height: 156px;
+  border-radius: var(--r-md);
 }
 
 .lib-sheet-title {
   margin: 0;
-  font-size: 1.3rem;
-  font-weight: 800;
-  line-height: 1.3;
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1.35;
   text-wrap: balance;
 }
 
@@ -1278,19 +1295,12 @@
   font-size: 0.88rem;
 }
 
-.lib-sheet-stop {
-  width: 100%;
-  justify-content: center;
-  margin-top: 22px;
-  color: var(--lib-dim);
-}
-
 .lib-sheet-error {
   margin: 0 0 12px;
   padding: 10px 12px;
-  border-radius: 10px;
+  border-radius: var(--r-md);
   color: var(--danger);
-  background: color-mix(in srgb, var(--danger) 10%, transparent);
+  background: rgba(var(--danger-rgb), 0.1);
   font-size: 0.88rem;
 }
 
@@ -1299,7 +1309,7 @@
   justify-content: space-between;
   margin-top: 2px;
   font-size: 0.8rem;
-  color: var(--lib-dim);
+  color: var(--text-dim);
 }
 
 .lib-sheet-controls {
@@ -1307,7 +1317,7 @@
   align-items: center;
   justify-content: center;
   gap: 10px;
-  margin: 10px 0 20px;
+  margin: 12px 0 22px;
 }
 
 .lib-sheet-controls .lib-icon-btn {
@@ -1321,81 +1331,95 @@
 
 .lib-sheet-label {
   display: block;
-  margin-bottom: 8px;
+  margin: 0 2px 8px;
   font-size: 0.82rem;
-  font-weight: 700;
-  color: var(--lib-dim);
+  font-weight: 600;
+  color: var(--text-dim);
 }
 
 .lib-sheet-label-value {
-  color: var(--lib-accent-text);
+  color: var(--accent);
 }
 
+/* segmented control: keys in a recessed tray */
 .lib-seg {
   display: grid;
   grid-template-columns: repeat(var(--lib-cols, 5), minmax(0, 1fr));
-  gap: 6px;
+  gap: 4px;
+  padding: 4px;
+  background: var(--inset);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--r-md);
 }
 
 .lib-seg-item {
-  min-height: 42px;
-  padding: 0 6px;
-  border-radius: 10px;
-  border: 1px solid var(--glass-border);
+  min-height: 40px;
+  padding: 0 4px;
+  border: 0;
+  border-radius: var(--r-sm);
   background: none;
-  color: var(--text);
-  font: inherit;
+  color: var(--text-dim);
   font-size: 0.86rem;
-  font-weight: 700;
+  font-weight: 600;
   font-variant-numeric: tabular-nums;
   cursor: pointer;
-  transition: background 0.15s ease, border-color 0.15s ease;
+  transition: background 0.15s ease, color 0.15s ease;
 }
 
 .lib-seg-item:hover {
-  background: var(--lib-hover);
+  color: var(--text);
+  background: var(--card-2);
 }
 
 .lib-seg-item.is-on {
   background: var(--accent);
-  border-color: var(--accent);
-  color: var(--lib-on-accent);
+  color: var(--on-accent);
+}
+
+.lib-sheet-stop {
+  width: 100%;
+  margin-top: 24px;
+  color: var(--text-dim);
 }
 
 .lib-sheet-note {
   margin: 16px 0 0;
   font-size: 0.8rem;
-  color: var(--lib-dim);
-  line-height: 1.5;
+  color: var(--text-dim);
+  line-height: 1.6;
 }
 
 /* ---------- small screens ---------- */
 @media (max-width: 760px) {
   .lib-page {
-    padding: 1.25rem 1rem 2.5rem;
+    padding: 18px 16px 32px;
   }
 
   .lib-title {
-    font-size: 1.45rem;
+    font-size: 1.42rem;
   }
 
   .lib-shelf {
-    --lib-book-w: 100px;
-    --lib-cavity-top: 22px;
+    --lib-book-w: 108px;
+    padding: 4px 6px 6px;
   }
 
   .lib-shelf-large {
-    --lib-book-w: 118px;
+    --lib-book-w: 138px;
   }
 
   .lib-shelf-books {
-    gap: 16px;
-    padding-left: 18px;
-    padding-right: 18px;
+    gap: 12px;
+    padding: 12px;
+  }
+
+  .lib-shelf-large .lib-shelf-books {
+    gap: 18px 12px;
+    justify-content: space-between;
   }
 
   .lib-shelf-empty {
-    padding: 0 16px;
+    padding: 12px;
     gap: 10px;
   }
 
@@ -1404,45 +1428,95 @@
   }
 
   .lib-shelf-empty-text {
-    margin-left: 4px;
-    font-size: 0.82rem;
+    margin-left: 2px;
+    font-size: 0.84rem;
   }
 
-  .lib-plate {
-    left: 16px;
-    max-width: calc(100% - 32px);
-  }
-
+  /* book page: cover beside the title, everything else full width */
   .lib-book-page {
-    grid-template-columns: 1fr;
-    gap: 1.25rem;
+    grid-template-columns: 92px minmax(0, 1fr);
+    gap: 0 16px;
+  }
+
+  .lib-book-main {
+    display: contents;
   }
 
   .lib-book-aside {
     position: static;
+    grid-column: 1;
+    grid-row: 1;
   }
 
   .lib-book-aside .lib-cover-detail {
-    --lib-book-w: 120px;
-    width: 120px;
-    height: 180px;
+    --lib-book-w: 92px;
+    width: 92px;
+    border-radius: var(--r-md);
+  }
+
+  .lib-book-aside .lib-cover-face {
+    gap: 5px;
+  }
+
+  .lib-book-head {
+    grid-column: 2;
+    grid-row: 1;
+    align-self: center;
+    padding: 0;
+  }
+
+  .lib-book-progress,
+  .lib-primary,
+  .lib-tracks,
+  .lib-book-empty {
+    grid-column: 1 / -1;
+  }
+
+  .lib-book-progress {
+    margin: 18px 2px 0;
   }
 
   .lib-primary {
     width: 100%;
     justify-content: center;
+    margin-top: 14px;
+  }
+
+  .lib-tracks {
+    margin-top: 16px;
+    padding: 4px;
+  }
+
+  .lib-track {
+    gap: 10px;
+    padding: 10px 8px;
+  }
+
+  .lib-player {
+    left: 8px;
+    right: 8px;
+    bottom: calc(8px + env(safe-area-inset-bottom));
+    padding-bottom: 6px;
   }
 
   .lib-player-row {
     grid-template-columns: minmax(0, 1fr) auto;
-    height: 68px;
-    padding: 0 8px 0 12px;
-    gap: 6px;
+    height: 64px;
+    padding: 0 6px 0 4px;
+    gap: 4px;
+  }
+
+  .lib-player-info {
+    gap: 10px;
   }
 
   .lib-player-extras,
   .lib-wide-only {
     display: none;
+  }
+
+  .lib-player-controls {
+    gap: 2px;
   }
 
   .lib-player-controls .lib-icon-btn {
@@ -1455,13 +1529,25 @@
     height: 46px;
   }
 
+  .lib-play-large {
+    width: 72px;
+    height: 72px;
+  }
+
   /* on phones the thin line is a readout; seeking lives in the sheet */
   .lib-scrub-bar {
+    left: 16px;
+    right: 16px;
     pointer-events: none;
   }
 
   .lib-scrub-bar::-webkit-slider-thumb {
     opacity: 0;
+  }
+
+  .lib-sheet {
+    padding-left: 16px;
+    padding-right: 16px;
   }
 
   .lib-sheet-controls {
@@ -1482,7 +1568,8 @@
     animation: none;
   }
 
-  .lib-book .lib-cover {
+  .lib-book .lib-cover,
+  .lib-shelf-chev {
     transition: none;
   }
 }

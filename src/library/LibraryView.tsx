@@ -1,10 +1,10 @@
 import { useEffect } from 'react'
 import BookCover from './BookCover'
 import { fmtClock, fmtLength } from './format'
-import { IconCheck, IconPause, IconPlay, IconRetry } from './icons'
+import { IconCheck, IconChevronRight, IconPause, IconPlay, IconRetry } from './icons'
 import { useLibrary } from './LibraryProvider'
 import type { LibraryRoute } from './route'
-import { bookStats, trackState } from './stats'
+import { bookStats, trackState, type TrackState } from './stats'
 import type { Book, Shelf } from './types'
 import './library.css'
 
@@ -14,6 +14,22 @@ const SYNC_HINT = 'npm run library:sync'
 const CATALOG_HINT = 'scripts/library/catalog.json'
 
 export default function LibraryView({ route, navigate }: { route: LibraryRoute; navigate: Nav }) {
+  // Paint the Squircle ground behind the whole route (and calm the Hub
+  // toolbar to match) only while the Library is on screen.
+  useEffect(() => {
+    const root = document.documentElement
+    root.classList.add('lib-route')
+    return () => root.classList.remove('lib-route')
+  }, [])
+
+  return (
+    <div className="lib-sq lib-root">
+      <LibraryBody route={route} navigate={navigate} />
+    </div>
+  )
+}
+
+function LibraryBody({ route, navigate }: { route: LibraryRoute; navigate: Nav }) {
   const lib = useLibrary()
   const { catalog } = lib
 
@@ -93,7 +109,7 @@ function Bookcase({ shelves, navigate }: { shelves: Shelf[]; navigate: Nav }) {
     <div className="lib-page fade-in">
       <header className="lib-head">
         <h1 className="lib-title">ห้องสมุดเสียง</h1>
-        <p className="lib-head-meta">
+        <p className="lib-head-meta lib-num">
           {shelves.length} ชั้น · {books} เล่ม{seconds > 0 ? ` · ฟังรวม ${fmtLength(seconds)}` : ''}
         </p>
       </header>
@@ -116,20 +132,29 @@ function ResumeStrip({ navigate }: { navigate: Nav }) {
   const playing = isCurrent && lib.status === 'playing'
   const p = lib.progress[track.id]
   const at = isCurrent ? lib.position : p && !p.completed ? p.positionSeconds : 0
+  const dur = isCurrent && lib.duration ? lib.duration : track.durationSeconds ?? 0
+  const pct = dur > 0 ? Math.min(100, (at / dur) * 100) : 0
   return (
     <section className="lib-resume" aria-label="ฟังต่อจากครั้งก่อน">
       <button className="lib-resume-book" onClick={() => navigate({ kind: 'book', slug: book.slug })} aria-label={`เปิดเล่ม ${book.title}`}>
         <BookCover book={book} size="thumb" />
       </button>
       <div className="lib-resume-text">
-        <span className="lib-resume-title">{playing ? 'กำลังฟัง' : 'ฟังต่อ'}: {track.title}</span>
+        <span className="lib-resume-title">
+          {playing ? 'กำลังฟัง' : 'ฟังต่อ'}: {track.title}
+        </span>
         <span className="lib-resume-meta">
           {at > 3 ? `${playing ? '' : 'ค้างที่ '}${fmtClock(at)}/${fmtClock(track.durationSeconds)} · ` : ''}
           ตอน {index + 1}/{book.tracks.length} · {book.title}
         </span>
+        {at > 3 && dur > 0 && (
+          <span className="lib-meter lib-resume-meter" aria-hidden="true">
+            <span style={{ width: `${pct}%` }} />
+          </span>
+        )}
       </div>
       <button
-        className="lib-play-round"
+        className="lib-play"
         onClick={() => (isCurrent ? lib.toggle() : lib.playTrack(track.id))}
         aria-label={playing ? 'หยุดชั่วคราว' : `ฟังต่อ ${track.title}`}
       >
@@ -143,8 +168,17 @@ function ShelfRow({ shelf, navigate, large }: { shelf: Shelf; navigate: Nav; lar
   const lib = useLibrary()
   const titleId = `lib-shelf-${shelf.slug}`
   return (
-    <section className={`lib-shelf${large ? ' lib-shelf-large' : ''}`} aria-labelledby={titleId}>
-      <div className="lib-shelf-scroll">
+    <section className={`lib-shelf${large ? ' lib-shelf-large' : ''}`} aria-labelledby={large ? undefined : titleId} aria-label={large ? shelf.title : undefined}>
+      {!large && (
+        <button className="lib-shelf-head" onClick={() => navigate({ kind: 'shelf', slug: shelf.slug })}>
+          <span className="lib-shelf-title" id={titleId}>
+            {shelf.title}
+          </span>
+          <span className="lib-shelf-count lib-num">{shelf.books.length} เล่ม</span>
+          <IconChevronRight size={18} className="lib-shelf-chev" />
+        </button>
+      )}
+      <div className="lib-bay">
         {shelf.books.length > 0 ? (
           <ul className="lib-shelf-books">
             {shelf.books.map((b) => {
@@ -158,11 +192,13 @@ function ShelfRow({ shelf, navigate, large }: { shelf: Shelf; navigate: Nav; lar
                     onPointerEnter={() => lib.prepareBook(b)}
                     aria-label={`${b.title}, ${st.count} ตอน, ${caption(st)}`}
                   >
-                    <BookCover book={b} size="shelf" state={st.state} />
+                    <BookCover book={b} size="shelf" state={st.state} done={st.done} count={st.count} />
                   </button>
                   <span className="lib-slot-caption" aria-hidden="true">
                     <span className="lib-slot-title">{b.title}</span>
-                    <span className="lib-slot-meta">{caption(st)}</span>
+                    <span className="lib-slot-meta lib-num">
+                      {st.count === 0 ? 'ยังไม่มีตอน' : `${st.count} ตอน · ${fmtLength(st.totalSeconds)}`}
+                    </span>
                   </span>
                 </li>
               )
@@ -181,14 +217,6 @@ function ShelfRow({ shelf, navigate, large }: { shelf: Shelf; navigate: Nav; lar
           </div>
         )}
       </div>
-      <div className="lib-plank">
-        <button className="lib-plate" onClick={() => navigate({ kind: 'shelf', slug: shelf.slug })}>
-          <span className="lib-plate-title" id={titleId}>
-            {shelf.title}
-          </span>
-          <span className="lib-plate-count">{shelf.books.length} เล่ม</span>
-        </button>
-      </div>
     </section>
   )
 }
@@ -202,45 +230,22 @@ function caption(st: ReturnType<typeof bookStats>) {
 
 // ---------- one shelf ----------
 function ShelfPage({ shelf, navigate }: { shelf: Shelf; navigate: Nav }) {
-  const lib = useLibrary()
   return (
     <div className="lib-page fade-in">
       <header className="lib-head">
         <h1 className="lib-title">{shelf.title}</h1>
-        <p className="lib-head-meta">
+        <p className="lib-head-meta lib-num">
           {shelf.books.length} เล่ม{shelf.description ? ` · ${shelf.description}` : ''}
         </p>
       </header>
-      <div className="lib-case">
-        <ShelfRow shelf={shelf} navigate={navigate} large />
-      </div>
-      {shelf.books.length > 0 && (
-        <ul className="lib-booklist">
-          {shelf.books.map((b) => {
-            const st = bookStats(b, lib.progress)
-            return (
-              <li key={b.id}>
-                <button className="lib-booklist-row" onClick={() => navigate({ kind: 'book', slug: b.slug })}>
-                  <BookCover book={b} size="thumb" />
-                  <span className="lib-booklist-text">
-                    <span className="lib-booklist-title">{b.title}</span>
-                    <span className="lib-booklist-meta">
-                      {st.count} ตอน · {fmtLength(st.totalSeconds)}
-                      {b.author ? ` · ${b.author}` : ''}
-                    </span>
-                  </span>
-                  <span className={`lib-booklist-state is-${st.state}`}>{caption(st)}</span>
-                </button>
-              </li>
-            )
-          })}
-        </ul>
-      )}
+      <ShelfRow shelf={shelf} navigate={navigate} large />
     </div>
   )
 }
 
 // ---------- one book ----------
+const PILL_TEXT: Record<TrackState, string> = { new: 'ยังไม่ฟัง', progress: 'ฟังค้าง', done: 'ฟังจบ' }
+
 function BookPage({ book, shelf, navigate }: { book: Book; shelf: Shelf; navigate: Nav }) {
   const lib = useLibrary()
   const { prepareBook } = lib
@@ -280,19 +285,21 @@ function BookPage({ book, shelf, navigate }: { book: Book; shelf: Shelf; navigat
         <BookCover book={book} size="detail" state={st.state} />
       </aside>
       <div className="lib-book-main">
-        <h1 className="lib-title">{book.title}</h1>
-        <p className="lib-head-meta">
-          <button className="lib-inline-link" onClick={() => navigate({ kind: 'shelf', slug: shelf.slug })}>
-            ชั้น {shelf.title}
-          </button>
-          {' · '}
-          {[book.author, `${st.count} ตอน`, fmtLength(st.totalSeconds)].filter(Boolean).join(' · ')}
-        </p>
+        <header className="lib-book-head">
+          <h1 className="lib-title">{book.title}</h1>
+          <p className="lib-head-meta">
+            <button className="lib-inline-link" onClick={() => navigate({ kind: 'shelf', slug: shelf.slug })}>
+              ชั้น {shelf.title}
+            </button>
+            {' · '}
+            {[book.author, `${st.count} ตอน`, fmtLength(st.totalSeconds)].filter(Boolean).join(' · ')}
+          </p>
+        </header>
         <div className="lib-book-progress" aria-label={`ฟังจบ ${st.done} จาก ${st.count} ตอน`}>
           <span className="lib-meter" aria-hidden="true">
             <span style={{ width: `${pct}%` }} />
           </span>
-          <span className="lib-book-progress-text">
+          <span className="lib-book-progress-text lib-num">
             ฟังจบ {st.done} จาก {st.count} ตอน
           </span>
         </div>
@@ -304,7 +311,7 @@ function BookPage({ book, shelf, navigate }: { book: Book; shelf: Shelf; navigat
         )}
 
         {st.count === 0 ? (
-          <p className="lib-state-text">
+          <p className="lib-state-text lib-book-empty">
             เล่มนี้ยังไม่มีตอน ใส่ไฟล์ใน <code>{CATALOG_HINT}</code> แล้วรัน <code>{SYNC_HINT}</code>
           </p>
         ) : (
@@ -314,18 +321,34 @@ function BookPage({ book, shelf, navigate }: { book: Book; shelf: Shelf; navigat
               const isCurrent = lib.current?.track.id === t.id
               const isPlaying = isCurrent && lib.status === 'playing'
               const isLoading = isCurrent && (lib.status === 'loading' || lib.buffering)
+              const isError = isCurrent && lib.status === 'error'
               const p = lib.progress[t.id]
               const at = isCurrent ? lib.position : p?.positionSeconds ?? 0
               const dur = isCurrent && lib.duration ? lib.duration : t.durationSeconds ?? 0
               const showBar = isCurrent ? at > 0 : s === 'progress'
               let statusText: string
-              if (isCurrent && lib.status === 'error') statusText = 'เล่นไม่ได้ กดเพื่อลองใหม่'
+              if (isError) statusText = 'เล่นไม่ได้ กดเพื่อลองใหม่'
               else if (isPlaying) statusText = `กำลังเล่น · ${fmtClock(at)}`
               else if (isLoading) statusText = 'กำลังโหลด...'
               else if (isCurrent && at > 3) statusText = `หยุดไว้ที่ ${fmtClock(at)}`
               else if (s === 'done') statusText = 'ฟังจบแล้ว'
               else if (s === 'progress') statusText = `ค้างที่ ${fmtClock(at)}`
               else statusText = 'ยังไม่ฟัง'
+              // The pill names the state; the line under the title carries the time.
+              let pillKind: string = s
+              let pillText = PILL_TEXT[s]
+              if (isError) {
+                pillKind = 'error'
+                pillText = 'เล่นไม่ได้'
+              } else if (isPlaying || isLoading) {
+                pillKind = 'live'
+                pillText = isLoading ? 'กำลังโหลด' : 'กำลังเล่น'
+              } else if (isCurrent && at > 3) {
+                pillKind = 'progress'
+                pillText = 'หยุดไว้'
+              }
+              const detail =
+                isError || isPlaying || isLoading || (isCurrent && at > 3) || s === 'progress' ? statusText : null
               return (
                 <li key={t.id}>
                   <button
@@ -334,19 +357,22 @@ function BookPage({ book, shelf, navigate }: { book: Book; shelf: Shelf; navigat
                     onClick={() => (isCurrent ? lib.toggle() : lib.playTrack(t.id))}
                     aria-label={`ตอน ${i + 1} ${t.title}, ${fmtClock(t.durationSeconds)}, ${statusText}`}
                   >
-                    <span className="lib-track-num" aria-hidden="true">
-                      {isPlaying ? <EqBars /> : s === 'done' && !isCurrent ? <IconCheck size={18} /> : i + 1}
+                    <span className="lib-track-num lib-num" aria-hidden="true">
+                      {isPlaying ? <EqBars /> : s === 'done' && !isCurrent ? <IconCheck size={16} /> : i + 1}
                     </span>
                     <span className="lib-track-body">
                       <span className="lib-track-title">{t.title}</span>
-                      <span className="lib-track-status">{statusText}</span>
+                      {detail && <span className="lib-track-status lib-num">{detail}</span>}
                       {showBar && dur > 0 && (
                         <span className="lib-track-bar" aria-hidden="true">
                           <span style={{ width: `${Math.min(100, (at / dur) * 100)}%` }} />
                         </span>
                       )}
                     </span>
-                    <span className="lib-track-dur">{fmtClock(t.durationSeconds)}</span>
+                    <span className="lib-track-side" aria-hidden="true">
+                      <span className={`lib-pill is-${pillKind}`}>{pillText}</span>
+                      <span className="lib-track-dur lib-num">{fmtClock(t.durationSeconds)}</span>
+                    </span>
                   </button>
                 </li>
               )
@@ -378,7 +404,10 @@ function LibrarySkeleton() {
       <div className="lib-case">
         {[0, 1].map((i) => (
           <section key={i} className="lib-shelf">
-            <div className="lib-shelf-scroll">
+            <div className="lib-shelf-head lib-shelf-head-skel">
+              <span className="lib-skel lib-skel-line" />
+            </div>
+            <div className="lib-bay">
               <ul className="lib-shelf-books">
                 {[0, 1, 2].map((j) => (
                   <li key={j} className="lib-slot">
@@ -387,7 +416,6 @@ function LibrarySkeleton() {
                 ))}
               </ul>
             </div>
-            <div className="lib-plank" />
           </section>
         ))}
       </div>

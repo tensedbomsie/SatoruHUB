@@ -16,13 +16,102 @@
           "cloth": "ink",
           "sourceDir": "E:/projYT/reading/audio_acc1101_el",
           "tracks": [
-            { "file": "00_intro.mp3", "path": "acc1101/00-intro.mp3", "title": "บทนำ" },
-            { "file": "01_ค่าเสื่อมราคา.mp3", "path": "acc1101/01-depreciation.mp3", "title": "ค่าเสื่อมราคา" },
-            { "file": "02_หนี้สงสัยจะสูญ.mp3", "path": "acc1101/02-doubtful-debts.mp3", "title": "หนี้สงสัยจะสูญ" },
-            { "file": "03_รายการปรับปรุง.mp3", "path": "acc1101/03-adjusting-entries.mp3", "title": "รายการปรับปรุง" },
-            { "file": "04_กระดาษทำการ.mp3", "path": "acc1101/04-worksheet.mp3", "title": "กระดาษทำการ" },
-            { "file": "05_ลักษณะเชิงคุณภาพ.mp3", "path": "acc1101/05-qualitative-characteristics.mp3", "title": "ลักษณะเชิงคุณภาพ" },
-            { "file": "06_ส่วนประกอบงบและผู้ใช้งบ.mp3", "path": "acc1101/06-statements-and-users.mp3", "title": "ส่วนประกอบงบและผู้ใช้งบ" }
+            {
+              "file": "00_intro.mp3",
+              "path": "acc1101/00-intro.mp3",
+              "title": "บทนำ"
+            },
+            {
+              "file": "01_ค่าเสื่อมราคา.mp3",
+              "path": "acc1101/01-depreciation.mp3",
+              "title": "ค่าเสื่อมราคา"
+            },
+            {
+              "file": "02_หนี้สงสัยจะสูญ.mp3",
+              "path": "acc1101/02-doubtful-debts.mp3",
+              "title": "หนี้สงสัยจะสูญ"
+            },
+            {
+              "file": "03_รายการปรับปรุง.mp3",
+              "path": "acc1101/03-adjusting-entries.mp3",
+              "title": "รายการปรับปรุง"
+            },
+            {
+              "file": "04_กระดาษทำการ.mp3",
+              "path": "acc1101/04-worksheet.mp3",
+              "title": "กระดาษทำการ"
+            },
+            {
+              "file": "05_ลักษณะเชิงคุณภาพ.mp3",
+              "path": "acc1101/05-qualitative-characteristics.mp3",
+              "title": "ลักษณะเชิงคุณภาพ"
+            },
+            {
+              "file": "06_ส่วนประกอบงบและผู้ใช้งบ.mp3",
+              "path": "acc1101/06-statements-and-users.mp3",
+              "title": "ส่วนประกอบงบและผู้ใช้งบ"
+            }
+          ]
+        },
+        {
+          "slug": "pol1101",
+          "title": "POL1101 การเมืองการปกครองไทย",
+          "coverLabel": "POL1101",
+          "subtitle": "การเมืองการปกครองไทย",
+          "author": "ทบทวนก่อนสอบ เสียงชาย",
+          "cloth": "plum",
+          "sourceDir": "E:/projYT/reading/audio_pol1101_el",
+          "tracks": [
+            {
+              "file": "00_intro.mp3",
+              "path": "pol1101/00-intro.mp3",
+              "title": "บทนำ"
+            },
+            {
+              "file": "01_วิถีประชาธิปไตยไทย.mp3",
+              "path": "pol1101/01-thai-democracy.mp3",
+              "title": "วิถีประชาธิปไตยไทย"
+            },
+            {
+              "file": "02_ต่างชาติอยุธยาและเบาว์ริง.mp3",
+              "path": "pol1101/02-foreigners-bowring.mp3",
+              "title": "ต่างชาติสมัยอยุธยาและเบาว์ริง"
+            },
+            {
+              "file": "03_ทวิราชากับพ่อปกครองลูก.mp3",
+              "path": "pol1101/03-divine-right-father-rule.mp3",
+              "title": "Divine Right กับพ่อปกครองลูก"
+            },
+            {
+              "file": "04_ศักดินาและทาส.mp3",
+              "path": "pol1101/04-sakdina-slavery.mp3",
+              "title": "ศักดินาและทาส"
+            },
+            {
+              "file": "05_กลุ่มผลประโยชน์และวิป.mp3",
+              "path": "pol1101/05-interest-groups-whip.mp3",
+              "title": "กลุ่มผลประโยชน์และวิป"
+            },
+            {
+              "file": "06_หัวเมือง.mp3",
+              "path": "pol1101/06-provinces.mp3",
+              "title": "หัวเมืองชั้นใน ชั้นนอก ประเทศราช"
+            },
+            {
+              "file": "07_ศาลเฉพาะทาง.mp3",
+              "path": "pol1101/07-specialized-courts.mp3",
+              "title": "ศาลเฉพาะทาง"
+            },
+            {
+              "file": "08_เทศบาลและกฎหมายอิสลาม.mp3",
+              "path": "pol1101/08-municipality-islamic-law.mp3",
+              "title": "เทศบาลและกฎหมายอิสลามชายแดนใต้"
+            },
+            {
+              "file": "09_การเมืองปัจจุบัน.mp3",
+              "path": "pol1101/09-current-politics.mp3",
+              "title": "การเมืองปัจจุบัน (เช็คซ้ำก่อนสอบ)"
+            }
           ]
         }
       ]

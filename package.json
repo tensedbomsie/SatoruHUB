@@ -8,7 +8,8 @@
     "build": "tsc -b && vite build",
     "postbuild": "node -e \"require('fs').copyFileSync('dist/index.html','dist/404.html')\"",
     "lint": "oxlint",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "library:sync": "node scripts/library/sync.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.110.2",

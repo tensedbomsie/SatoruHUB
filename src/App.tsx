@@ -1,5 +1,11 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import type { Session } from '@supabase/supabase-js'
+import { LibraryProvider } from './library/LibraryProvider'
+import { createSupabaseBackend } from './library/supabaseBackend'
+import { useLibraryRoute } from './library/route'
+import type { LibraryBackend } from './library/types'
+import LibraryView from './library/LibraryView'
+import PlayerBar from './library/PlayerBar'
 import { supabase } from './lib/supabase'
 import Login from './Login'
 import {
@@ -83,7 +89,23 @@ const APPS: AppLink[] = [
     icon: '☀️',
     url: 'https://hub.ppchan.com/NewsReader/',
   },
+  {
+    // Built into the Hub itself (not an iframe app) so the player keeps
+    // playing while moving between the wheel, other views and sub-apps.
+    name: 'Library',
+    description: 'ห้องสมุดเสียง ชั้นหนังสือส่วนตัว ฟังไปทำอย่างอื่นไป จำตำแหน่งที่ฟังค้างให้เอง',
+    icon: '📚',
+    url: '#library',
+  },
 ]
+
+const LIBRARY_URL = '#library'
+
+// DEV ONLY: `?libraryDemo` opens the Hub without a login, backed by the local
+// catalog and audio served by the dev server. `?libraryTtl=30` shortens the
+// fake signed-URL lifetime to exercise re-signing. Both are compiled out of
+// production builds because import.meta.env.DEV is statically false there.
+const DEV_LIBRARY_DEMO = import.meta.env.DEV && new URLSearchParams(window.location.search).has('libraryDemo')
 
 type QuickLink = { name: string; icon: 'youtube' | string; url: string }
 
@@ -133,6 +155,8 @@ function App() {
   const [activeApp, setActiveApp] = useState<Pick<AppLink, 'name' | 'icon' | 'url'> | null>(null)
   const [hubName, setHubNameState] = useState(DEFAULT_HUB_NAME)
   const [nameDraft, setNameDraft] = useState(DEFAULT_HUB_NAME)
+  const [libRoute, navigateLibrary] = useLibraryRoute()
+  const [devBackend, setDevBackend] = useState<LibraryBackend | null>(null)
   const [isPortfolio] = useState(() => {
     const path = window.location.pathname.replace(/\/$/, '')
     if (path.endsWith('/PPchanDesignConcepts')) return true
@@ -184,14 +208,38 @@ function App() {
     ]).then(() => setLastSync(new Date()))
   }, [session])
 
+  useEffect(() => {
+    if (!import.meta.env.DEV || !DEV_LIBRARY_DEMO) return
+    const ttl = Number(new URLSearchParams(window.location.search).get('libraryTtl')) || 3 * 60 * 60
+    import('./library/devBackend').then((m) => setDevBackend(m.createDevBackend(ttl)))
+  }, [])
+
+  const ownerId = session?.user.id ?? null
+  const libraryBackend = useMemo<LibraryBackend | null>(() => {
+    if (import.meta.env.DEV && DEV_LIBRARY_DEMO) return devBackend
+    return ownerId ? createSupabaseBackend(ownerId) : null
+  }, [ownerId, devBackend])
+
   if (isPortfolio) return <PublicPortfolio />
 
   if (!checked) return null
-  if (!session) return <Login />
+  if (!session && !(import.meta.env.DEV && DEV_LIBRARY_DEMO)) return <Login />
+
+  const currentView = libRoute ? 'library' : view
+  const goBack = () => {
+    if (libRoute && libRoute.kind !== 'home') navigateLibrary({ kind: 'home' })
+    else if (libRoute) navigateLibrary(null)
+    else setView('hub')
+  }
+  const openApp = (app: Pick<AppLink, 'name' | 'icon' | 'url'>) => {
+    if (app.url === LIBRARY_URL) navigateLibrary({ kind: 'home' })
+    else setActiveApp(app)
+  }
 
   return (
+    <LibraryProvider backend={libraryBackend}>
     <div className="hub-page fade-in">
-      {view === 'hub' && (
+      {currentView === 'hub' && (
         <video
           className="hub-bg-video"
           src={`${import.meta.env.BASE_URL}bg-space.mp4`}
@@ -201,16 +249,20 @@ function App() {
           playsInline
         />
       )}
-      <div className="hub-bg-overlay" />
+      {/* The dark scrim exists for the space video; the Library sits on the
+          theme's own background so Flat Warm stays light and readable. */}
+      {currentView !== 'library' && <div className="hub-bg-overlay" />}
       <div className="hub-content">
       <div className="toolbar">
-        {view !== 'hub' ? (
-          <button onClick={() => setView('hub')}>← กลับ</button>
+        {currentView !== 'hub' ? (
+          <button onClick={goBack}>
+            {libRoute && libRoute.kind !== 'home' ? '← ห้องสมุด' : '← กลับ'}
+          </button>
         ) : (
           <h1>🏠 {hubName}</h1>
         )}
         <span className="spacer" />
-        {view === 'hub' && (
+        {currentView === 'hub' && (
           <>
             <button className="nav-btn nav-btn-1" onClick={() => setView('concepts')}>🎨 Concepts</button>
             <button className="nav-btn nav-btn-2" onClick={() => setView('testimonials')}>💬 รีวิว</button>
@@ -226,11 +278,13 @@ function App() {
           </>
         )}
         <button className="nav-btn nav-btn-5" onClick={() => setShowSettings(true)} title="ตั้งค่า">⚙️ ตั้งค่า</button>
-        <span className="user-email">{session.user.email}</span>
+        <span className="user-email">{session?.user.email ?? 'dev demo (ไม่ได้ล็อกอิน)'}</span>
         <button onClick={() => supabase.auth.signOut()}>ออกจากระบบ</button>
       </div>
 
-      {view === 'concepts' ? (
+      {currentView === 'library' && libRoute ? (
+        <LibraryView route={libRoute} navigate={navigateLibrary} />
+      ) : view === 'concepts' ? (
         <ConceptsGallery />
       ) : view === 'testimonials' ? (
         <TestimonialsAdmin />
@@ -259,7 +313,7 @@ function App() {
                 apps={APPS}
                 onCenterClick={() => setChatOpen((v) => !v)}
                 centerActive={chatOpen}
-                onAppOpen={setActiveApp}
+                onAppOpen={openApp}
                 storyboard={storyboard}
                 food={food}
                 workout={workout}
@@ -436,7 +490,7 @@ function App() {
         </div>
       )}
 
-      <FloatingChat open={chatOpen} onOpenChange={setChatOpen} hideBubble={view === 'hub'} />
+      <FloatingChat open={chatOpen} onOpenChange={setChatOpen} hideBubble={currentView === 'hub'} />
 
       {activeApp && (
         <div className="app-overlay">
@@ -464,6 +518,8 @@ function App() {
       )}
       </div>
     </div>
+    <PlayerBar onOpenBook={(slug) => navigateLibrary({ kind: 'book', slug })} />
+    </LibraryProvider>
   )
 }
 

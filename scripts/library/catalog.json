@@ -1,0 +1,37 @@
+{
+  "ownerEmail": "blackmotion1245@gmail.com",
+  "bucket": "library-audio",
+  "shelves": [
+    {
+      "slug": "ram-exam",
+      "title": "ติวสอบ ราม",
+      "description": "หนังสือเสียงทบทวนวิชาก่อนสอบ",
+      "books": [
+        {
+          "slug": "acc1101",
+          "title": "ACC1101 บัญชีเบื้องต้น",
+          "coverLabel": "ACC1101",
+          "subtitle": "บัญชีเบื้องต้น",
+          "author": "ทบทวนก่อนสอบ เสียงชาย",
+          "cloth": "ink",
+          "sourceDir": "E:/projYT/reading/audio_acc1101_el",
+          "tracks": [
+            { "file": "00_intro.mp3", "path": "acc1101/00-intro.mp3", "title": "บทนำ" },
+            { "file": "01_ค่าเสื่อมราคา.mp3", "path": "acc1101/01-depreciation.mp3", "title": "ค่าเสื่อมราคา" },
+            { "file": "02_หนี้สงสัยจะสูญ.mp3", "path": "acc1101/02-doubtful-debts.mp3", "title": "หนี้สงสัยจะสูญ" },
+            { "file": "03_รายการปรับปรุง.mp3", "path": "acc1101/03-adjusting-entries.mp3", "title": "รายการปรับปรุง" },
+            { "file": "04_กระดาษทำการ.mp3", "path": "acc1101/04-worksheet.mp3", "title": "กระดาษทำการ" },
+            { "file": "05_ลักษณะเชิงคุณภาพ.mp3", "path": "acc1101/05-qualitative-characteristics.mp3", "title": "ลักษณะเชิงคุณภาพ" },
+            { "file": "06_ส่วนประกอบงบและผู้ใช้งบ.mp3", "path": "acc1101/06-statements-and-users.mp3", "title": "ส่วนประกอบงบและผู้ใช้งบ" }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "dhamma",
+      "title": "ธรรมะ",
+      "description": "พุทธวจน วัดนาป่าพง (รอเติมเสียง)",
+      "books": []
+    }
+  ]
+}

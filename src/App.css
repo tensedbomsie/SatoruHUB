@@ -1032,6 +1032,14 @@ textarea {
   position: relative;
 }
 
+/* Keep the entrance fade, but drop its transform once it ends: a lingering
+   transform turns .hub-page into the containing block for every
+   position: fixed child (corner links, chat bubble), which then pin to the
+   bottom of the whole page instead of the screen. */
+.hub-page.fade-in {
+  animation-fill-mode: backwards;
+}
+
 .hub-bg-video {
   position: fixed;
   inset: 0;
@@ -1093,6 +1101,22 @@ textarea {
   display: inline-flex;
   align-items: center;
   transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+@media (max-width: 560px) {
+  .toolbar {
+    flex-wrap: wrap;
+    padding: 0.6rem 0.8rem;
+  }
+
+  .toolbar .user-email {
+    display: none;
+  }
+
+  .toolbar button,
+  .toolbar a.toolbar-link {
+    white-space: nowrap;
+  }
 }
 
 .toolbar button:hover,

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useOptionalLibrary } from './library/LibraryProvider'
 import { timeAgo, type StoryboardStats, type FoodDiaryStats, type WorkoutStats, type MoneyDiaryStats, type MovieHubStats, type TechDictionaryStats } from './liveStats'
 
 type WheelApp = {
@@ -45,9 +46,12 @@ function getDetail(
     money: MoneyDiaryStats | null
     movie: MovieHubStats | null
     techDict: TechDictionaryStats | null
+    library: string
   },
 ): string {
   switch (appName) {
+    case 'Library':
+      return data.library
     case 'Storyboard':
       if (!data.storyboard) return ''
       return `${data.storyboard.count} โปรเจกต์`
@@ -104,7 +108,13 @@ export default function HubWheel({
   const count = apps.length
   const segmentAngle = 360 / count
   const midRadius = (R_IN + R_OUT) / 2
-  const statData = { storyboard, food, workout, money, movie, techDict }
+  const lib = useOptionalLibrary()
+  const libraryDetail = lib?.current
+    ? `${lib.status === 'playing' ? 'กำลังฟัง' : 'ค้าง'} ตอน ${lib.current.index + 1}/${lib.current.book.tracks.length}`
+    : lib?.catalog.status === 'ready'
+      ? `${lib.catalog.shelves.reduce((n, s) => n + s.books.length, 0)} เล่ม`
+      : ''
+  const statData = { storyboard, food, workout, money, movie, techDict, library: libraryDetail }
 
   const activeCount = [
     food && food.kcalToday > 0,

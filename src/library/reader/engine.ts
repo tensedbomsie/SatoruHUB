@@ -47,8 +47,8 @@ export type SearchHit = { target: string; label: string; pre: string; match: str
 
 export type EngineCallbacks = {
   onRelocate: (loc: EngineLocation) => void
-  /** tap in the reading area: left / right third turn pages, centre toggles the chrome */
-  onTap: (zone: 'left' | 'center' | 'right') => void
+  /** tap in the reading area: left / right third turn pages, a centre touch toggles the chrome */
+  onTap: (zone: 'left' | 'center' | 'right', pointerType: string) => void
   onKey: (e: KeyboardEvent) => void
   /** EPUB: text was selected (empty string when cleared) */
   onSelection?: (text: string) => void

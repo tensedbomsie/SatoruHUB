@@ -7,6 +7,8 @@ import {
   IconClose,
   IconHighlight,
   IconList,
+  IconMinus,
+  IconPlus,
   IconRetry,
   IconSearch,
   IconTextSize,
@@ -178,6 +180,8 @@ export default function ReaderView({ file, book, onClose }: { file: DocFile; boo
     void Promise.resolve(fn(e)).catch(() => {})
   }, [])
 
+  const closeSettings = useCallback(() => setSettingsOpen(false), [])
+
   const closeOverlays = useCallback(() => {
     setPanel(null)
     setSettingsOpen(false)
@@ -186,12 +190,19 @@ export default function ReaderView({ file, book, onClose }: { file: DocFile; boo
   const keyAction = useCallback(
     (e: KeyboardEvent) => {
       if (e.ctrlKey || e.metaKey || e.altKey) return
-      const t = e.target as HTMLElement | null
-      if (t?.closest?.('input, textarea, select, [contenteditable="true"]')) return
+      // Escape and Tab always bring the reader back to a state you can leave:
+      // panels close, hidden chrome (and with it the back key) returns.
       if (e.key === 'Escape') {
         closeOverlays()
+        setChromeHidden(false)
         return
       }
+      if (e.key === 'Tab') {
+        setChromeHidden(false)
+        return
+      }
+      const t = e.target as HTMLElement | null
+      if (t?.closest?.('input, textarea, select, [contenteditable="true"]')) return
       if (e.key === 'ArrowRight' || e.key === 'PageDown') {
         e.preventDefault?.()
         go((x) => x.next())
@@ -228,13 +239,16 @@ export default function ReaderView({ file, book, onClose }: { file: DocFile; boo
         if (performance.now() < settleUntil.current && !movedRef.current) return
         queueSave(l)
       },
-      onTap(zone) {
+      onTap(zone, pointerType) {
         const e = engineRef.current
-        if (zone === 'center' || !e?.paged) {
-          setChromeHidden((h) => !h)
+        if (zone !== 'center') {
+          // edge taps turn pages only where there are pages to turn
+          if (e?.paged) go((x) => (zone === 'left' ? x.prev() : x.next()))
           return
         }
-        go((x) => (zone === 'left' ? x.prev() : x.next()))
+        // Hiding the chrome is a touch gesture. A mouse click in the text
+        // (selecting, clicking a link) must never make Back and the progress vanish.
+        if (pointerType !== 'mouse') setChromeHidden((h) => !h)
       },
       onKey: (e) => keyRef.current(e),
       onSelection: (text) => setSelection(text),
@@ -386,13 +400,33 @@ export default function ReaderView({ file, book, onClose }: { file: DocFile; boo
     }
   }
 
+  // Deleting is one tap, so it can be taken back for a few seconds.
+  const [undo, setUndo] = useState<Bookmark | null>(null)
+  const undoTimer = useRef(0)
+  useEffect(() => () => window.clearTimeout(undoTimer.current), [])
+
   const removeMark = async (m: Bookmark) => {
     if (!backend) return
     try {
       await backend.deleteBookmark(m.id)
       setMarks((list) => list.filter((x) => x.id !== m.id))
+      setUndo(m)
+      window.clearTimeout(undoTimer.current)
+      undoTimer.current = window.setTimeout(() => setUndo(null), 7000)
     } catch {
       setMarksError('ลบไม่สำเร็จ ลองใหม่อีกครั้ง')
+    }
+  }
+
+  const undoRemove = async () => {
+    const m = undo
+    if (!backend || !m) return
+    setUndo(null)
+    try {
+      const back = await backend.addBookmark({ fileId: m.fileId, kind: m.kind, locator: m.locator, label: m.label, excerpt: m.excerpt, percent: m.percent })
+      setMarks((list) => [...list, back])
+    } catch {
+      setMarksError('เอาที่คั่นคืนไม่สำเร็จ ลองคั่นใหม่อีกครั้ง')
     }
   }
 
@@ -512,7 +546,23 @@ export default function ReaderView({ file, book, onClose }: { file: DocFile; boo
       </div>
 
       <footer className="lib-rd-bottom">
-        <div className="lib-rd-progress">
+        {phase.kind !== 'ready' ? (
+          // No position yet (or ever, on error): show what is known about the file instead.
+          <p className="lib-rd-status lib-rd-status-idle lib-num">
+            {[KIND_LABEL[file.kind], file.estMinutes ? `อ่านราว ${fmtMinutes(file.estMinutes)}` : file.pageCount ? `${file.pageCount} หน้า` : null, fmtBytes(file.sizeBytes) || null]
+              .filter(Boolean)
+              .join(' · ')}
+          </p>
+        ) : (
+        <div className="lib-rd-row">
+          {paged ? (
+            <button className="lib-icon-btn" onClick={() => go((x) => x.prev())} aria-label="หน้าก่อน">
+              <IconChevronLeft size={24} />
+            </button>
+          ) : (
+            <span className="lib-rd-spacer" />
+          )}
+          <div className="lib-rd-center">
           <input
             type="range"
             className="lib-scrub lib-rd-scrub"
@@ -520,7 +570,6 @@ export default function ReaderView({ file, book, onClose }: { file: DocFile; boo
             max={1000}
             step={1}
             value={Math.round(percent * 10)}
-            disabled={phase.kind !== 'ready'}
             style={{ '--lib-pct': `${Math.min(100, percent)}%` } as CSSProperties}
             aria-label="ตำแหน่งในเล่ม"
             aria-valuetext={`อ่านไป ${fmtPct(percent)}`}
@@ -537,15 +586,6 @@ export default function ReaderView({ file, book, onClose }: { file: DocFile; boo
               go((x) => x.goToFraction(v / 100))
             }}
           />
-        </div>
-        <div className="lib-rd-row">
-          {paged ? (
-            <button className="lib-icon-btn" onClick={() => go((x) => x.prev())} aria-label="หน้าก่อน" disabled={phase.kind !== 'ready'}>
-              <IconChevronLeft size={24} />
-            </button>
-          ) : (
-            <span className="lib-rd-spacer" />
-          )}
           <p className="lib-rd-status lib-num" aria-live="off">
             <strong>{statusParts[0]}</strong>
             {statusParts.slice(1).map((s) => (
@@ -553,14 +593,16 @@ export default function ReaderView({ file, book, onClose }: { file: DocFile; boo
             ))}
             {lib.syncIssue && <span className="lib-rd-sync"> · บันทึกไว้ในเครื่องก่อน</span>}
           </p>
+          </div>
           {paged ? (
-            <button className="lib-icon-btn" onClick={() => go((x) => x.next())} aria-label="หน้าถัดไป" disabled={phase.kind !== 'ready'}>
+            <button className="lib-icon-btn" onClick={() => go((x) => x.next())} aria-label="หน้าถัดไป">
               <IconChevronRight size={24} />
             </button>
           ) : (
             <span className="lib-rd-spacer" />
           )}
         </div>
+        )}
       </footer>
 
       {chromeHidden && (
@@ -569,7 +611,7 @@ export default function ReaderView({ file, book, onClose }: { file: DocFile; boo
         </span>
       )}
 
-      {settingsOpen && <SettingsPanel kind={file.kind} prefs={prefs} onChange={setPrefs} onClose={() => setSettingsOpen(false)} />}
+      {settingsOpen && <SettingsPanel kind={file.kind} prefs={prefs} onChange={setPrefs} onClose={closeSettings} />}
 
       {panel && (
         <SidePanel panel={panel} setPanel={setPanel} onClose={() => setPanel(null)}>
@@ -594,6 +636,8 @@ export default function ReaderView({ file, book, onClose }: { file: DocFile; boo
                 setPanel(null)
               }}
               onRemove={removeMark}
+              undo={undo}
+              onUndo={undoRemove}
             />
           )}
           {panel === 'search' && <SearchBox engine={engineRef.current} onPick={(h) => { go((e) => e.goTo(h.target)); setPanel(null) }} />}
@@ -646,11 +690,29 @@ function ToolButton({
 }
 
 // ---------- side panel: contents / bookmarks / search ----------
+const FOCUSABLE = 'button:not([disabled]), input:not([disabled]), [href], [tabindex]:not([tabindex="-1"])'
+
+/** Keep Tab inside a modal surface. */
+function trapTab(e: React.KeyboardEvent<HTMLElement>) {
+  if (e.key !== 'Tab') return
+  const items = Array.from(e.currentTarget.querySelectorAll<HTMLElement>(FOCUSABLE))
+  if (items.length === 0) return
+  const first = items[0]
+  const last = items[items.length - 1]
+  if (e.shiftKey && document.activeElement === first) {
+    e.preventDefault()
+    last.focus()
+  } else if (!e.shiftKey && document.activeElement === last) {
+    e.preventDefault()
+    first.focus()
+  }
+}
+
 function SidePanel({ panel, setPanel, onClose, children }: { panel: Panel; setPanel: (p: Panel) => void; onClose: () => void; children: ReactNode }) {
   const ref = useRef<HTMLDivElement>(null)
   useEffect(() => {
     const opener = document.activeElement as HTMLElement | null
-    ref.current?.querySelector<HTMLElement>('[aria-selected="true"]')?.focus()
+    ref.current?.querySelector<HTMLElement>('.lib-rd-tabs .is-on')?.focus()
     return () => opener?.focus?.()
   }, [])
   const tabs: { id: Panel; label: string }[] = [
@@ -660,11 +722,19 @@ function SidePanel({ panel, setPanel, onClose, children }: { panel: Panel; setPa
   ]
   return (
     <div className="lib-rd-scrim" onClick={onClose}>
-      <aside className="lib-rd-panel" ref={ref} role="dialog" aria-modal="true" aria-label="สารบัญและที่คั่น" onClick={(e) => e.stopPropagation()}>
+      <aside
+        className="lib-rd-panel"
+        ref={ref}
+        role="dialog"
+        aria-modal="true"
+        aria-label="สารบัญ ที่คั่น และค้นหา"
+        onClick={(e) => e.stopPropagation()}
+        onKeyDown={trapTab}
+      >
         <div className="lib-rd-panel-head">
-          <div className="lib-seg lib-rd-tabs" role="tablist" style={{ '--lib-cols': 3 } as CSSProperties}>
+          <div className="lib-seg lib-rd-tabs" role="group" aria-label="เลือกแผง" style={{ '--lib-cols': 3 } as CSSProperties}>
             {tabs.map((t) => (
-              <button key={t.id} role="tab" aria-selected={panel === t.id} className={`lib-seg-item${panel === t.id ? ' is-on' : ''}`} onClick={() => setPanel(t.id)}>
+              <button key={t.id} aria-pressed={panel === t.id} className={`lib-seg-item${panel === t.id ? ' is-on' : ''}`} onClick={() => setPanel(t.id)}>
                 {t.label}
               </button>
             ))}
@@ -716,12 +786,16 @@ function MarksList({
   kind,
   onPick,
   onRemove,
+  undo,
+  onUndo,
 }: {
   marks: Bookmark[]
   error: string | null
   kind: DocFile['kind']
   onPick: (m: Bookmark) => void
   onRemove: (m: Bookmark) => void
+  undo: Bookmark | null
+  onUndo: () => void
 }) {
   const sorted = [...marks].sort((a, b) => (a.percent ?? 0) - (b.percent ?? 0))
   return (
@@ -730,6 +804,14 @@ function MarksList({
         <p className="lib-rd-error" role="alert">
           {error}
         </p>
+      )}
+      {undo && (
+        <div className="lib-rd-undo" role="status">
+          <span>ลบ{undo.kind === 'highlight' ? 'ไฮไลต์' : 'ที่คั่น'}แล้ว</span>
+          <button className="lib-btn" onClick={onUndo}>
+            เลิกทำ
+          </button>
+        </div>
       )}
       {sorted.length === 0 ? (
         <p className="lib-rd-empty">
@@ -749,7 +831,7 @@ function MarksList({
                   </span>
                 </span>
               </button>
-              <button className="lib-icon-btn lib-icon-btn-sm lib-rd-remove" onClick={() => onRemove(m)} aria-label={`ลบ${m.kind === 'highlight' ? 'ไฮไลต์' : 'ที่คั่น'}นี้`}>
+              <button className="lib-icon-btn lib-rd-remove" onClick={() => onRemove(m)} aria-label={`ลบ${m.kind === 'highlight' ? 'ไฮไลต์' : 'ที่คั่น'}นี้`}>
                 <IconTrash size={18} />
               </button>
             </li>
@@ -856,14 +938,21 @@ const THEMES: { id: ReaderTheme; label: string }[] = [
 function SettingsPanel({ kind, prefs, onChange, onClose }: { kind: DocFile['kind']; prefs: ReaderPrefs; onChange: (p: Partial<ReaderPrefs>) => void; onClose: () => void }) {
   const ref = useRef<HTMLDivElement>(null)
   useEffect(() => {
-    ref.current?.querySelector<HTMLElement>('button')?.focus()
+    const opener = document.activeElement as HTMLElement | null
+    const panel = ref.current
+    panel?.querySelector<HTMLElement>('button:not([disabled])')?.focus()
     const onDown = (e: PointerEvent) => {
       const t = e.target as HTMLElement
-      if (ref.current?.contains(t) || t.closest?.('.lib-rd-tool[aria-expanded]')) return
+      if (panel?.contains(t) || t.closest?.('.lib-rd-tool[aria-expanded]')) return
       onClose()
     }
     document.addEventListener('pointerdown', onDown)
-    return () => document.removeEventListener('pointerdown', onDown)
+    return () => {
+      document.removeEventListener('pointerdown', onDown)
+      // Back to the Aa key, unless the reader already moved focus elsewhere.
+      const active = document.activeElement
+      if (!active || active === document.body || panel?.contains(active)) opener?.focus?.()
+    }
   }, [onClose])
   const isPdf = kind === 'pdf'
   const size = isPdf ? prefs.pdfZoom : prefs.fontScale
@@ -873,20 +962,20 @@ function SettingsPanel({ kind, prefs, onChange, onClose }: { kind: DocFile['kind
     else onChange({ fontScale: Math.min(2, Math.max(0.8, v)) })
   }
   return (
-    <div className="lib-rd-settings" ref={ref} role="dialog" aria-label="ตั้งค่าการอ่าน">
+    <div className="lib-rd-settings" ref={ref} role="dialog" aria-label="ตั้งค่าการอ่าน" onKeyDown={trapTab}>
       <div className="lib-sheet-group">
         <span className="lib-sheet-label" id="rd-size">
           {isPdf ? 'ขนาดหน้า' : 'ขนาดตัวอักษร'}
         </span>
         <div className="lib-rd-stepper" role="group" aria-labelledby="rd-size">
           <button className="lib-ctl" onClick={() => step(-0.1)} disabled={size <= (isPdf ? 0.6 : 0.8)} aria-label="เล็กลง">
-            {isPdf ? '−' : <span className="lib-rd-a-small">ก</span>}
+            {isPdf ? <IconMinus size={18} /> : <span className="lib-rd-a-small">ก</span>}
           </button>
           <span className="lib-rd-stepper-value lib-num" aria-live="polite">
             {Math.round(size * 100)}%
           </span>
           <button className="lib-ctl" onClick={() => step(0.1)} disabled={size >= (isPdf ? 3 : 2)} aria-label="ใหญ่ขึ้น">
-            {isPdf ? '+' : <span className="lib-rd-a-large">ก</span>}
+            {isPdf ? <IconPlus size={18} /> : <span className="lib-rd-a-large">ก</span>}
           </button>
         </div>
       </div>

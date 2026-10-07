@@ -269,8 +269,7 @@ export async function createPdfEngine({ container, data, prefs, initial, callbac
     const box = scroller.getBoundingClientRect()
     const x = e.clientX - box.left
     const third = box.width / 3
-    if (current.pdfMode === 'page') callbacks.onTap(x < third ? 'left' : x > box.width - third ? 'right' : 'center')
-    else callbacks.onTap('center')
+    callbacks.onTap(x < third ? 'left' : x > box.width - third ? 'right' : 'center', (e as PointerEvent).pointerType || 'mouse')
   })
 
   const ro = new ResizeObserver(() => {

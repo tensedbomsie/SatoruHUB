@@ -223,6 +223,22 @@ export function IconHighlight({ size, className }: IconProps) {
   )
 }
 
+export function IconMinus({ size, className }: IconProps) {
+  return (
+    <svg {...base(size)} className={className}>
+      <path d="M5.5 12h13" />
+    </svg>
+  )
+}
+
+export function IconPlus({ size, className }: IconProps) {
+  return (
+    <svg {...base(size)} className={className}>
+      <path d="M5.5 12h13M12 5.5v13" />
+    </svg>
+  )
+}
+
 export function IconTrash({ size, className }: IconProps) {
   return (
     <svg {...base(size)} className={className}>

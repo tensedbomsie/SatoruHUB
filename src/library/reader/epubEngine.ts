@@ -98,6 +98,7 @@ function readerCss(p: ReaderPrefs): string {
 
 type RelocateDetail = {
   fraction: number
+  section?: { current: number; total: number }
   cfi: string
   tocItem?: { label?: string; href?: string } | null
   time?: { total?: number }
@@ -169,7 +170,8 @@ export async function createEpubEngine({ container, data, prefs, initial, callba
       const box = container.getBoundingClientRect()
       const x = (frame?.getBoundingClientRect().left ?? 0) + ev.clientX - box.left
       const third = box.width / 3
-      callbacks.onTap(x < third ? 'left' : x > box.width - third ? 'right' : 'center')
+      const pointerType = (ev as PointerEvent).pointerType || 'mouse'
+      callbacks.onTap(x < third ? 'left' : x > box.width - third ? 'right' : 'center', pointerType)
     })
     if (callbacks.onSelection) {
       let t = 0
@@ -180,9 +182,23 @@ export async function createEpubEngine({ container, data, prefs, initial, callba
     }
   })
 
+  // foliate reports the END of the visible page when paginated but the START
+  // of the view when scrolling, so the same spot read 3% vs <1% and a scrolled
+  // book could never reach 100%. Normalise both to "read up to the bottom of
+  // what is on screen".
+  const endFraction = (d: RelocateDetail): number => {
+    const r = view.renderer as unknown as { scrolled?: boolean; end?: number; viewSize?: number }
+    const index = d.section?.current
+    if (!r?.scrolled || index == null || !r.viewSize) return d.fraction ?? 0
+    const fr = view.getSectionFractions()
+    const from = fr[index] ?? 0
+    const to = fr[index + 1] ?? 1
+    return from + Math.min(1, (r.end ?? 0) / r.viewSize) * (to - from)
+  }
+
   view.addEventListener('relocate', (e: Event) => {
     const d = (e as CustomEvent<RelocateDetail>).detail
-    const fraction = Math.min(1, Math.max(0, d.fraction ?? 0))
+    const fraction = Math.min(1, Math.max(0, endFraction(d)))
     callbacks.onRelocate({
       locator: { cfi: d.cfi, fraction },
       percent: fraction * 100,

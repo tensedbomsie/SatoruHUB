@@ -57,8 +57,9 @@
   --text: #3a2e21;
   --text-dim: #66533d;
   --text-dimmer: #8c7860;
-  --accent: #8a4f1c;
-  --accent-rgb: 138, 79, 28;
+  /* the one Squircle accent, deepened for contrast on paper */
+  --accent: #4447c9;
+  --accent-rgb: 68, 71, 201;
   --on-accent: #ffffff;
   --lib-raise: none;
   color-scheme: light;
@@ -398,25 +399,48 @@
   border-top: 1px solid var(--border-soft);
 }
 
-.lib-rd-progress {
-  padding: 0 8px;
-}
-
-.lib-rd-scrub {
-  height: 22px;
-  --lib-scrub-h: 4px;
-}
-
-.lib-rd-scrub:disabled {
-  cursor: default;
-  opacity: 0.5;
-}
-
+/* page keys either side; the position slider and the "how far" line share the
+   middle so the bar stays one row tall above the text */
 .lib-rd-row {
   display: grid;
   grid-template-columns: 44px minmax(0, 1fr) 44px;
   align-items: center;
   gap: 6px;
+}
+
+.lib-rd-center {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* thin 4px track, tall hit area */
+.lib-rd-scrub {
+  height: 32px;
+  --lib-scrub-h: 4px;
+}
+
+.lib-rd-status-idle {
+  padding: 12px 0;
+}
+
+.lib-rd-undo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 4px 2px 10px;
+  padding: 6px 6px 6px 12px;
+  border-radius: var(--r-md);
+  background: var(--card-2);
+  font-size: 0.86rem;
+}
+
+.lib-rd-undo .lib-btn {
+  min-height: 36px;
+  padding: 0 12px;
+  background: var(--card);
 }
 
 .lib-rd-spacer {
@@ -439,7 +463,8 @@
 }
 
 .lib-rd-sync {
-  color: var(--text-dimmer);
+  color: var(--text-dim);
+  font-weight: 600;
 }
 
 /* immersive: chrome tucked away, a hairline keeps the position visible */
@@ -643,7 +668,7 @@
 }
 
 .lib-rd-input::placeholder {
-  color: var(--text-dimmer);
+  color: var(--text-dim);
 }
 
 .lib-rd-input:focus-visible {
@@ -687,7 +712,7 @@
 }
 
 .lib-rd-stepper .lib-ctl {
-  height: 40px;
+  height: 44px;
   font-size: 1.05rem;
 }
 
@@ -775,10 +800,6 @@
 
   .lib-rd-back-text {
     display: none;
-  }
-
-  .lib-rd-tools .lib-icon-btn {
-    width: 40px;
   }
 
   .lib-rd-bottom {

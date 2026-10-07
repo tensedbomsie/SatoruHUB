@@ -31,7 +31,7 @@ else if(d.type==='goto-heading'){want=null;var h=document.getElementById(d.id);i
 else if(d.type==='zoom'){document.documentElement.style.zoom=String(d.zoom);if(want!=null)setTimeout(apply,50)}
 else if(d.type==='page'){want=null;scrollBy({top:d.dir*innerHeight*0.88,behavior:'smooth'})}});
 addEventListener('keydown',function(e){post({type:'key',key:e.key,shift:e.shiftKey,ctrl:e.ctrlKey||e.metaKey,alt:e.altKey})});
-addEventListener('click',function(e){if(e.target&&e.target.closest&&e.target.closest('a,button,summary,input,label,details'))return;if(String(getSelection()).length)return;post({type:'tap',x:e.clientX/innerWidth})});
+addEventListener('click',function(e){if(e.target&&e.target.closest&&e.target.closest('a,button,summary,input,label,details'))return;if(String(getSelection()).length)return;post({type:'tap',x:e.clientX/innerWidth,pointer:e.pointerType||'mouse'})});
 function ready(){post({type:'ready',toc:hs.map(function(h){return{id:h.id,label:h.textContent.trim(),depth:+h.tagName[1]-1}}),fraction:sized()?frac():0,chapter:sized()?cur():null,text:text().slice(0,400000)});setTimeout(pos,400)}
 if(document.readyState==='complete')ready();else addEventListener('load',ready);
 })();</script>`
@@ -51,7 +51,7 @@ type BridgeMsg =
   | { type: 'ready'; toc: { id: string; label: string; depth: number }[]; fraction: number; chapter: string | null; text: string }
   | { type: 'pos'; fraction: number; chapter: string | null }
   | { type: 'key'; key: string; shift: boolean; ctrl: boolean; alt: boolean }
-  | { type: 'tap'; x: number }
+  | { type: 'tap'; x: number; pointer?: string }
 
 export async function createHtmlEngine({ container, data, prefs, initial, callbacks }: EngineInit): Promise<ReaderEngine> {
   const html = new TextDecoder('utf-8').decode(data)
@@ -118,7 +118,7 @@ export async function createHtmlEngine({ container, data, prefs, initial, callba
         resolve()
       } else if (m.type === 'pos') relocate(m.fraction, m.chapter)
       else if (m.type === 'key') callbacks.onKey(new KeyboardEvent('keydown', { key: m.key, shiftKey: m.shift, ctrlKey: m.ctrl, altKey: m.alt }))
-      else if (m.type === 'tap') callbacks.onTap('center')
+      else if (m.type === 'tap') callbacks.onTap(m.x < 1 / 3 ? 'left' : m.x > 2 / 3 ? 'right' : 'center', m.pointer || 'mouse')
     }
     window.addEventListener('message', onMessage)
     cleanup = () => {

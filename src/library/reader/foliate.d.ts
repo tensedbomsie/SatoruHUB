@@ -28,6 +28,7 @@ declare module 'foliate-js/view.js' {
     next(): Promise<void>
     prev(): Promise<void>
     getCFI(index: number, range?: Range): string
+    getSectionFractions(): number[]
     addAnnotation(a: { value: string }, remove?: boolean): Promise<unknown>
     deleteAnnotation(a: { value: string }): Promise<unknown>
     search(opts: { query: string; matchCase?: boolean; matchDiacritics?: boolean; matchWholeWords?: boolean; index?: number }): AsyncGenerator<unknown>

@@ -1,12 +1,18 @@
-import { useEffect } from 'react'
+import { lazy, Suspense, useEffect } from 'react'
 import BookCover from './BookCover'
-import { fmtClock, fmtLength } from './format'
-import { IconCheck, IconChevronRight, IconPause, IconPlay, IconRetry } from './icons'
+import { fmtBytes, fmtClock, fmtLength, fmtMinutes, fmtPct } from './format'
+import { IconBookOpen, IconCheck, IconChevronRight, IconPause, IconPlay, IconRetry } from './icons'
 import { useLibrary } from './LibraryProvider'
 import type { LibraryRoute } from './route'
-import { bookStats, trackState, type TrackState } from './stats'
-import type { Book, Shelf } from './types'
+import { bookMode, bookReading, bookStats, fileMinutesLeft, fileState, trackState, type TrackState } from './stats'
+import type { Book, DocFile, Shelf } from './types'
 import './library.css'
+
+// The reader (and the EPUB / PDF engines it pulls in on demand) only loads
+// when a book is actually opened for reading.
+const ReaderView = lazy(() => import('./reader/ReaderView'))
+
+const KIND_LABEL: Record<DocFile['kind'], string> = { epub: 'EPUB', pdf: 'PDF', html: 'HTML' }
 
 type Nav = (route: LibraryRoute | null) => void
 
@@ -63,6 +69,16 @@ function LibraryBody({ route, navigate }: { route: LibraryRoute; navigate: Nav }
     )
   }
 
+  if (route.kind === 'read') {
+    const found = findBook(catalog.shelves, route.slug)
+    const file = found?.book.files.find((f) => f.id === route.fileId)
+    if (!found || !file) return <NotFound navigate={navigate} what="ไฟล์นี้" />
+    return (
+      <Suspense fallback={<ReaderLoading />}>
+        <ReaderView key={file.id} file={file} book={found.book} onClose={() => navigate({ kind: 'book', slug: found.book.slug })} />
+      </Suspense>
+    )
+  }
   if (route.kind === 'book') {
     const found = findBook(catalog.shelves, route.slug)
     if (!found) return <NotFound navigate={navigate} what="เล่มนี้" />
@@ -105,14 +121,17 @@ function Bookcase({ shelves, navigate }: { shelves: Shelf[]; navigate: Nav }) {
     (n, s) => n + s.books.reduce((m, b) => m + b.tracks.reduce((k, t) => k + (t.durationSeconds ?? 0), 0), 0),
     0,
   )
+  const readable = shelves.reduce((n, s) => n + s.books.filter((b) => b.files.length > 0).length, 0)
   return (
     <div className="lib-page fade-in">
       <header className="lib-head">
-        <h1 className="lib-title">ห้องสมุดเสียง</h1>
+        <h1 className="lib-title">ห้องสมุด</h1>
         <p className="lib-head-meta lib-num">
           {shelves.length} ชั้น · {books} เล่ม{seconds > 0 ? ` · ฟังรวม ${fmtLength(seconds)}` : ''}
+          {readable > 0 ? ` · อ่านได้ ${readable} เล่ม` : ''}
         </p>
       </header>
+      <ReadResumeStrip navigate={navigate} />
       <ResumeStrip navigate={navigate} />
       <div className="lib-case">
         {shelves.map((s) => (
@@ -164,6 +183,38 @@ function ResumeStrip({ navigate }: { navigate: Nav }) {
   )
 }
 
+// "Continue reading": the most recently opened file that is not finished.
+function ReadResumeStrip({ navigate }: { navigate: Nav }) {
+  const lib = useLibrary()
+  const target = lib.lastRead
+  if (!target) return null
+  const { file, book } = target
+  const p = lib.readingProgress[file.id]
+  if (!p || fileState(file, lib.readingProgress) === 'done') return null
+  const left = fileMinutesLeft(file, lib.readingProgress)
+  const open = () => navigate({ kind: 'read', slug: book.slug, fileId: file.id })
+  return (
+    <section className="lib-resume" aria-label="อ่านต่อจากครั้งก่อน">
+      <button className="lib-resume-book" onClick={() => navigate({ kind: 'book', slug: book.slug })} aria-label={`เปิดเล่ม ${book.title}`}>
+        <BookCover book={book} size="thumb" />
+      </button>
+      <div className="lib-resume-text">
+        <span className="lib-resume-title">อ่านต่อ: {file.title}</span>
+        <span className="lib-resume-meta">
+          อ่านไป {fmtPct(p.percent)}
+          {left != null ? ` · เหลือราว ${fmtMinutes(left)}` : p.locator.pages ? ` · หน้า ${p.locator.page ?? 1}/${p.locator.pages}` : ''} · {book.title}
+        </span>
+        <span className="lib-meter lib-resume-meter" aria-hidden="true">
+          <span style={{ width: `${Math.min(100, p.percent)}%` }} />
+        </span>
+      </div>
+      <button className="lib-play" onClick={open} aria-label={`อ่านต่อ ${file.title}`}>
+        <IconBookOpen size={22} />
+      </button>
+    </section>
+  )
+}
+
 function ShelfRow({ shelf, navigate, large }: { shelf: Shelf; navigate: Nav; large?: boolean }) {
   const lib = useLibrary()
   const titleId = `lib-shelf-${shelf.slug}`
@@ -183,6 +234,8 @@ function ShelfRow({ shelf, navigate, large }: { shelf: Shelf; navigate: Nav; lar
           <ul className="lib-shelf-books">
             {shelf.books.map((b) => {
               const st = bookStats(b, lib.progress)
+              const rd = bookReading(b, lib.readingProgress)
+              const mode = bookMode(b)
               const playing = lib.current?.book.id === b.id && lib.status === 'playing'
               return (
                 <li key={b.id} className="lib-slot">
@@ -190,15 +243,21 @@ function ShelfRow({ shelf, navigate, large }: { shelf: Shelf; navigate: Nav; lar
                     className={`lib-book${playing ? ' is-playing' : ''}`}
                     onClick={() => navigate({ kind: 'book', slug: b.slug })}
                     onPointerEnter={() => lib.prepareBook(b)}
-                    aria-label={`${b.title}, ${st.count} ตอน, ${caption(st)}`}
+                    aria-label={`${b.title}, ${caption(st, rd, mode)}`}
                   >
-                    <BookCover book={b} size="shelf" state={st.state} done={st.done} count={st.count} />
+                    <BookCover
+                      book={b}
+                      size="shelf"
+                      state={st.count ? st.state : undefined}
+                      done={st.done}
+                      count={st.count}
+                      mode={mode}
+                      read={rd.count ? { state: rd.state, percent: rd.percent } : undefined}
+                    />
                   </button>
                   <span className="lib-slot-caption" aria-hidden="true">
                     <span className="lib-slot-title">{b.title}</span>
-                    <span className="lib-slot-meta lib-num">
-                      {st.count === 0 ? 'ยังไม่มีตอน' : `${st.count} ตอน · ${fmtLength(st.totalSeconds)}`}
-                    </span>
+                    <span className="lib-slot-meta lib-num">{slotMeta(b, st.count, st.totalSeconds)}</span>
                   </span>
                 </li>
               )
@@ -221,11 +280,32 @@ function ShelfRow({ shelf, navigate, large }: { shelf: Shelf; navigate: Nav; lar
   )
 }
 
-function caption(st: ReturnType<typeof bookStats>) {
-  if (st.count === 0) return 'ยังไม่มีตอน'
-  if (st.state === 'done') return `ฟังจบครบ ${st.count} ตอน`
-  if (st.state === 'progress') return `ฟังจบ ${st.done}/${st.count} ตอน`
-  return `${st.count} ตอน · ${fmtLength(st.totalSeconds)}`
+function slotMeta(b: Book, count: number, seconds: number) {
+  const parts: string[] = []
+  if (count) parts.push(`${count} ตอน · ${fmtLength(seconds)}`)
+  if (b.files.length) {
+    const minutes = b.files.reduce((n, f) => n + (f.estMinutes ?? 0), 0)
+    const pages = b.files.reduce((n, f) => n + (f.pageCount ?? 0), 0)
+    if (!count) parts.push(minutes ? `อ่านราว ${fmtMinutes(minutes)}` : pages ? `${pages} หน้า` : `${b.files.length} ไฟล์อ่าน`)
+    else parts.push('อ่านได้')
+  }
+  return parts.join(' · ') || 'ยังว่าง'
+}
+
+function caption(st: ReturnType<typeof bookStats>, rd: ReturnType<typeof bookReading>, mode: ReturnType<typeof bookMode>) {
+  const parts: string[] = []
+  if (mode === 'empty') return 'ยังว่าง'
+  if (st.count) {
+    if (st.state === 'done') parts.push(`ฟังจบครบ ${st.count} ตอน`)
+    else if (st.state === 'progress') parts.push(`ฟังจบ ${st.done}/${st.count} ตอน`)
+    else parts.push(`${st.count} ตอน ${fmtLength(st.totalSeconds)}`)
+  }
+  if (rd.count) {
+    if (rd.state === 'done') parts.push('อ่านจบแล้ว')
+    else if (rd.state === 'progress') parts.push(`อ่านไป ${fmtPct(rd.percent)}`)
+    else parts.push(`มีไฟล์อ่าน ${rd.count} ไฟล์`)
+  }
+  return parts.join(', ')
 }
 
 // ---------- one shelf ----------
@@ -279,10 +359,48 @@ function BookPage({ book, shelf, navigate }: { book: Book; shelf: Shelf; navigat
     primaryAction = () => lib.playTrack(nextUp.id)
   }
 
+  // Reading side
+  const rd = bookReading(book, lib.readingProgress)
+  const mode = bookMode(book)
+  const readTarget = rd.nextFile ?? book.files[0] ?? null
+  const readLeft = readTarget ? fileMinutesLeft(readTarget, lib.readingProgress) : null
+  const readLabel = !readTarget
+    ? ''
+    : rd.state === 'done'
+      ? 'อ่านใหม่อีกรอบ'
+      : rd.state === 'progress' && lib.readingProgress[readTarget.id]
+        ? `อ่านต่อ ${fmtPct(lib.readingProgress[readTarget.id].percent)}`
+        : 'เริ่มอ่าน'
+  const openRead = (f: DocFile) => navigate({ kind: 'read', slug: book.slug, fileId: f.id })
+
+  // With both formats, the one used most recently gets the solid key.
+  const lastListen = book.tracks.reduce((m, t) => (lib.progress[t.id]?.updatedAt ?? '') > m ? lib.progress[t.id].updatedAt : m, '')
+  const lastRead = book.files.reduce((m, f) => (lib.readingProgress[f.id]?.updatedAt ?? '') > m ? lib.readingProgress[f.id].updatedAt : m, '')
+  const readFirst = mode === 'read' || (mode === 'both' && !currentHere && lastRead > lastListen)
+
+  const listenButton = st.count > 0 && (
+    <button className={readFirst ? 'lib-btn lib-action' : 'lib-primary lib-action'} onClick={primaryAction}>
+      {playingHere ? <IconPause size={20} /> : <IconPlay size={20} />}
+      <span>{primaryLabel}</span>
+    </button>
+  )
+  const readButton = readTarget && (
+    <button className={readFirst ? 'lib-primary lib-action' : 'lib-btn lib-action'} onClick={() => openRead(readTarget)}>
+      <IconBookOpen size={20} />
+      <span>{readLabel}</span>
+    </button>
+  )
+
+  const metaParts = [
+    book.author,
+    st.count ? `${st.count} ตอน ${fmtLength(st.totalSeconds)}` : '',
+    book.files.length ? (book.files.length === 1 ? `ไฟล์อ่าน ${KIND_LABEL[book.files[0].kind]}` : `ไฟล์อ่าน ${book.files.length} ไฟล์`) : '',
+  ].filter(Boolean)
+
   return (
     <div className="lib-page lib-book-page fade-in">
       <aside className="lib-book-aside">
-        <BookCover book={book} size="detail" state={st.state} />
+        <BookCover book={book} size="detail" state={st.state} mode={mode} />
       </aside>
       <div className="lib-book-main">
         <header className="lib-book-head">
@@ -291,30 +409,81 @@ function BookPage({ book, shelf, navigate }: { book: Book; shelf: Shelf; navigat
             <button className="lib-inline-link" onClick={() => navigate({ kind: 'shelf', slug: shelf.slug })}>
               ชั้น {shelf.title}
             </button>
-            {' · '}
-            {[book.author, `${st.count} ตอน`, fmtLength(st.totalSeconds)].filter(Boolean).join(' · ')}
+            {metaParts.length ? ` · ${metaParts.join(' · ')}` : ''}
           </p>
         </header>
-        <div className="lib-book-progress" aria-label={`ฟังจบ ${st.done} จาก ${st.count} ตอน`}>
-          <span className="lib-meter" aria-hidden="true">
-            <span style={{ width: `${pct}%` }} />
-          </span>
-          <span className="lib-book-progress-text lib-num">
-            ฟังจบ {st.done} จาก {st.count} ตอน
-          </span>
+
+        <div className="lib-book-meters">
+          {rd.count > 0 && (
+            <div className="lib-book-progress" aria-label={`อ่านไป ${fmtPct(rd.percent)}`}>
+              <span className="lib-book-progress-kind">อ่าน</span>
+              <span className="lib-meter" aria-hidden="true">
+                <span style={{ width: `${Math.min(100, rd.percent)}%` }} />
+              </span>
+              <span className="lib-book-progress-text lib-num">
+                {rd.state === 'done'
+                  ? 'อ่านจบแล้ว'
+                  : rd.state === 'new'
+                    ? `ยังไม่เริ่ม${readLeft != null ? ` · ทั้งเล่มอ่านราว ${fmtMinutes(readLeft)}` : readTarget?.pageCount ? ` · ${readTarget.pageCount} หน้า` : ''}`
+                    : `อ่านไป ${fmtPct(rd.percent)}${readLeft != null ? ` · เหลือราว ${fmtMinutes(readLeft)}` : ''}`}
+              </span>
+            </div>
+          )}
+          {st.count > 0 && (
+            <div className="lib-book-progress" aria-label={`ฟังจบ ${st.done} จาก ${st.count} ตอน`}>
+              <span className="lib-book-progress-kind">ฟัง</span>
+              <span className="lib-meter" aria-hidden="true">
+                <span style={{ width: `${pct}%` }} />
+              </span>
+              <span className="lib-book-progress-text lib-num">
+                ฟังจบ {st.done} จาก {st.count} ตอน
+              </span>
+            </div>
+          )}
         </div>
-        {st.count > 0 && (
-          <button className="lib-primary" onClick={primaryAction}>
-            {playingHere ? <IconPause size={20} /> : <IconPlay size={20} />}
-            <span>{primaryLabel}</span>
-          </button>
+
+        {(listenButton || readButton) && (
+          <div className="lib-book-actions">
+            {readFirst ? (
+              <>
+                {readButton}
+                {listenButton}
+              </>
+            ) : (
+              <>
+                {listenButton}
+                {readButton}
+              </>
+            )}
+          </div>
         )}
 
-        {st.count === 0 ? (
+        {book.files.length > 0 && (
+          <section className="lib-book-section" aria-labelledby="lib-files-title">
+            <h2 className="lib-section-title" id="lib-files-title">
+              อ่าน
+            </h2>
+            <ul className="lib-tracks lib-files">
+              {book.files.map((f) => (
+                <li key={f.id}>
+                  <FileRow file={f} onOpen={() => openRead(f)} />
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        {mode === 'empty' ? (
           <p className="lib-state-text lib-book-empty">
-            เล่มนี้ยังไม่มีตอน ใส่ไฟล์ใน <code>{CATALOG_HINT}</code> แล้วรัน <code>{SYNC_HINT}</code>
+            เล่มนี้ยังว่าง ใส่ไฟล์เสียง (tracks) หรือไฟล์อ่าน (files) ใน <code>{CATALOG_HINT}</code> แล้วรัน <code>{SYNC_HINT}</code>
           </p>
-        ) : (
+        ) : st.count === 0 ? null : (
+          <section className="lib-book-section" aria-label="ตอนทั้งหมด">
+            {book.files.length > 0 && (
+              <h2 className="lib-section-title" id="lib-tracks-title">
+                ฟัง
+              </h2>
+            )}
           <ol className="lib-tracks">
             {book.tracks.map((t, i) => {
               const s = trackState(t, lib.progress)
@@ -381,8 +550,61 @@ function BookPage({ book, shelf, navigate }: { book: Book; shelf: Shelf; navigat
               )
             })}
           </ol>
+          </section>
         )}
       </div>
+    </div>
+  )
+}
+
+const FILE_PILL: Record<TrackState, string> = { new: 'ยังไม่อ่าน', progress: 'อ่านค้าง', done: 'อ่านจบ' }
+
+function FileRow({ file, onOpen }: { file: DocFile; onOpen: () => void }) {
+  const lib = useLibrary()
+  const s = fileState(file, lib.readingProgress)
+  const p = lib.readingProgress[file.id]
+  const left = fileMinutesLeft(file, lib.readingProgress)
+  const pages = p?.locator.pages ?? file.pageCount
+  let detail: string
+  if (s === 'done') detail = 'อ่านจบแล้ว'
+  else if (s === 'progress' && p) {
+    detail = `อ่านไป ${fmtPct(p.percent)}`
+    if (left != null) detail += ` · เหลือราว ${fmtMinutes(left)}`
+    else if (p.locator.page && pages) detail += ` · หน้า ${p.locator.page}/${pages}`
+  } else {
+    const len = file.estMinutes ? `อ่านราว ${fmtMinutes(file.estMinutes)}` : pages ? `${pages} หน้า` : ''
+    detail = [len, fmtBytes(file.sizeBytes)].filter(Boolean).join(' · ') || 'ยังไม่ได้เปิด'
+  }
+  return (
+    <button className={`lib-track lib-file is-${s}`} onClick={onOpen} aria-label={`อ่าน ${file.title}, ${KIND_LABEL[file.kind]}, ${detail}`}>
+      <span className="lib-track-num lib-file-kind" aria-hidden="true">
+        {KIND_LABEL[file.kind]}
+      </span>
+      <span className="lib-track-body">
+        <span className="lib-track-title">{file.title}</span>
+        <span className="lib-track-status lib-num">{detail}</span>
+        {s === 'progress' && p && (
+          <span className="lib-track-bar" aria-hidden="true">
+            <span style={{ width: `${Math.min(100, p.percent)}%` }} />
+          </span>
+        )}
+      </span>
+      <span className="lib-track-side" aria-hidden="true">
+        <span className={`lib-pill is-${s}`}>
+          {s === 'done' && <IconCheck size={13} />}
+          {FILE_PILL[s]}
+        </span>
+        <IconChevronRight size={18} className="lib-file-chev" />
+      </span>
+    </button>
+  )
+}
+
+function ReaderLoading() {
+  return (
+    <div className="lib-reader-loading" role="status" aria-live="polite">
+      <span className="lib-skel lib-skel-line" />
+      <span>กำลังเตรียมหน้าอ่าน...</span>
     </div>
   )
 }

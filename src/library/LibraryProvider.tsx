@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
-import type { Book, LibraryBackend, Progress, Shelf, SignedUrl, Track } from './types'
+import type { Book, DocFile, LibraryBackend, Progress, ReadingProgress, Shelf, SignedUrl, Track } from './types'
 import { coverArtworkUrl } from './artwork'
 
 export const RATES = [0.75, 1, 1.25, 1.5, 1.75, 2] as const
@@ -8,14 +8,28 @@ export type SleepState = { kind: 'off' } | { kind: 'time'; endsAt: number; minut
 export type PlayerStatus = 'idle' | 'loading' | 'playing' | 'paused' | 'error'
 export type CatalogState = { status: 'loading' | 'ready' | 'error'; shelves: Shelf[]; error: string | null }
 export type Located = { track: Track; book: Book; shelf: Shelf; index: number }
+export type LocatedFile = { file: DocFile; book: Book; shelf: Shelf }
 
 type LibraryContextValue = {
+  backend: LibraryBackend | null
   backendKind: LibraryBackend['kind'] | null
   catalog: CatalogState
   reload: () => void
   progress: Record<string, Progress>
   locate: (trackId: string) => Located | null
   lastPlayed: Located | null
+  // ---- reading ----
+  readingProgress: Record<string, ReadingProgress>
+  saveReadingProgress: (p: ReadingProgress) => void
+  locateFile: (fileId: string) => LocatedFile | null
+  lastRead: LocatedFile | null
+  // ---- volume ----
+  volume: number
+  muted: boolean
+  /** false where the platform ignores element volume (iOS Safari): use the device buttons */
+  volumeSupported: boolean
+  setVolume: (v: number) => void
+  toggleMute: () => void
   current: Located | null
   status: PlayerStatus
   buffering: boolean
@@ -53,8 +67,10 @@ export function useOptionalLibrary(): LibraryContextValue | null {
 }
 
 const RATE_KEY = 'satoru_library_rate'
+const VOLUME_KEY = 'satoru_library_volume'
 const DISMISS_KEY = 'satoru_library_dismissed'
 const cacheKey = (kind: string) => `satoru_library_progress_${kind}`
+const readingCacheKey = (kind: string) => `satoru_library_reading_${kind}`
 const SAVE_EVERY_MS = 5000
 const RESIGN_MARGIN_MS = 10 * 60 * 1000
 const FADE_MS = 6000
@@ -81,6 +97,26 @@ function storedRate(): number {
   return (RATES as readonly number[]).includes(v) ? v : 1
 }
 
+type StoredVolume = { volume: number; muted: boolean }
+function storedVolume(): StoredVolume {
+  const v = readJson<Partial<StoredVolume>>(VOLUME_KEY, {})
+  const volume = typeof v.volume === 'number' && Number.isFinite(v.volume) ? Math.min(1, Math.max(0, v.volume)) : 1
+  return { volume, muted: v.muted === true }
+}
+
+// iOS Safari keeps media volume under the hardware buttons only: assigning
+// `audio.volume` is ignored and it keeps reading back 1. Probing a detached
+// element tells the two apart without touching the real player.
+function probeVolumeControl(): boolean {
+  try {
+    const a = document.createElement('audio')
+    a.volume = 0.5
+    return Math.abs(a.volume - 0.5) < 0.01
+  } catch {
+    return false
+  }
+}
+
 function errorText(err: unknown): string {
   if (err instanceof Error) return err.message
   return String(err)
@@ -101,7 +137,15 @@ export function LibraryProvider({ backend, children }: { backend: LibraryBackend
   const [sleep, setSleepState] = useState<SleepState>({ kind: 'off' })
   const [now, setNow] = useState(() => Date.now())
   const [sheetOpen, setSheetOpen] = useState(false)
+  const [readingProgress, setReadingProgress] = useState<Record<string, ReadingProgress>>({})
+  const [volumeState, setVolumeState] = useState(storedVolume)
+  const [volumeSupported] = useState(probeVolumeControl)
 
+  const readingRef = useRef(readingProgress)
+  const volumeRef = useRef(volumeState)
+  // The sleep-timer fade scales the listener's volume instead of replacing
+  // it, so a fade and a slider move never fight over audio.volume.
+  const fadeFactorRef = useRef(1)
   const progressRef = useRef(progress)
   const currentRef = useRef<Located | null>(null)
   const rateRef = useRef(rate)
@@ -124,7 +168,29 @@ export function LibraryProvider({ backend, children }: { backend: LibraryBackend
     if (!backend) return
     setCatalog((c) => ({ ...c, status: 'loading', error: null }))
     try {
-      const [shelves, remote] = await Promise.all([backend.loadCatalog(), backend.loadProgress()])
+      const [shelves, remote, remoteReading] = await Promise.all([
+        backend.loadCatalog(),
+        backend.loadProgress(),
+        backend.loadReadingProgress().catch(() => [] as ReadingProgress[]),
+      ])
+      // Reading positions merge the same way as listening positions: the local
+      // copy wins only when it is clearly newer than the database row.
+      const localReading = readJson<Record<string, ReadingProgress>>(readingCacheKey(backend.kind), {})
+      const mergedReading: Record<string, ReadingProgress> = {}
+      for (const r of remoteReading) mergedReading[r.fileId] = r
+      const readingToPush: ReadingProgress[] = []
+      for (const r of Object.values(localReading)) {
+        const db = mergedReading[r.fileId]
+        if (!db || Date.parse(r.updatedAt) > Date.parse(db.updatedAt) + 1000) {
+          mergedReading[r.fileId] = r
+          readingToPush.push(r)
+        }
+      }
+      readingRef.current = mergedReading
+      setReadingProgress(mergedReading)
+      writeJson(readingCacheKey(backend.kind), mergedReading)
+      for (const r of readingToPush) backend.saveReadingProgress(r).catch(() => setSyncIssue(true))
+
       const local = readJson<Record<string, Progress>>(cacheKey(backend.kind), {})
       const merged: Record<string, Progress> = {}
       for (const p of remote) merged[p.trackId] = p
@@ -162,6 +228,87 @@ export function LibraryProvider({ backend, children }: { backend: LibraryBackend
   indexRef.current = index
 
   const locate = useCallback((trackId: string) => indexRef.current.get(trackId) ?? null, [])
+
+  const fileIndex = useMemo(() => {
+    const map = new Map<string, LocatedFile>()
+    for (const shelf of catalog.shelves) for (const book of shelf.books) for (const file of book.files) map.set(file.id, { file, book, shelf })
+    return map
+  }, [catalog.shelves])
+  const fileIndexRef = useRef(fileIndex)
+  fileIndexRef.current = fileIndex
+  const locateFile = useCallback((fileId: string) => fileIndexRef.current.get(fileId) ?? null, [])
+
+  const lastRead = useMemo<LocatedFile | null>(() => {
+    let best: ReadingProgress | null = null
+    for (const r of Object.values(readingProgress)) {
+      if (!fileIndex.has(r.fileId)) continue
+      if (!best || r.updatedAt > best.updatedAt) best = r
+    }
+    return best ? fileIndex.get(best.fileId)! : null
+  }, [readingProgress, fileIndex])
+
+  const saveReadingProgress = useCallback(
+    (p: ReadingProgress) => {
+      if (!backend) return
+      const next = { ...readingRef.current, [p.fileId]: p }
+      readingRef.current = next
+      setReadingProgress(next)
+      writeJson(readingCacheKey(backend.kind), next)
+      backend
+        .saveReadingProgress(p)
+        .then(() => setSyncIssue(false))
+        .catch(() => setSyncIssue(true))
+    },
+    [backend],
+  )
+
+  // ---------- volume ----------
+  const applyVolume = useCallback(() => {
+    const a = audioRef.current
+    if (!a) return
+    const { volume, muted } = volumeRef.current
+    if (volumeSupported) a.volume = Math.min(1, Math.max(0, volume * fadeFactorRef.current))
+    a.muted = muted
+  }, [volumeSupported])
+
+  const commitVolume = useCallback(
+    (next: StoredVolume) => {
+      volumeRef.current = next
+      setVolumeState(next)
+      writeJson(VOLUME_KEY, next)
+      applyVolume()
+    },
+    [applyVolume],
+  )
+
+  const setVolume = useCallback(
+    (v: number) => {
+      const volume = Math.round(Math.min(1, Math.max(0, v)) * 100) / 100
+      // Dragging up from silence means "I want to hear it": lift the mute too.
+      commitVolume({ volume, muted: volume > 0 ? false : volumeRef.current.muted })
+    },
+    [commitVolume],
+  )
+
+  const toggleMute = useCallback(() => {
+    const cur = volumeRef.current
+    if (cur.muted || cur.volume === 0) commitVolume({ volume: cur.volume === 0 ? 0.5 : cur.volume, muted: false })
+    else commitVolume({ ...cur, muted: true })
+  }, [commitVolume])
+
+  useEffect(() => {
+    applyVolume()
+  }, [applyVolume])
+
+  /** Stop a running sleep fade and give the listener their full volume back. */
+  const cancelFade = useCallback(() => {
+    if (fadeRef.current) {
+      window.clearInterval(fadeRef.current)
+      fadeRef.current = null
+    }
+    fadeFactorRef.current = 1
+    applyVolume()
+  }, [applyVolume])
 
   const lastPlayed = useMemo<Located | null>(() => {
     let best: Progress | null = null
@@ -300,11 +447,7 @@ export function LibraryProvider({ backend, children }: { backend: LibraryBackend
       const loc = indexRef.current.get(trackId)
       if (!loc || !audioRef.current) return
       if (currentRef.current && currentRef.current.track.id !== trackId) persistCurrent()
-      if (fadeRef.current) {
-        window.clearInterval(fadeRef.current)
-        fadeRef.current = null
-        audioRef.current.volume = 1
-      }
+      cancelFade()
       const p = progressRef.current[trackId]
       const start = opts?.fromStart
         ? 0
@@ -337,7 +480,7 @@ export function LibraryProvider({ backend, children }: { backend: LibraryBackend
       }
       ensureUrls(loc.book.tracks.map((t) => t.audioPath)).catch(() => {})
     },
-    [ensureUrls, fail, freshUrl, persistCurrent, setMetadata, startAudio],
+    [cancelFade, ensureUrls, fail, freshUrl, persistCurrent, setMetadata, startAudio],
   )
 
   const toggle = useCallback(() => {
@@ -360,13 +503,15 @@ export function LibraryProvider({ backend, children }: { backend: LibraryBackend
         playTrack(loc.track.id, { at: a.currentTime })
         return
       }
+      // Pressing play mid-fade means "keep listening": drop the fade.
+      cancelFade()
       wantPlayRef.current = true
       a.play().catch(() => {})
     } else {
       wantPlayRef.current = false
       a.pause()
     }
-  }, [freshUrl, playTrack, status])
+  }, [cancelFade, freshUrl, playTrack, status])
 
   const seekTo = useCallback(
     (seconds: number) => {
@@ -422,25 +567,30 @@ export function LibraryProvider({ backend, children }: { backend: LibraryBackend
     [updatePositionState],
   )
 
+  // Sleep timer: ramp the fade factor 1 -> 0 on top of the chosen volume, then
+  // pause and restore the factor. Moving the slider mid-fade keeps working:
+  // the new level is simply faded from where the ramp is. Where element volume
+  // is fixed (iOS) the fade cannot be heard, so it just pauses at the end.
   const fadeAndPause = useCallback(() => {
     const a = audioRef.current
     if (!a || a.paused) return
-    const startVol = a.volume || 1
     const steps = 30
     let step = 0
     if (fadeRef.current) window.clearInterval(fadeRef.current)
     fadeRef.current = window.setInterval(() => {
       step++
-      a.volume = Math.max(0, startVol * (1 - step / steps))
+      fadeFactorRef.current = Math.max(0, 1 - step / steps)
+      applyVolume()
       if (step >= steps) {
         if (fadeRef.current) window.clearInterval(fadeRef.current)
         fadeRef.current = null
         wantPlayRef.current = false
         a.pause()
-        a.volume = startVol
+        fadeFactorRef.current = 1
+        applyVolume()
       }
     }, FADE_MS / steps)
-  }, [])
+  }, [applyVolume])
 
   const setSleep = useCallback((choice: SleepChoice) => {
     if (choice === 'off') setSleepState({ kind: 'off' })
@@ -466,6 +616,7 @@ export function LibraryProvider({ backend, children }: { backend: LibraryBackend
   const close = useCallback(() => {
     const a = audioRef.current
     persistCurrent()
+    cancelFade()
     const loc = currentRef.current
     if (loc) writeJson(DISMISS_KEY, loc.track.id)
     wantPlayRef.current = false
@@ -482,7 +633,7 @@ export function LibraryProvider({ backend, children }: { backend: LibraryBackend
     setSleepState({ kind: 'off' })
     setSheetOpen(false)
     setMetadata(null)
-  }, [persistCurrent, setMetadata])
+  }, [cancelFade, persistCurrent, setMetadata])
 
   const prepareBook = useCallback(
     (book: Book) => {
@@ -691,12 +842,22 @@ export function LibraryProvider({ backend, children }: { backend: LibraryBackend
 
   const value = useMemo<LibraryContextValue>(
     () => ({
+      backend,
       backendKind: backend?.kind ?? null,
       catalog,
       reload: load,
       progress,
       locate,
       lastPlayed,
+      readingProgress,
+      saveReadingProgress,
+      locateFile,
+      lastRead,
+      volume: volumeState.volume,
+      muted: volumeState.muted,
+      volumeSupported,
+      setVolume,
+      toggleMute,
       current,
       status,
       buffering,
@@ -720,7 +881,7 @@ export function LibraryProvider({ backend, children }: { backend: LibraryBackend
       close,
       prepareBook,
     }),
-    [backend, catalog, load, progress, locate, lastPlayed, current, status, buffering, position, duration, rate, error, syncIssue, sleep, now, sheetOpen, playTrack, toggle, seekTo, skip, next, prev, setRate, setSleep, close, prepareBook],
+    [backend, catalog, load, progress, locate, lastPlayed, readingProgress, saveReadingProgress, locateFile, lastRead, volumeState, volumeSupported, setVolume, toggleMute, current, status, buffering, position, duration, rate, error, syncIssue, sleep, now, sheetOpen, playTrack, toggle, seekTo, skip, next, prev, setRate, setSleep, close, prepareBook],
   )
 
   return (

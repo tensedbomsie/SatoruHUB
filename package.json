@@ -13,6 +13,8 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.110.2",
+    "foliate-js": "https://codeload.github.com/johnfactotum/foliate-js/tar.gz/78914aef4466eb960965702401634c2cb348e9b1",
+    "pdfjs-dist": "^6.4.299",
     "react": "^19.2.7",
     "react-dom": "^19.2.7"
   },

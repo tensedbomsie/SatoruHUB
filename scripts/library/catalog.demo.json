@@ -1,0 +1,75 @@
+{
+  "ownerEmail": "dev-demo@localhost",
+  "bucket": "library-audio",
+  "docsBucket": "library-docs",
+  "shelves": [
+    {
+      "slug": "ram-exam",
+      "title": "ติวสอบ ราม",
+      "books": [
+        {
+          "slug": "mgt2102",
+          "title": "MGT2102",
+          "files": [
+            {
+              "kind": "pdf",
+              "file": "samples/mgt2102-study-sheet.pdf",
+              "path": "demo/mgt2102-study-sheet.pdf",
+              "title": "สรุปก่อนสอบ MGT2102 (PDF)"
+            },
+            {
+              "kind": "html",
+              "file": "E:/projYT/reading/mgt2102_study_sheet.html",
+              "path": "demo/mgt2102-study-sheet.html",
+              "title": "สรุปก่อนสอบ MGT2102 (หน้าเว็บ)"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "reader-samples",
+      "title": "ตัวอย่างทดสอบ",
+      "description": "ไฟล์ทดสอบโหมดอ่าน เห็นเฉพาะ dev server",
+      "books": [
+        {
+          "slug": "sample-epub",
+          "title": "สมุดทดลองอ่าน",
+          "coverLabel": "ทดลองอ่าน",
+          "subtitle": "EPUB ไทย / English",
+          "author": "ตัวอย่างทดสอบ",
+          "cloth": "dusk",
+          "files": [
+            {
+              "kind": "epub",
+              "file": "samples/sample-th-en.epub",
+              "path": "demo/sample-th-en.epub",
+              "title": "สมุดทดลองอ่าน"
+            }
+          ]
+        },
+        {
+          "slug": "sample-broken",
+          "title": "ไฟล์เสีย (ทดสอบ)",
+          "coverLabel": "ไฟล์เสีย",
+          "subtitle": "ต้องขึ้นข้อความแนะนำวิธีแก้",
+          "cloth": "clay",
+          "files": [
+            {
+              "kind": "epub",
+              "file": "samples/broken.epub",
+              "path": "demo/broken.epub",
+              "title": "ไฟล์ที่เสียหาย"
+            },
+            {
+              "kind": "pdf",
+              "file": "samples/not-here.pdf",
+              "path": "demo/not-here.pdf",
+              "title": "ไฟล์ที่หายจากคลัง"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

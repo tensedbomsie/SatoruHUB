@@ -1,14 +1,21 @@
 import { useCallback, useEffect, useState } from 'react'
 
 // The Library lives inside the Hub's single page, addressed by hash:
-//   #library                 bookcase
-//   #library/shelf/<slug>    one shelf
-//   #library/book/<slug>     one book and its tracks
+//   #library                         bookcase
+//   #library/shelf/<slug>            one shelf
+//   #library/book/<slug>             one book: its tracks and readable files
+//   #library/read/<slug>/<fileId>    the full-screen reader for one file
 // Hash routing keeps it clear of the service worker's navigateFallback and of
 // GitHub Pages paths, and makes the phone's back button work naturally.
-export type LibraryRoute = { kind: 'home' } | { kind: 'shelf'; slug: string } | { kind: 'book'; slug: string }
+export type LibraryRoute =
+  | { kind: 'home' }
+  | { kind: 'shelf'; slug: string }
+  | { kind: 'book'; slug: string }
+  | { kind: 'read'; slug: string; fileId: string }
 
 export function parseLibraryHash(hash: string): LibraryRoute | null {
+  const read = /^#library\/read\/([^/?#]+)\/([^/?#]+)\/?$/.exec(hash)
+  if (read) return { kind: 'read', slug: decodeURIComponent(read[1]), fileId: decodeURIComponent(read[2]) }
   const m = /^#library(?:\/(shelf|book)\/([^/?#]+))?\/?$/.exec(hash)
   if (!m) return null
   if (!m[1]) return { kind: 'home' }
@@ -16,7 +23,9 @@ export function parseLibraryHash(hash: string): LibraryRoute | null {
 }
 
 export function libraryHash(route: LibraryRoute): string {
-  return route.kind === 'home' ? '#library' : `#library/${route.kind}/${encodeURIComponent(route.slug)}`
+  if (route.kind === 'home') return '#library'
+  if (route.kind === 'read') return `#library/read/${encodeURIComponent(route.slug)}/${encodeURIComponent(route.fileId)}`
+  return `#library/${route.kind}/${encodeURIComponent(route.slug)}`
 }
 
 export function useLibraryRoute(): [LibraryRoute | null, (route: LibraryRoute | null) => void] {

@@ -7,11 +7,13 @@ import {
   IconClose,
   IconForward30,
   IconMoon,
+  IconMute,
   IconNext,
   IconPause,
   IconPlay,
   IconPrev,
   IconRetry,
+  IconVolume,
 } from './icons'
 import { RATES, useLibrary, type SleepChoice, type SleepState } from './LibraryProvider'
 import './library.css'
@@ -87,6 +89,7 @@ export default function PlayerBar({ onOpenBook }: { onOpenBook: (slug: string) =
             <span className="lib-player-time">
               {fmtClock(lib.position)} / {fmtClock(lib.duration)}
             </span>
+            <VolumeControl variant="bar" />
             <div className="lib-menu-anchor">
               <button
                 className={`lib-ctl${lib.rate !== 1 ? ' is-on' : ''}`}
@@ -162,6 +165,64 @@ function PlayButton({ playing, busy, error, onClick, large }: { playing: boolean
     >
       {error ? <IconRetry size={large ? 30 : 22} /> : playing ? <IconPause size={large ? 34 : 24} /> : <IconPlay size={large ? 34 : 24} />}
     </button>
+  )
+}
+
+// Volume: a mute key plus a 0-100% slider, shared by the docked bar and the
+// sheet. The slider is a native range, so arrow keys (left/right and up/down)
+// step 5% and Page Up/Down jump further while it has focus. Where the platform
+// ignores element volume (iOS Safari) only the mute key is offered, with a
+// pointer to the hardware buttons.
+function VolumeControl({ variant }: { variant: 'bar' | 'sheet' }) {
+  const lib = useLibrary()
+  const pct = Math.round(lib.volume * 100)
+  const silent = lib.muted || pct === 0
+  const level: 0 | 1 | 2 = pct === 0 ? 0 : pct < 50 ? 1 : 2
+  const muteKey = (
+    <button
+      className={`lib-icon-btn lib-vol-key${variant === 'bar' ? ' lib-icon-btn-sm' : ''}${silent ? ' is-silent' : ''}`}
+      onClick={lib.toggleMute}
+      aria-pressed={lib.muted}
+      aria-label={lib.muted ? 'เปิดเสียง' : 'ปิดเสียง'}
+      title={lib.muted ? 'เปิดเสียง' : 'ปิดเสียง'}
+    >
+      {silent ? <IconMute size={variant === 'bar' ? 20 : 22} /> : <IconVolume level={level} size={variant === 'bar' ? 20 : 22} />}
+    </button>
+  )
+  const slider = lib.volumeSupported ? (
+    <input
+      type="range"
+      className={`lib-scrub lib-vol lib-vol-${variant}${lib.muted ? ' is-muted' : ''}`}
+      min={0}
+      max={100}
+      step={5}
+      value={pct}
+      style={{ '--lib-pct': `${lib.muted ? 0 : pct}%` } as CSSProperties}
+      aria-label="ระดับเสียง"
+      aria-valuetext={lib.muted ? `ปิดเสียงอยู่ ระดับ ${pct}%` : `${pct}%`}
+      onChange={(e) => lib.setVolume(Number(e.target.value) / 100)}
+    />
+  ) : null
+
+  if (variant === 'bar') {
+    return (
+      <div className="lib-vol-wrap" role="group" aria-label="ระดับเสียง">
+        {muteKey}
+        {slider}
+      </div>
+    )
+  }
+  return (
+    <div className="lib-sheet-group">
+      <span className="lib-sheet-label" id="lib-vol-label">
+        ระดับเสียง
+        <span className="lib-sheet-label-value lib-num"> · {lib.muted ? 'ปิดเสียงอยู่' : `${pct}%`}</span>
+      </span>
+      <div className="lib-vol-row" role="group" aria-labelledby="lib-vol-label">
+        {muteKey}
+        {slider ?? <p className="lib-vol-note">อุปกรณ์นี้ปรับความดังด้วยปุ่มเสียงของเครื่องเท่านั้น ส่วนปุ่มซ้ายใช้ปิด/เปิดเสียงได้</p>}
+      </div>
+    </div>
   )
 }
 
@@ -318,6 +379,8 @@ function PlayerSheet({ onOpenBook }: { onOpenBook: (slug: string) => void }) {
             <IconNext size={26} />
           </button>
         </div>
+
+        <VolumeControl variant="sheet" />
 
         <div className="lib-sheet-group">
           <span className="lib-sheet-label" id="lib-rate-label">

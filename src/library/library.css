@@ -658,12 +658,45 @@
   color: rgba(241, 242, 246, 0.86);
 }
 
-/* status pill riding on the cover: needs its own dark backing on any tint */
-.lib-cover-pill {
+/* status pills riding on the cover: need their own dark backing on any tint */
+.lib-cover-pills {
   position: absolute;
   left: 9%;
+  right: 9%;
   bottom: 8%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 5px;
+}
+
+.lib-cover-pill {
   background: rgba(8, 9, 12, 0.72);
+}
+
+/* format key: which ways this book can be taken in (listen, read, both) */
+.lib-cover-mode {
+  position: absolute;
+  top: 7px;
+  right: 7px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 24px;
+  padding: 0 6px;
+  border-radius: var(--r-sm);
+  background: rgba(8, 9, 12, 0.6);
+  color: rgba(241, 242, 246, 0.9);
+}
+
+.lib-cover-detail .lib-cover-mode {
+  top: 10px;
+  right: 10px;
+}
+
+/* the key sits in its own band above the lettering, never over it */
+.lib-cover.has-mode .lib-cover-face {
+  top: calc(7px + 24px + 8%);
 }
 
 .lib-cover-pill.is-progress {
@@ -714,21 +747,119 @@
   padding: 0 4px;
 }
 
+.lib-book-meters {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 16px 4px 0;
+}
+
 .lib-book-progress {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin: 16px 4px 0;
 }
 
 .lib-book-progress .lib-meter {
   width: 200px;
   max-width: 50%;
+  flex: none;
+}
+
+/* the format word only appears when a book has both meters */
+.lib-book-progress-kind {
+  width: 2.2em;
+  flex: none;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-dim);
+}
+
+.lib-book-meters > .lib-book-progress:only-child .lib-book-progress-kind {
+  display: none;
 }
 
 .lib-book-progress-text {
   font-size: 0.84rem;
   color: var(--text-dim);
+}
+
+.lib-book-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.lib-book-actions .lib-primary {
+  margin-top: 0;
+}
+
+/* the secondary format key keeps the primary's size so the pair aligns */
+.lib-btn.lib-action {
+  min-height: 48px;
+  padding: 0 20px 0 16px;
+  gap: 10px;
+  font-size: 0.96rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.lib-book-section {
+  margin-top: 26px;
+}
+
+.lib-book-section .lib-tracks {
+  margin-top: 0;
+}
+
+.lib-section-title {
+  margin: 0 4px 10px;
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: var(--text-dim);
+}
+
+/* file rows reuse the track row; the number key becomes a format key */
+.lib-file-kind {
+  width: auto;
+  min-width: 40px;
+  padding: 0 6px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.lib-track.lib-file {
+  grid-template-columns: auto minmax(0, 1fr) auto;
+}
+
+.lib-file .lib-track-side {
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+.lib-file-chev {
+  color: var(--text-dim);
+}
+
+.lib-file.is-done .lib-track-num {
+  color: var(--accent);
+  background: rgba(var(--accent-rgb), 0.12);
+}
+
+.lib-reader-loading {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: #0f1015;
+  color: var(--text-dim);
+  font-size: 0.9rem;
 }
 
 /* primary action: the one solid accent plate on the screen */
@@ -1237,6 +1368,85 @@
   --lib-scrub-h: 6px;
 }
 
+/* ---------- volume ---------- */
+.lib-icon-btn-sm {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--r-sm);
+}
+
+.lib-vol-key {
+  color: var(--text-dim);
+}
+
+.lib-vol-key:hover:not(:disabled) {
+  color: var(--text);
+}
+
+.lib-vol-key.is-silent {
+  color: var(--accent);
+}
+
+.lib-vol-wrap {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin-right: 2px;
+}
+
+.lib-vol {
+  height: 24px;
+  --lib-scrub-h: 4px;
+}
+
+.lib-vol-bar {
+  width: 84px;
+  flex: none;
+}
+
+/* muted: the level is kept (unmute restores it) but drawn as inactive */
+.lib-vol.is-muted::-webkit-slider-thumb {
+  background: var(--text-dimmer);
+}
+
+.lib-vol.is-muted::-moz-range-thumb {
+  background: var(--text-dimmer);
+}
+
+.lib-vol.is-muted::-moz-range-progress {
+  background: transparent;
+}
+
+.lib-vol-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 12px 4px 4px;
+  background: var(--inset);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--r-md);
+}
+
+.lib-vol-sheet {
+  flex: 1;
+  height: 36px;
+  --lib-scrub-h: 6px;
+}
+
+.lib-vol-note {
+  margin: 0;
+  padding: 6px 0;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: var(--text-dim);
+}
+
+@media (max-width: 1000px) {
+  .lib-vol-bar {
+    display: none;
+  }
+}
+
 /* ---------- full player sheet ---------- */
 .lib-sheet-backdrop {
   position: fixed;
@@ -1483,21 +1693,29 @@
     padding: 0;
   }
 
-  .lib-book-progress,
-  .lib-primary,
+  .lib-book-meters,
+  .lib-book-actions,
+  .lib-book-section,
   .lib-tracks,
   .lib-book-empty {
     grid-column: 1 / -1;
   }
 
-  .lib-book-progress {
+  .lib-book-meters {
     margin: 18px 2px 0;
   }
 
-  .lib-primary {
-    width: 100%;
-    justify-content: center;
+  .lib-book-actions {
     margin-top: 14px;
+  }
+
+  .lib-book-actions > * {
+    flex: 1 1 100%;
+    justify-content: center;
+  }
+
+  .lib-book-section {
+    margin-top: 20px;
   }
 
   .lib-tracks {

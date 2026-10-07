@@ -1,0 +1,808 @@
+/* ==========================================================================
+   Library reader (โซนอ่าน) in the ATLAS Squircle language.
+
+   Read mode: the page is the product. The chrome is two quiet bars that never
+   sit on top of the text (the text area is the grid row between them), and
+   three reading themes re-ink both the page and the chrome so a light page is
+   never framed by a dark slab. Shared Squircle controls (segments, keys,
+   meters) pick the theme up through the same tokens they already use.
+   Loaded only with the reader chunk.
+   ========================================================================== */
+
+.lib-reader {
+  --rd-bg: #101117;
+  --rd-chrome: #15161d;
+  --lib-solid: #15161d;
+  --card: #191a22;
+  --card-2: #1e2028;
+  --inset: #0c0d12;
+
+  position: fixed;
+  inset: 0 0 var(--lib-player-space, 0px) 0;
+  z-index: 300;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  background: var(--rd-bg);
+  color: var(--text);
+}
+
+.lib-reader[data-rtheme='light'] {
+  --rd-bg: #f7f7f4;
+  --rd-chrome: #ededea;
+  --lib-solid: #f4f4f1;
+  --card: #ffffff;
+  --card-2: #e3e3df;
+  --inset: #e6e6e2;
+  --border: rgba(20, 22, 30, 0.12);
+  --border-soft: rgba(20, 22, 30, 0.08);
+  --text: #1d1e24;
+  --text-dim: #565a66;
+  --text-dimmer: #8a8d96;
+  --accent: #4447c9;
+  --accent-rgb: 68, 71, 201;
+  --on-accent: #ffffff;
+  --lib-raise: none;
+  color-scheme: light;
+}
+
+.lib-reader[data-rtheme='sepia'] {
+  --rd-bg: #f2e8d5;
+  --rd-chrome: #e8dbc1;
+  --lib-solid: #efe3cc;
+  --card: #f7eedd;
+  --card-2: #dfd0b3;
+  --inset: #e2d4b8;
+  --border: rgba(58, 46, 33, 0.16);
+  --border-soft: rgba(58, 46, 33, 0.1);
+  --text: #3a2e21;
+  --text-dim: #66533d;
+  --text-dimmer: #8c7860;
+  --accent: #8a4f1c;
+  --accent-rgb: 138, 79, 28;
+  --on-accent: #ffffff;
+  --lib-raise: none;
+  color-scheme: light;
+}
+
+/* while reading: no page scroll behind, Hub floaters out of the way */
+:root.lib-reading body {
+  overflow: hidden;
+}
+:root.lib-reading .fc-bubble,
+:root.lib-reading .corner-links,
+:root.lib-reading .side-link-left {
+  display: none !important;
+}
+
+/* ---------- top bar ---------- */
+.lib-rd-top {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 58px;
+  padding: 6px 10px;
+  padding-top: calc(6px + env(safe-area-inset-top));
+  background: var(--rd-chrome);
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.lib-rd-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  min-height: 44px;
+  padding: 0 12px 0 6px;
+  border: 0;
+  border-radius: var(--r-md);
+  background: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.lib-rd-back:hover {
+  background: var(--card-2);
+}
+
+.lib-rd-titles {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 0 4px;
+}
+
+.lib-rd-title,
+.lib-rd-chapter {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lib-rd-title {
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+.lib-rd-chapter {
+  font-size: 0.78rem;
+  color: var(--text-dim);
+}
+
+.lib-rd-tools {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.lib-rd-tool {
+  color: var(--text-dim);
+}
+
+.lib-rd-tool:hover:not(:disabled) {
+  color: var(--text);
+}
+
+.lib-rd-tool.is-on {
+  color: var(--accent);
+  background: rgba(var(--accent-rgb), 0.14);
+}
+
+/* ---------- reading stage ---------- */
+.lib-rd-stage {
+  position: relative;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.lib-rd-host {
+  position: absolute;
+  inset: 0;
+}
+
+.lib-rd-host foliate-view,
+.lib-epub-view {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.lib-html-frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: #fff;
+}
+
+/* ---------- PDF ---------- */
+.lib-pdf {
+  position: absolute;
+  inset: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  background: var(--rd-bg);
+  outline: none;
+  scrollbar-width: thin;
+  scrollbar-color: var(--card-2) transparent;
+}
+
+.lib-pdf-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 12px 28px;
+  min-width: min-content;
+}
+
+.lib-pdf.is-paged .lib-pdf-stack {
+  min-height: 100%;
+  justify-content: center;
+  padding-bottom: 14px;
+}
+
+.lib-pdf-page {
+  position: relative;
+  flex: none;
+  overflow: hidden;
+  border-radius: 4px;
+  background: #ffffff;
+  box-shadow: 0 8px 22px -14px rgba(0, 0, 0, 0.7);
+}
+
+.lib-pdf-page canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.lib-pdf[data-theme='sepia'] .lib-pdf-page canvas {
+  filter: sepia(0.3) brightness(0.97);
+}
+
+/* dark theme, "dim" on: invert the paper so a white page does not glare at night */
+.lib-pdf.is-dim .lib-pdf-page {
+  background: #16171c;
+}
+
+.lib-pdf.is-dim .lib-pdf-page canvas {
+  filter: invert(0.88) hue-rotate(180deg);
+}
+
+/* pdf.js text layer (selection + copy), trimmed from pdfjs-dist/web/pdf_viewer.css */
+.lib-pdf .textLayer {
+  position: absolute;
+  inset: 0;
+  overflow: clip;
+  opacity: 1;
+  line-height: 1;
+  text-align: initial;
+  -webkit-text-size-adjust: none;
+  text-size-adjust: none;
+  forced-color-adjust: none;
+  transform-origin: 0 0;
+  z-index: 0;
+  --min-font-size: 1;
+  --text-scale-factor: calc(var(--total-scale-factor) * var(--min-font-size));
+  --min-font-size-inv: calc(1 / var(--min-font-size));
+}
+
+.lib-pdf .textLayer :is(span, br) {
+  color: transparent;
+  position: absolute;
+  white-space: pre;
+  cursor: text;
+  transform-origin: 0% 0%;
+}
+
+.lib-pdf .textLayer > :not(.markedContent),
+.lib-pdf .textLayer .markedContent span:not(.markedContent) {
+  z-index: 1;
+  --font-height: 0;
+  font-size: calc(var(--text-scale-factor) * var(--font-height));
+  --scale-x: 1;
+  --rotate: 0deg;
+  transform: rotate(var(--rotate)) scaleX(var(--scale-x)) scale(var(--min-font-size-inv));
+}
+
+.lib-pdf .textLayer .markedContent {
+  display: contents;
+}
+
+.lib-pdf .textLayer ::selection {
+  background: rgba(68, 71, 201, 0.3);
+  color: transparent;
+}
+
+.lib-pdf .textLayer .endOfContent {
+  display: block;
+  position: absolute;
+  inset: 100% 0 0;
+  z-index: 0;
+  cursor: default;
+  user-select: none;
+}
+
+/* ---------- loading / error over the stage ---------- */
+.lib-rd-state {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: var(--rd-bg);
+}
+
+.lib-rd-card {
+  width: min(30rem, 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 26px 22px;
+  text-align: center;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  box-shadow: var(--lib-raise);
+}
+
+.lib-rd-card-title {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.lib-rd-card.is-error .lib-rd-card-title {
+  color: var(--text);
+}
+
+.lib-rd-card-text {
+  margin: 0;
+  color: var(--text-dim);
+  font-size: 0.9rem;
+  line-height: 1.7;
+}
+
+.lib-rd-card-detail {
+  margin: 0;
+  max-width: 100%;
+  padding: 6px 10px;
+  border-radius: var(--r-sm);
+  background: var(--inset);
+  color: var(--text-dim);
+  font-family: ui-monospace, 'Cascadia Mono', Consolas, monospace;
+  font-size: 0.74rem;
+  overflow-wrap: anywhere;
+}
+
+.lib-rd-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.lib-rd-card-actions .lib-primary {
+  margin-top: 0;
+}
+
+.lib-rd-load {
+  width: min(240px, 80%);
+}
+
+.lib-rd-load > span.is-indeterminate {
+  animation: lib-rd-indet 1.2s ease-in-out infinite alternate;
+}
+
+@keyframes lib-rd-indet {
+  from {
+    transform: translateX(-60%);
+  }
+  to {
+    transform: translateX(220%);
+  }
+}
+
+/* selection -> highlight action, floating over the stage bottom */
+.lib-rd-highlight {
+  position: absolute;
+  left: 50%;
+  bottom: 14px;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 16px 0 12px;
+  border: 0;
+  border-radius: var(--r-md);
+  background: var(--accent);
+  color: var(--on-accent);
+  font-size: 0.9rem;
+  font-weight: 700;
+  box-shadow: 0 12px 26px -12px rgba(0, 0, 0, 0.7);
+  cursor: pointer;
+  animation: lib-pop 0.16s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* ---------- bottom bar: where you are, how far to the end ---------- */
+.lib-rd-bottom {
+  padding: 4px 10px 6px;
+  background: var(--rd-chrome);
+  border-top: 1px solid var(--border-soft);
+}
+
+.lib-rd-progress {
+  padding: 0 8px;
+}
+
+.lib-rd-scrub {
+  height: 22px;
+  --lib-scrub-h: 4px;
+}
+
+.lib-rd-scrub:disabled {
+  cursor: default;
+  opacity: 0.5;
+}
+
+.lib-rd-row {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) 44px;
+  align-items: center;
+  gap: 6px;
+}
+
+.lib-rd-spacer {
+  width: 44px;
+}
+
+.lib-rd-status {
+  margin: 0;
+  text-align: center;
+  font-size: 0.82rem;
+  color: var(--text-dim);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lib-rd-status strong {
+  color: var(--text);
+  font-weight: 700;
+}
+
+.lib-rd-sync {
+  color: var(--text-dimmer);
+}
+
+/* immersive: chrome tucked away, a hairline keeps the position visible */
+.lib-reader.is-immersive .lib-rd-top,
+.lib-reader.is-immersive .lib-rd-bottom {
+  display: none;
+}
+
+.lib-rd-thinbar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 3px;
+  background: var(--inset);
+  pointer-events: none;
+}
+
+.lib-rd-thinbar > span {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+}
+
+/* ---------- side panel: contents / bookmarks / search ---------- */
+.lib-rd-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  justify-content: flex-end;
+  background: rgba(4, 5, 8, 0.5);
+  animation: lib-fade 0.18s ease;
+}
+
+.lib-rd-panel {
+  width: min(380px, 100%);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: var(--lib-solid);
+  border-left: 1px solid var(--border);
+  box-shadow: -18px 0 40px -24px rgba(0, 0, 0, 0.8);
+  animation: lib-rd-slide 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@keyframes lib-rd-slide {
+  from {
+    transform: translateX(24px);
+    opacity: 0;
+  }
+}
+
+.lib-rd-panel-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 10px 8px;
+  padding-top: calc(10px + env(safe-area-inset-top));
+}
+
+.lib-rd-tabs {
+  flex: 1;
+}
+
+.lib-rd-panel-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 4px 10px 20px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--card-2) transparent;
+}
+
+.lib-rd-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.lib-rd-item {
+  width: 100%;
+  min-height: 44px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  padding-left: calc(12px + var(--depth, 0) * 16px);
+  border: 0;
+  border-radius: var(--r-md);
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.lib-rd-item:hover {
+  background: var(--card-2);
+}
+
+.lib-rd-item.is-current {
+  background: rgba(var(--accent-rgb), 0.14);
+  font-weight: 600;
+}
+
+.lib-rd-item-kind {
+  flex: none;
+  margin-top: 2px;
+  color: var(--accent);
+}
+
+.lib-rd-item-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+
+.lib-rd-item-meta {
+  flex: none;
+  font-size: 0.76rem;
+  font-weight: 500;
+  color: var(--text-dim);
+}
+
+.lib-rd-item > .lib-rd-item-meta {
+  margin-left: auto;
+  padding-top: 2px;
+}
+
+.lib-rd-mark {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.lib-rd-remove {
+  flex: none;
+  color: var(--text-dim);
+}
+
+.lib-rd-excerpt {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.lib-rd-excerpt mark {
+  background: rgba(var(--accent-rgb), 0.3);
+  color: inherit;
+  border-radius: 3px;
+  padding: 0 1px;
+}
+
+.lib-rd-empty {
+  margin: 0;
+  padding: 18px 12px;
+  color: var(--text-dim);
+  font-size: 0.88rem;
+  line-height: 1.7;
+}
+
+.lib-rd-error {
+  margin: 4px 2px 10px;
+  padding: 10px 12px;
+  border-radius: var(--r-md);
+  background: rgba(var(--danger-rgb), 0.12);
+  color: var(--danger);
+  font-size: 0.86rem;
+}
+
+.lib-reader[data-rtheme='light'] .lib-rd-error,
+.lib-reader[data-rtheme='sepia'] .lib-rd-error {
+  color: #a3241f;
+}
+
+.lib-rd-search-form {
+  display: flex;
+  gap: 8px;
+  padding: 2px 0 6px;
+}
+
+.lib-rd-input {
+  flex: 1;
+  min-width: 0;
+  min-height: 42px;
+  padding: 0 12px;
+  border-radius: var(--r-md);
+  border: 1px solid var(--border);
+  background: var(--inset);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.92rem;
+}
+
+.lib-rd-input::placeholder {
+  color: var(--text-dimmer);
+}
+
+.lib-rd-input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.lib-rd-search-status {
+  min-height: 1.4em;
+  margin: 4px 4px 8px;
+  font-size: 0.8rem;
+  color: var(--text-dim);
+}
+
+/* ---------- reading settings ---------- */
+.lib-rd-settings {
+  position: absolute;
+  top: calc(64px + env(safe-area-inset-top));
+  right: 10px;
+  z-index: 6;
+  width: min(360px, calc(100% - 20px));
+  max-height: calc(100% - 80px);
+  overflow-y: auto;
+  padding: 4px 16px 18px;
+  background: var(--lib-solid);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  box-shadow: 0 20px 44px -18px rgba(0, 0, 0, 0.75);
+  animation: lib-pop 0.16s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.lib-rd-stepper {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr) 56px;
+  align-items: center;
+  gap: 8px;
+  padding: 4px;
+  background: var(--inset);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--r-md);
+}
+
+.lib-rd-stepper .lib-ctl {
+  height: 40px;
+  font-size: 1.05rem;
+}
+
+.lib-rd-stepper .lib-ctl:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.lib-rd-stepper-value {
+  text-align: center;
+  font-size: 0.98rem;
+  font-weight: 700;
+}
+
+.lib-rd-a-small {
+  font-size: 0.82rem;
+}
+
+.lib-rd-a-large {
+  font-size: 1.22rem;
+}
+
+.lib-rd-themes {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.lib-rd-theme {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+  padding: 6px 6px 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  background: none;
+  font-size: 0.84rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.lib-rd-theme.is-on {
+  border-color: var(--accent);
+  box-shadow: inset 0 0 0 1px var(--accent);
+}
+
+.lib-rd-swatch {
+  display: grid;
+  place-items: center;
+  height: 40px;
+  border-radius: var(--r-sm);
+  font-size: 1.1rem;
+  font-weight: 600;
+  border: 1px solid rgba(127, 127, 127, 0.25);
+}
+
+.lib-rd-theme[data-swatch='dark'] .lib-rd-swatch {
+  background: #101117;
+  color: #dcdee6;
+}
+
+.lib-rd-theme[data-swatch='light'] .lib-rd-swatch {
+  background: #f7f7f4;
+  color: #1d1e24;
+}
+
+.lib-rd-theme[data-swatch='sepia'] .lib-rd-swatch {
+  background: #f2e8d5;
+  color: #3a2e21;
+}
+
+/* ---------- small screens ---------- */
+@media (max-width: 760px) {
+  .lib-rd-top {
+    gap: 2px;
+    padding-left: 4px;
+    padding-right: 4px;
+  }
+
+  .lib-rd-back {
+    padding-right: 4px;
+  }
+
+  .lib-rd-back-text {
+    display: none;
+  }
+
+  .lib-rd-tools .lib-icon-btn {
+    width: 40px;
+  }
+
+  .lib-rd-bottom {
+    padding: 2px 4px 4px;
+  }
+
+  .lib-rd-panel {
+    width: 100%;
+    border-left: 0;
+  }
+
+  .lib-rd-settings {
+    left: 8px;
+    right: 8px;
+    width: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lib-rd-panel,
+  .lib-rd-scrim,
+  .lib-rd-settings,
+  .lib-rd-highlight,
+  .lib-rd-load > span.is-indeterminate {
+    animation: none;
+  }
+}

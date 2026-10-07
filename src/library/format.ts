@@ -16,6 +16,26 @@ export function fmtLength(totalSeconds: number): string {
   return m ? `${h} ชม. ${m} นาที` : `${h} ชม.`
 }
 
+/** Reading time in minutes: "12 นาที", "1 ชม. 5 นาที". */
+export function fmtMinutes(minutes: number): string {
+  if (minutes < 1) return 'ไม่ถึง 1 นาที'
+  return fmtLength(minutes * 60)
+}
+
+/** Whole percent, never rounding a started file up to 100 or down to 0. */
+export function fmtPct(pct: number): string {
+  if (!Number.isFinite(pct) || pct <= 0) return '0%'
+  if (pct < 1) return '<1%'
+  if (pct >= 99.5) return '100%'
+  return `${Math.min(99, Math.floor(pct))}%`
+}
+
+export function fmtBytes(n: number | null): string {
+  if (n == null) return ''
+  if (n < 1024 * 1024) return `${Math.max(1, Math.round(n / 1024))} KB`
+  return `${(n / 1024 / 1024).toFixed(1)} MB`
+}
+
 export function fmtRate(rate: number): string {
   return `${rate.toFixed(2).replace(/0$/, '').replace(/\.0$/, '')}×`
 }

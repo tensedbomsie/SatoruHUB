@@ -93,7 +93,7 @@ const APPS: AppLink[] = [
     // Built into the Hub itself (not an iframe app) so the player keeps
     // playing while moving between the wheel, other views and sub-apps.
     name: 'Library',
-    description: 'ห้องสมุดเสียง ชั้นหนังสือส่วนตัว ฟังไปทำอย่างอื่นไป จำตำแหน่งที่ฟังค้างให้เอง',
+    description: 'ห้องสมุดส่วนตัว ฟังหนังสือเสียงหรือเปิดอ่าน EPUB/PDF ก็ได้ จำตำแหน่งที่ค้างไว้ให้เอง',
     icon: '📚',
     url: '#library',
   },
@@ -227,7 +227,8 @@ function App() {
 
   const currentView = libRoute ? 'library' : view
   const goBack = () => {
-    if (libRoute && libRoute.kind !== 'home') navigateLibrary({ kind: 'home' })
+    if (libRoute?.kind === 'read') navigateLibrary({ kind: 'book', slug: libRoute.slug })
+    else if (libRoute && libRoute.kind !== 'home') navigateLibrary({ kind: 'home' })
     else if (libRoute) navigateLibrary(null)
     else setView('hub')
   }
